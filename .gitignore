@@ -1,0 +1,11 @@
+# Data files
+eda/archive*
+*.h5
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# macOS
+.DS_Store

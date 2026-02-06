@@ -1,0 +1,17 @@
+{
+  "uptrend": [
+    "data/demo/AAPL_20230205_uptrend_0.png",
+    "data/demo/AAPL_20230320_uptrend_1.png",
+    "data/demo/AAPL_20230502_uptrend_2.png"
+  ],
+  "downtrend": [
+    "data/demo/AAPL_20240121_downtrend_0.png",
+    "data/demo/AAPL_20250218_downtrend_1.png",
+    "data/demo/MSFT_20250102_downtrend_2.png"
+  ],
+  "sideways": [
+    "data/demo/AAPL_20230614_sideways_0.png",
+    "data/demo/AAPL_20230730_sideways_1.png",
+    "data/demo/AAPL_20231023_sideways_2.png"
+  ]
+}

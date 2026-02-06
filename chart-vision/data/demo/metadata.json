@@ -1,0 +1,173 @@
+[
+  {
+    "filename": "AAPL_20230205_uptrend_0.png",
+    "ticker": "AAPL",
+    "start_date": "2023-02-05",
+    "end_date": "2023-05-01",
+    "trend": "uptrend",
+    "support_levels": [
+      143.9
+    ],
+    "resistance_levels": [
+      156.33,
+      170.45
+    ],
+    "price_range": [
+      143.9,
+      170.45
+    ]
+  },
+  {
+    "filename": "AAPL_20230320_uptrend_1.png",
+    "ticker": "AAPL",
+    "start_date": "2023-03-20",
+    "end_date": "2023-06-13",
+    "trend": "uptrend",
+    "support_levels": [
+      155.98
+    ],
+    "resistance_levels": [
+      184.951
+    ],
+    "price_range": [
+      155.98,
+      184.951
+    ]
+  },
+  {
+    "filename": "AAPL_20230502_uptrend_2.png",
+    "ticker": "AAPL",
+    "start_date": "2023-05-02",
+    "end_date": "2023-07-27",
+    "trend": "uptrend",
+    "support_levels": [
+      164.31
+    ],
+    "resistance_levels": [
+      196.355
+    ],
+    "price_range": [
+      164.31,
+      198.23
+    ]
+  },
+  {
+    "filename": "AAPL_20230614_sideways_0.png",
+    "ticker": "AAPL",
+    "start_date": "2023-06-14",
+    "end_date": "2023-09-10",
+    "trend": "sideways",
+    "support_levels": [
+      172.75,
+      182.5901
+    ],
+    "resistance_levels": [
+      189.98,
+      196.355
+    ],
+    "price_range": [
+      171.96,
+      198.23
+    ]
+  },
+  {
+    "filename": "AAPL_20230730_sideways_1.png",
+    "ticker": "AAPL",
+    "start_date": "2023-07-30",
+    "end_date": "2023-10-22",
+    "trend": "sideways",
+    "support_levels": [
+      167.62,
+      172.75
+    ],
+    "resistance_levels": [
+      182.34,
+      189.98,
+      196.73
+    ],
+    "price_range": [
+      167.62,
+      196.73
+    ]
+  },
+  {
+    "filename": "AAPL_20231023_sideways_2.png",
+    "ticker": "AAPL",
+    "start_date": "2023-10-23",
+    "end_date": "2024-01-18",
+    "trend": "sideways",
+    "support_levels": [
+      165.67,
+      180.17,
+      187.4511
+    ],
+    "resistance_levels": [
+      199.62
+    ],
+    "price_range": [
+      165.67,
+      199.62
+    ]
+  },
+  {
+    "filename": "AAPL_20240121_downtrend_0.png",
+    "ticker": "AAPL",
+    "start_date": "2024-01-21",
+    "end_date": "2024-04-15",
+    "trend": "downtrend",
+    "support_levels": [
+      167.8,
+      179.25
+    ],
+    "resistance_levels": [
+      178.515,
+      196.38
+    ],
+    "price_range": [
+      167.11,
+      196.38
+    ]
+  },
+  {
+    "filename": "AAPL_20250218_downtrend_1.png",
+    "ticker": "AAPL",
+    "start_date": "2025-02-18",
+    "end_date": "2025-05-13",
+    "trend": "downtrend",
+    "support_levels": [
+      169.2101,
+      193.25,
+      208.42
+    ],
+    "resistance_levels": [
+      214.56,
+      225.62,
+      250.0
+    ],
+    "price_range": [
+      169.2101,
+      250.0
+    ]
+  },
+  {
+    "filename": "MSFT_20250102_downtrend_2.png",
+    "ticker": "MSFT",
+    "start_date": "2025-01-02",
+    "end_date": "2025-03-31",
+    "trend": "downtrend",
+    "support_levels": [
+      367.24,
+      376.91,
+      410.72
+    ],
+    "resistance_levels": [
+      396.36,
+      419.31,
+      448.38
+    ],
+    "price_range": [
+      367.24,
+      448.38
+    ]
+  }
+]
