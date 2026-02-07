@@ -1,12 +1,15 @@
 """
-QuantCademy LLM Agent using Ollama
-Connects to local Ollama instance with llama3 for RAG-powered tutoring.
+QuantCademy LLM Agent
+Supports Gemini (default) and Ollama for RAG-powered tutoring.
 Uses semantic search via vector store for better context retrieval.
 """
 
-import requests
-import json
+import os
 from typing import Generator, Union, Optional, List, Dict
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Import knowledge base functions
 from .knowledge_base import search_knowledge_base, format_context_for_llm, KNOWLEDGE_BASE
@@ -25,72 +28,42 @@ except ImportError:
     get_context_for_query = None
     get_vector_store = None
 
-# Ollama configuration
-OLLAMA_BASE_URL = "http://localhost:11434"
-DEFAULT_MODEL = "llama3"
-
-# System prompt for the investing tutor
-SYSTEM_PROMPT = """You are QuantCademy AI, a friendly and knowledgeable investing tutor designed to help beginners learn about investing.
-
-YOUR ROLE:
-- Teach investing concepts in simple, clear language
-- Use analogies and examples beginners can understand
-- Be encouraging and patient
-- Never give specific financial advice or stock picks
-- Always emphasize that investing involves risk
-
-YOUR STYLE:
-- Conversational but informative
-- Break down complex topics into digestible parts
-- Use bullet points, tables, and structure when helpful
-- Relate concepts to the user's personal situation when possible
-- Ask follow-up questions to ensure understanding
-
-YOUR KNOWLEDGE SOURCES:
-- SEC Investor.gov
-- Investopedia
-- Vanguard Research
-- Fidelity Learning Center
-- Bogleheads Wiki
-- Federal Reserve
-- FINRA Investor Education
-
-IMPORTANT GUIDELINES:
-1. If asked about specific stocks to buy, politely decline and explain why diversified index funds are better for beginners
-2. Always mention that you're an AI and users should consult a financial advisor for personal advice
-3. When discussing risk, be honest about potential losses
-4. Encourage long-term thinking over short-term speculation
-5. Reference the educational content provided in your context
-6. Cite your sources when possible (e.g., "According to Vanguard research...")
-7. If you don't know something, say so rather than making things up
-
-RESPONSE FORMAT:
-- Use markdown formatting for clarity
-- Use headers (##) for major sections
-- Use bullet points for lists
-- Use **bold** for important terms
-- Keep responses focused and not too long (300-500 words usually)
-"""
+# Try to import LLM provider
+try:
+    from .llm_provider import (
+        check_llm_status,
+        chat_with_llm,
+        LLM_PROVIDER,
+        GEMINI_AVAILABLE,
+        SYSTEM_PROMPT
+    )
+    LLM_PROVIDER_AVAILABLE = True
+except ImportError:
+    LLM_PROVIDER_AVAILABLE = False
+    LLM_PROVIDER = "none"
+    GEMINI_AVAILABLE = False
 
 
 def check_ollama_status() -> dict:
-    """Check if Ollama is running and available."""
-    try:
-        response = requests.get(f"{OLLAMA_BASE_URL}/api/tags", timeout=5)
-        if response.status_code == 200:
-            models = response.json().get('models', [])
-            model_names = [m['name'] for m in models]
-            has_llama3 = any('llama3' in name.lower() for name in model_names)
-            return {
-                "status": "online",
-                "models": model_names,
-                "has_llama3": has_llama3
-            }
-        return {"status": "error", "message": "Unexpected response"}
-    except requests.exceptions.ConnectionError:
-        return {"status": "offline", "message": "Cannot connect to Ollama. Make sure it's running."}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
+    """Check LLM status (supports both Gemini and Ollama)."""
+    if LLM_PROVIDER_AVAILABLE:
+        status = check_llm_status()
+        # Map to expected format for backwards compatibility
+        return {
+            "status": status.get("status", "offline"),
+            "message": status.get("message", ""),
+            "provider": status.get("provider", "unknown"),
+            "has_llama3": status.get("ollama_available", False),
+            "models": [status.get("message", "")]
+        }
+    else:
+        return {
+            "status": "offline",
+            "message": "LLM provider not configured",
+            "provider": "none",
+            "has_llama3": False,
+            "models": []
+        }
 
 
 def get_rag_context(query: str, user_profile: dict = None, use_semantic: bool = True) -> tuple:
@@ -106,14 +79,12 @@ def get_rag_context(query: str, user_profile: dict = None, use_semantic: bool = 
     # Try semantic search first (much better results)
     if use_semantic and VECTOR_STORE_AVAILABLE and get_context_for_query:
         try:
-            # Get vector store and ensure it's indexed
             store = get_vector_store()
             if store:
                 results, context = store.search_with_context(query, n_results=3)
                 sources = [r['title'] for r in results]
                 
                 if context:
-                    # Add user profile context if available
                     if user_profile:
                         profile_context = format_user_profile(user_profile)
                         context = context + "\n" + profile_context
@@ -131,7 +102,6 @@ def get_rag_context(query: str, user_profile: dict = None, use_semantic: bool = 
     else:
         context = "No specific documents found. Use general investing knowledge."
     
-    # Add user profile context if available
     if user_profile:
         profile_context = format_user_profile(user_profile)
         context = context + "\n" + profile_context
@@ -161,17 +131,18 @@ def chat_with_ollama(
     message: str,
     user_profile: dict = None,
     conversation_history: list = None,
-    model: str = DEFAULT_MODEL,
+    model: str = None,
     stream: bool = True
 ) -> Union[Generator[str, None, None], str]:
     """
-    Send a message to Ollama with RAG context.
+    Send a message to the configured LLM with RAG context.
+    Now supports Gemini (default) and Ollama.
     
     Args:
         message: User's question
         user_profile: User's investment profile for personalization
         conversation_history: Previous messages for context
-        model: Ollama model to use
+        model: Model to use (ignored, uses env config)
         stream: Whether to stream the response
     
     Yields/Returns:
@@ -180,152 +151,62 @@ def chat_with_ollama(
     # Get RAG context using semantic search
     context, sources = get_rag_context(message, user_profile)
     
-    # Build the prompt with context
-    augmented_message = f"""CONTEXT FROM TRUSTED FINANCIAL EDUCATION SOURCES:
-{context}
+    if LLM_PROVIDER_AVAILABLE:
+        return chat_with_llm(
+            message=message,
+            context=context,
+            conversation_history=conversation_history,
+            stream=stream
+        )
+    else:
+        # Fallback when no LLM available
+        error_msg = """❌ No LLM provider configured. 
 
-USER QUESTION: {message}
+**To enable the AI tutor, create a `.env` file:**
+```
+GEMINI_API_KEY=your_api_key_here
+LLM_PROVIDER=gemini
+GEMINI_MODEL=models/gemini-1.5-flash-latest
+```
 
-Please answer the user's question using the context provided above. If the context covers the topic, reference the sources. If not, use your general knowledge about investing basics. Always be helpful, accurate, and beginner-friendly. Remember to:
-1. Use simple language and analogies
-2. Structure your response clearly
-3. Mention if something requires professional advice
-4. Be encouraging about their investing journey"""
-
-    # Build messages array
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-    
-    # Add conversation history if provided (for context continuity)
-    if conversation_history:
-        for msg in conversation_history[-6:]:  # Keep last 6 messages for context
-            messages.append({
-                "role": msg.get("role", "user"),
-                "content": msg.get("content", "")
-            })
-    
-    # Add current message
-    messages.append({"role": "user", "content": augmented_message})
-    
-    # Make request to Ollama
-    payload = {
-        "model": model,
-        "messages": messages,
-        "stream": stream,
-        "options": {
-            "temperature": 0.7,
-            "top_p": 0.9,
-            "num_predict": 1024
-        }
-    }
-    
-    try:
+Or start Ollama: `ollama serve`"""
         if stream:
-            response = requests.post(
-                f"{OLLAMA_BASE_URL}/api/chat",
-                json=payload,
-                stream=True,
-                timeout=120
-            )
-            
-            for line in response.iter_lines():
-                if line:
-                    try:
-                        data = json.loads(line)
-                        if 'message' in data and 'content' in data['message']:
-                            yield data['message']['content']
-                        if data.get('done', False):
-                            break
-                    except json.JSONDecodeError:
-                        continue
-        else:
-            response = requests.post(
-                f"{OLLAMA_BASE_URL}/api/chat",
-                json=payload,
-                timeout=120
-            )
-            data = response.json()
-            return data.get('message', {}).get('content', 'No response generated.')
-            
-    except requests.exceptions.ConnectionError:
-        error_msg = "❌ Cannot connect to Ollama. Please make sure Ollama is running (`ollama serve`)."
-        if stream:
-            yield error_msg
-        else:
-            return error_msg
-    except requests.exceptions.Timeout:
-        error_msg = "❌ Request timed out. Please try again with a shorter question."
-        if stream:
-            yield error_msg
-        else:
-            return error_msg
-    except Exception as e:
-        error_msg = f"❌ Error: {str(e)}"
-        if stream:
-            yield error_msg
-        else:
-            return error_msg
+            def error_gen():
+                yield error_msg
+            return error_gen()
+        return error_msg
 
 
 def generate_module_explanation(module_id: str, user_profile: dict = None) -> str:
-    """
-    Generate a personalized explanation for a learning module.
-    """
+    """Generate a personalized explanation for a learning module."""
     from .knowledge_base import get_documents_for_module
     docs = get_documents_for_module(module_id)
     
     if not docs:
         return "No content available for this module yet."
     
-    # Format context from related documents
     context = "\n\n".join([doc['content'] for _, doc in docs[:3]])
-    
-    profile_str = ""
-    if user_profile:
-        profile_str = f"""
-USER PROFILE:
-- Horizon: {user_profile.get('horizon_years', 15)} years
-- Monthly contribution: ${user_profile.get('monthly_contribution', 500)}
-- Risk tolerance: {user_profile.get('risk_tolerance', 5)}/10
-"""
     
     prompt = f"""Based on the following educational content, create a personalized lesson summary.
 
 CONTENT:
 {context}
 
-{profile_str}
-
 Create a 3-4 paragraph explanation that:
 1. Explains the key concepts simply
-2. Relates them to the user's specific situation (if profile provided)
-3. Provides one actionable takeaway
-4. Is encouraging and beginner-friendly
+2. Provides one actionable takeaway
+3. Is encouraging and beginner-friendly
 
 Keep it under 400 words."""
     
-    return chat_with_ollama(prompt, user_profile, stream=False)
-
-
-def answer_quiz_explanation(question: str, user_answer: str, correct_answer: str, is_correct: bool) -> str:
-    """
-    Generate an explanation for a quiz answer.
-    """
-    prompt = f"""A user just answered a quiz question about investing.
-
-Question: {question}
-User's answer: {user_answer}
-Correct answer: {correct_answer}
-Was correct: {is_correct}
-
-Provide a brief (2-3 sentence) explanation of why the correct answer is right. If the user was wrong, gently explain their misconception. Be encouraging!"""
-
-    return chat_with_ollama(prompt, stream=False)
+    result = chat_with_ollama(prompt, user_profile, stream=False)
+    if hasattr(result, '__iter__') and not isinstance(result, str):
+        return "".join(result)
+    return result
 
 
 def get_related_topics(query: str) -> List[str]:
-    """
-    Get related topics the user might want to learn about.
-    """
+    """Get related topics the user might want to learn about."""
     if VECTOR_STORE_AVAILABLE and semantic_search:
         results = semantic_search(query, n_results=5)
         return [r['title'] for r in results if r['relevance_score'] > 0.3]
@@ -397,8 +278,6 @@ The best time to start investing was yesterday. The second best time is **TODAY*
 
 **The math favors starting early**: Someone who invests from 25-35 (10 years) often ends up with MORE than someone who invests from 35-65 (30 years), because compound interest had more time to work.
 
-What's holding you back from starting?
-
 *Source: SEC Investor.gov, Fidelity*
 """,
 
@@ -450,13 +329,6 @@ Many employers match your contributions. This is **FREE MONEY**!
 
 **ALWAYS contribute at least enough to get the full match.**
 
-**Traditional vs Roth 401(k)**:
-- Traditional: Tax break now, taxed in retirement
-- Roth: No tax break now, tax-FREE in retirement
-
-**What to Invest In**:
-Look for low-cost index funds or a target-date fund for your retirement year.
-
 *Source: IRS, Fidelity*
 """,
 
@@ -473,22 +345,12 @@ If you own 500 stocks and one crashes, you barely notice.
 3. **Across geographies** - US, international, emerging markets
 4. **Across asset classes** - Stocks, bonds, real estate
 
-**The Magic**:
-Different assets often move in opposite directions. When stocks fall, bonds often rise. This smooths out your returns.
-
 **Simple Diversified Portfolio**:
 - 60% VTI (US stocks - thousands of companies)
 - 30% VXUS (International stocks)
 - 10% BND (Bonds)
 
 One purchase of each = instant diversification across the entire world economy!
-
-**What Diversification WON'T Do**:
-- Eliminate all risk (everything can fall together in crashes)
-- Guarantee profits
-- Beat concentrated bets that happen to win
-
-But it WILL help you sleep at night and stay invested long-term.
 
 *Source: Vanguard, Investopedia*
 """

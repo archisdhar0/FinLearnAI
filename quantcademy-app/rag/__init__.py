@@ -5,7 +5,8 @@ Retrieval-Augmented Generation for financial education.
 Components:
 - knowledge_base: Curated financial education content
 - vector_store: Semantic search using embeddings
-- ollama_agent: LLM integration with RAG
+- llm_provider: Multi-provider LLM support (Gemini, Ollama)
+- ollama_agent: Main RAG integration
 """
 
 from .knowledge_base import (
@@ -25,6 +26,20 @@ from .ollama_agent import (
     get_rag_context,
     QUICK_RESPONSES
 )
+
+# Try to import LLM provider
+try:
+    from .llm_provider import (
+        check_llm_status,
+        chat_with_llm,
+        LLM_PROVIDER,
+        GEMINI_AVAILABLE
+    )
+except ImportError:
+    check_llm_status = None
+    chat_with_llm = None
+    LLM_PROVIDER = "none"
+    GEMINI_AVAILABLE = False
 
 # Try to import vector store (optional, requires extra dependencies)
 try:
@@ -52,12 +67,18 @@ __all__ = [
     'format_context_for_llm',
     'get_all_documents',
     
-    # Ollama Agent
+    # LLM Agent
     'check_ollama_status',
     'chat_with_ollama',
     'get_quick_response',
     'get_rag_context',
     'QUICK_RESPONSES',
+    
+    # LLM Provider
+    'check_llm_status',
+    'chat_with_llm',
+    'LLM_PROVIDER',
+    'GEMINI_AVAILABLE',
     
     # Vector Store (optional)
     'VECTOR_STORE_AVAILABLE',

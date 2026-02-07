@@ -161,18 +161,19 @@ def main():
 
 
 def show_status_indicators():
-    """Show Ollama and RAG status."""
+    """Show LLM and RAG status."""
     status = check_ollama_status()
     
-    # Ollama status
+    # LLM status (Gemini or Ollama)
     if status['status'] == 'online':
-        ollama_icon = "🟢"
-        ollama_text = "Ollama Online"
-        model_text = 'llama3 ✓' if status.get('has_llama3') else 'llama3 not found'
+        llm_icon = "🟢"
+        provider = status.get('provider', 'unknown').title()
+        llm_text = f"{provider} Online"
+        model_text = status.get('message', '')
     else:
-        ollama_icon = "🔴"
-        ollama_text = "Ollama Offline"
-        model_text = "Run: ollama serve"
+        llm_icon = "🔴"
+        llm_text = "LLM Offline"
+        model_text = status.get('message', 'Check .env config')
     
     # Vector store status
     if VECTOR_STORE_AVAILABLE:
@@ -193,7 +194,7 @@ def show_status_indicators():
     
     st.markdown(f"""
     <div style="text-align: right; font-size: 0.85rem;">
-        <div>{ollama_icon} {ollama_text}</div>
+        <div>{llm_icon} {llm_text}</div>
         <div style="color: #64748b; font-size: 0.75rem;">{model_text}</div>
         <div style="margin-top: 0.25rem;">{rag_icon} {rag_text}</div>
     </div>

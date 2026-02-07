@@ -11,9 +11,12 @@ yfinance>=0.2.30
 # API
 requests>=2.31.0
 
+# Environment variables
+python-dotenv>=1.0.0
+
+# LLM Providers
+google-generativeai>=0.3.0
+
 # RAG / Vector Store (for semantic search)
 chromadb>=0.4.0
 sentence-transformers>=2.2.0
-
-# Optional: For faster embeddings (uncomment if you have CUDA)
-# torch>=2.0.0
