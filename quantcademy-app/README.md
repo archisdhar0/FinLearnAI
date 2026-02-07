@@ -17,123 +17,180 @@ Unlike static content sites (Investopedia, etc.), QuantCademy teaches through:
 | Learning path | Random browsing | Sequenced curriculum |
 | Risk explanation | Text definitions | YOUR portfolio simulations |
 | Outcomes | Generic examples | Monte Carlo with YOUR inputs |
-| Decision support | None | Concrete portfolio recommendations |
+| AI Tutor | None | RAG-powered chat with trusted sources |
 
 ## 🚀 Quick Start
+
+### 1. Clone and Setup
 
 ```bash
 # Navigate to app directory
 cd quantcademy-app
 
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
 # Install dependencies
 pip install -r requirements.txt
+```
 
-# Run the app
+### 2. Configure AI Tutor (Required for Chat Feature)
+
+Create a `.env` file in the `quantcademy-app` directory:
+
+```bash
+# Option 1: Using terminal
+cat > .env << 'EOF'
+LLM_PROVIDER=gemini
+GEMINI_API_KEY=your_api_key_here
+GEMINI_MODEL=models/gemini-1.5-flash-latest
+EOF
+
+# Option 2: Create manually with your editor
+```
+
+**Get your free Gemini API key:**
+1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Sign in with Google
+3. Click "Create API Key"
+4. Copy and paste into your `.env` file
+
+### 3. Run the App
+
+```bash
 streamlit run app.py
 ```
 
 The app will open at `http://localhost:8501`
 
-## 📚 MVP Modules
+---
 
-### Foundation Track (4 Modules)
+## 🤖 AI Tutor Features
 
-1. **🎯 Your Goal + Timeline**
-   - Define investment horizon
-   - Create money buckets (emergency, near-term, long-term)
-   - Personalized warnings based on your situation
+The AI Tutor uses **Retrieval-Augmented Generation (RAG)** with:
 
-2. **📊 Risk, Explained With Your Numbers**
-   - Interactive volatility vs drawdown visualization
-   - Historical crash examples
-   - See probability of loss at YOUR horizon
+- **20+ curated documents** from SEC, Investopedia, Vanguard, Fidelity, Bogleheads
+- **Semantic search** using sentence-transformers for accurate retrieval
+- **Gemini Flash** for fast, accurate responses
+- **Source citations** for every answer
 
-3. **🏗️ Build Your First Portfolio**
-   - 3-ETF strategy recommendation
-   - Allocation sliders with real-time stats
-   - Monthly contribution breakdown
+### Without API Key
 
-4. **🔮 What Could Happen? (Simulator)**
-   - Monte Carlo outcome bands
-   - "What if I stop contributing?" toggle
-   - Probability of loss over time
+The app still works! You can:
+- ✅ Use all Learning Modules (6 modules, 30+ lessons)
+- ✅ Get quick responses to common questions
+- ✅ Access the knowledge base directly
+- ❌ AI-generated personalized answers (needs API key)
+
+---
+
+## 📚 Learning Modules
+
+### Module 1: Market Mechanics (Beginner)
+- What is a Stock & Equity?
+- The Order Book (Bid/Ask/Spread)
+- Market vs Limit vs Stop Orders
+- Liquidity Providers vs Takers
+- Exchanges vs Dark Pools
+
+### Module 2: Macro Economics (Beginner)
+- Interest Rates & The Fed
+- Inflation & Purchasing Power
+- GDP & Economic Cycles
+- Currency & Exchange Rates
+- Geopolitical Risk Factors
+
+### Module 3: Technical Analysis (Intermediate)
+- Candlestick Patterns
+- Support & Resistance
+- Moving Averages (SMA, EMA)
+- RSI, MACD & Momentum
+- Volume Analysis
+- Chart Patterns
+
+### Module 3.5: Fundamental Analysis (Intermediate)
+- Reading Financial Statements
+- P/E Ratio & Valuation Metrics
+- Revenue & Earnings Growth
+- Balance Sheet Analysis
+- Cash Flow Analysis
+- Competitive Moats
+
+### Module 4: Quant Strategies (Advanced)
+- Factor Investing
+- Mean Reversion Strategies
+- Momentum Strategies
+- Statistical Arbitrage
+- Backtesting & Validation
+- Risk Management Systems
+
+### Module 5: Advanced Options (Expert)
+- Options Greeks Deep Dive
+- Vertical Spreads
+- Iron Condors & Butterflies
+- Calendar & Diagonal Spreads
+- Volatility Trading
+- Portfolio Hedging
+
+---
 
 ## 🔧 Technical Architecture
 
 ```
 quantcademy-app/
-├── app.py                 # Main Streamlit application
-├── requirements.txt       # Dependencies
+├── app.py                    # Main Streamlit application
+├── requirements.txt          # Dependencies
+├── .env                      # Your API keys (create this, not committed)
+├── pages/
+│   ├── learning_modules.py   # Interactive learning content
+│   ├── ai_tutor.py          # RAG-powered chat interface
+│   └── investor_insight.py   # Additional tools
+├── rag/
+│   ├── knowledge_base.py    # 20+ curated documents
+│   ├── vector_store.py      # Semantic search with ChromaDB
+│   ├── llm_provider.py      # Gemini/Ollama integration
+│   └── ollama_agent.py      # RAG orchestration
 ├── data/
-│   ├── __init__.py
-│   └── curriculum.py      # Learning paths, quizzes, personalization
-├── simulations/
-│   ├── __init__.py
-│   └── portfolio_sim.py   # Monte Carlo, drawdown, risk calculations
-├── components/            # (Future: reusable UI components)
-└── assets/               # (Future: images, styles)
+│   └── curriculum.py        # Learning paths, quizzes
+└── simulations/
+    └── portfolio_sim.py     # Monte Carlo, risk calculations
 ```
 
-## 🎨 Key Features
+---
 
-### Personalization Engine
-```python
-# User profile drives all content
-PERSONALIZATION = {
-    "short_horizon": {
-        "emphasis": "capital_preservation",
-        "key_message": "With a shorter timeline, protecting principal matters more...",
-        "recommended_allocation": {"stocks": 30, "bonds": 50, "cash": 20}
-    },
-    # ... adapts to user's situation
-}
+## 🔑 Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `LLM_PROVIDER` | Yes | `gemini` (recommended) or `ollama` |
+| `GEMINI_API_KEY` | For Gemini | Get from [Google AI Studio](https://aistudio.google.com/app/apikey) |
+| `GEMINI_MODEL` | Optional | Default: `models/gemini-1.5-flash-latest` |
+| `OLLAMA_BASE_URL` | For Ollama | Default: `http://localhost:11434` |
+| `OLLAMA_MODEL` | For Ollama | Default: `llama3` |
+
+### Using Ollama Instead (Local, Free)
+
+If you prefer running locally without an API key:
+
+```bash
+# Install Ollama from https://ollama.ai
+ollama serve  # In one terminal
+ollama pull llama3  # In another terminal
+
+# Update .env
+LLM_PROVIDER=ollama
 ```
 
-### Simulation Engine
-```python
-# Monte Carlo simulations with YOUR numbers
-sim = monte_carlo_simulation(
-    initial_investment=user_initial,
-    monthly_contribution=user_monthly,
-    weights=user_portfolio,
-    years=user_horizon
-)
-# Returns: percentile bands, probability of loss, worst/best outcomes
-```
+---
 
-### Misconception Detection
-```python
-# Quiz questions catch common mistakes
-QUIZ_QUESTIONS = {
-    "risk_explained": [{
-        "question": "If your portfolio drops 20%...",
-        "misconception_if_wrong": {
-            0: "Selling during drops locks in losses..."
-        }
-    }]
-}
-```
+## 📊 Data Sources
 
-## 📈 Roadmap
+- **Knowledge Base**: SEC, Investopedia, Vanguard, Fidelity, Bogleheads, FINRA
+- **Simulations**: Based on historical market parameters
+- **EDA Insights**: SCF 2022 and Reddit community analysis
 
-### Phase 1 (Current MVP)
-- [x] 4 Foundation modules
-- [x] Personalization by horizon & risk tolerance
-- [x] Monte Carlo simulations
-- [x] Interactive portfolio builder
-- [x] Beautiful Streamlit UI
-
-### Phase 2 (Next)
-- [ ] Investor Insight track (3 modules)
-- [ ] Quiz-based misconception routing
-- [ ] Progress persistence (database)
-- [ ] RAG-powered Q&A chatbot
-
-### Phase 3 (Future)
-- [ ] Applied Investing track
-- [ ] Real market data integration
-- [ ] Mobile-responsive design
-- [ ] User accounts & saved portfolios
+---
 
 ## 🧪 Development
 
@@ -141,15 +198,11 @@ QUIZ_QUESTIONS = {
 # Run with auto-reload
 streamlit run app.py --server.runOnSave true
 
-# Run tests (future)
-pytest tests/
+# Initialize vector store (optional, improves search)
+python -c "from rag.vector_store import get_vector_store; get_vector_store()"
 ```
 
-## 📊 Data Sources
-
-- **Simulations**: Based on historical market parameters
-- **RAG Content**: See `/rag_sources.md` for educational content sources
-- **EDA Insights**: Based on SCF 2022 and Reddit community analysis
+---
 
 ## 🤝 Contributing
 
@@ -157,6 +210,8 @@ pytest tests/
 2. Create a feature branch
 3. Make changes
 4. Submit a PR
+
+---
 
 ## 📄 License
 
