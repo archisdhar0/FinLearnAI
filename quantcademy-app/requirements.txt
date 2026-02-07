@@ -1,7 +1,19 @@
+# Core
 streamlit>=1.28.0
 pandas>=2.0.0
 numpy>=1.24.0
 plotly>=5.18.0
 scipy>=1.11.0
+
+# Data
 yfinance>=0.2.30
+
+# API
 requests>=2.31.0
+
+# RAG / Vector Store (for semantic search)
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+
+# Optional: For faster embeddings (uncomment if you have CUDA)
+# torch>=2.0.0
