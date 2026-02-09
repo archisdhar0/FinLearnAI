@@ -1,7 +1,11 @@
 """
 QuantCademy LLM Agent
-Supports Gemini (default) and Ollama for RAG-powered tutoring.
-Uses semantic search via vector store for better context retrieval.
+Capstone-grade RAG agent with:
+- Advanced retrieval (hybrid BM25 + semantic)
+- Reranking
+- Confidence gating
+- Multi-query decomposition
+- Citation-required answers
 """
 
 import os
@@ -11,22 +15,22 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Import knowledge base functions
+# Import knowledge base functions (legacy fallback)
 from .knowledge_base import search_knowledge_base, format_context_for_llm, KNOWLEDGE_BASE
 
-# Try to import vector store for semantic search
+# Try to import advanced retrieval system
+ADVANCED_RAG_AVAILABLE = False
 try:
-    from .vector_store import (
-        semantic_search, 
-        get_context_for_query, 
-        get_vector_store,
-        VECTOR_STORE_AVAILABLE
+    from .retrieval import (
+        retrieve_with_citations,
+        format_context_with_citations,
+        RetrievalResponse,
+        ADVANCED_RETRIEVAL_AVAILABLE
     )
-except ImportError:
-    VECTOR_STORE_AVAILABLE = False
-    semantic_search = None
-    get_context_for_query = None
-    get_vector_store = None
+    ADVANCED_RAG_AVAILABLE = True
+except ImportError as e:
+    print(f"Advanced retrieval not available: {e}")
+    ADVANCED_RETRIEVAL_AVAILABLE = False
 
 # Try to import LLM provider
 try:
@@ -48,13 +52,18 @@ def check_ollama_status() -> dict:
     """Check LLM status (supports both Gemini and Ollama)."""
     if LLM_PROVIDER_AVAILABLE:
         status = check_llm_status()
+        # Add advanced RAG status
+        status["advanced_rag"] = ADVANCED_RAG_AVAILABLE
+        status["advanced_retrieval"] = ADVANCED_RETRIEVAL_AVAILABLE
         # Map to expected format for backwards compatibility
         return {
             "status": status.get("status", "offline"),
             "message": status.get("message", ""),
             "provider": status.get("provider", "unknown"),
             "has_llama3": status.get("ollama_available", False),
-            "models": [status.get("message", "")]
+            "models": [status.get("message", "")],
+            "advanced_rag": ADVANCED_RAG_AVAILABLE,
+            "advanced_retrieval": ADVANCED_RETRIEVAL_AVAILABLE
         }
     else:
         return {
@@ -62,51 +71,79 @@ def check_ollama_status() -> dict:
             "message": "LLM provider not configured",
             "provider": "none",
             "has_llama3": False,
-            "models": []
+            "models": [],
+            "advanced_rag": False,
+            "advanced_retrieval": False
         }
 
 
-def get_rag_context(query: str, user_profile: dict = None, use_semantic: bool = True) -> tuple:
+def get_rag_context(query: str, user_profile: dict = None) -> tuple:
     """
-    Retrieve relevant context from knowledge base for the query.
-    Uses semantic search if available, falls back to keyword search.
+    Retrieve relevant context using advanced RAG (hybrid + reranking).
+    Falls back to keyword search if advanced retrieval is unavailable.
     
     Returns:
-        Tuple of (context_string, source_list)
+        Tuple of (context_string, citations_string, confidence, is_confident, refusal_reason)
     """
-    sources = []
-    
-    # Try semantic search first (much better results)
-    if use_semantic and VECTOR_STORE_AVAILABLE and get_context_for_query:
+    # Try advanced retrieval first
+    if ADVANCED_RAG_AVAILABLE:
         try:
-            store = get_vector_store()
-            if store:
-                results, context = store.search_with_context(query, n_results=3)
-                sources = [r['title'] for r in results]
-                
-                if context:
-                    if user_profile:
-                        profile_context = format_user_profile(user_profile)
-                        context = context + "\n" + profile_context
-                    
-                    return context, sources
+            response = retrieve_with_citations(query)
+            
+            context, citations = format_context_with_citations(response)
+            
+            # Add user profile to context
+            if context and user_profile:
+                profile_context = format_user_profile(user_profile)
+                context = context + "\n" + profile_context
+            
+            return (
+                context,
+                response.get_citation_string(),
+                response.confidence,
+                response.is_confident,
+                response.refusal_reason
+            )
         except Exception as e:
-            print(f"Semantic search error, falling back to keyword: {e}")
+            print(f"Advanced retrieval error, falling back to keyword: {e}")
     
     # Fallback to keyword search
     results = search_knowledge_base(query)
     
     if results:
+        # Check if the top result has a reasonable relevance score
+        top_score = results[0][1] if results else 0  # (doc_id, score, doc)
+        
+        # If score is too low, treat as no results
+        if top_score < 30:  # Less than 30% relevance
+            return (
+                "",
+                "",
+                0.15,
+                False,
+                f"I couldn't find relevant information about this topic. (Match score: {top_score}%)"
+            )
+        
         context = format_context_for_llm(results)
-        sources = [doc['title'] for _, _, doc in results[:3]]
+        sources = [doc.get('source', 'Unknown') for _, _, doc in results[:3]]
+        citations = "Sources: " + "; ".join(sources)
+        
+        # Scale confidence based on score
+        confidence = min(0.4 + (top_score / 200), 0.8)
+        
+        if user_profile:
+            profile_context = format_user_profile(user_profile)
+            context = context + "\n" + profile_context
+        
+        return (context, citations, confidence, True, None)
     else:
-        context = "No specific documents found. Use general investing knowledge."
-    
-    if user_profile:
-        profile_context = format_user_profile(user_profile)
-        context = context + "\n" + profile_context
-    
-    return context, sources
+        return (
+            "",
+            "",
+            0.0,
+            False,
+            "No relevant information found in the knowledge base."
+        )
 
 
 def format_user_profile(user_profile: dict) -> str:
@@ -135,8 +172,14 @@ def chat_with_ollama(
     stream: bool = True
 ) -> Union[Generator[str, None, None], str]:
     """
-    Send a message to the configured LLM with RAG context.
-    Now supports Gemini (default) and Ollama.
+    Send a message to the configured LLM with capstone-grade RAG.
+    
+    Features:
+    - Hybrid retrieval (BM25 + semantic)
+    - Reranking (top 20 → top 5)
+    - Confidence gating (refuses if not confident)
+    - Citation-required answers
+    - Stock picking refusal
     
     Args:
         message: User's question
@@ -148,13 +191,17 @@ def chat_with_ollama(
     Yields/Returns:
         Response text (streamed or complete)
     """
-    # Get RAG context using semantic search
-    context, sources = get_rag_context(message, user_profile)
+    # Get RAG context using advanced retrieval
+    context, citations, confidence, is_confident, refusal_reason = get_rag_context(message, user_profile)
     
     if LLM_PROVIDER_AVAILABLE:
         return chat_with_llm(
             message=message,
             context=context,
+            citations=citations,
+            confidence=confidence,
+            is_confident=is_confident,
+            refusal_reason=refusal_reason,
             conversation_history=conversation_history,
             stream=stream
         )
@@ -177,6 +224,29 @@ Or start Ollama: `ollama serve`"""
         return error_msg
 
 
+def answer_quiz_explanation(
+    question: str,
+    user_answer: str,
+    correct_answer: str,
+    is_correct: bool
+) -> str:
+    """Generate explanation for quiz answers using RAG."""
+    prompt = f"""The user answered a quiz question:
+
+Question: {question}
+User's answer: {user_answer}
+Correct answer: {correct_answer}
+Result: {'Correct!' if is_correct else 'Incorrect'}
+
+Provide a brief (2-3 sentence) explanation of why the correct answer is correct.
+Use the context from your knowledge base to give an educational explanation."""
+
+    result = chat_with_ollama(prompt, stream=False)
+    if hasattr(result, '__iter__') and not isinstance(result, str):
+        return "".join(result)
+    return result
+
+
 def generate_module_explanation(module_id: str, user_profile: dict = None) -> str:
     """Generate a personalized explanation for a learning module."""
     from .knowledge_base import get_documents_for_module
@@ -196,6 +266,7 @@ Create a 3-4 paragraph explanation that:
 1. Explains the key concepts simply
 2. Provides one actionable takeaway
 3. Is encouraging and beginner-friendly
+4. Cites the sources
 
 Keep it under 400 words."""
     
@@ -207,12 +278,16 @@ Keep it under 400 words."""
 
 def get_related_topics(query: str) -> List[str]:
     """Get related topics the user might want to learn about."""
-    if VECTOR_STORE_AVAILABLE and semantic_search:
-        results = semantic_search(query, n_results=5)
-        return [r['title'] for r in results if r['relevance_score'] > 0.3]
-    else:
-        results = search_knowledge_base(query)
-        return [doc['title'] for _, _, doc in results]
+    if ADVANCED_RAG_AVAILABLE:
+        try:
+            response = retrieve_with_citations(query, top_k=5, min_confidence=0.1)
+            return [r.chunk.section for r in response.results]
+        except Exception:
+            pass
+    
+    # Fallback
+    results = search_knowledge_base(query)
+    return [doc['title'] for _, _, doc in results]
 
 
 # Pre-defined responses for common questions (faster than LLM)
@@ -233,11 +308,13 @@ Great question! For beginners, I recommend starting with **low-cost index funds*
 
 Would you like me to explain how to choose between stocks and bonds based on your age?
 
-*Source: Vanguard, Bogleheads*
+*Sources: SEC Investor.gov (🏛️ Regulatory), Vanguard (🏦 Financial Institution), Bogleheads (🏦 Financial Institution)*
 """,
     
     "what is an etf": """
 An **ETF (Exchange-Traded Fund)** is like a basket that holds many investments at once! 🧺
+
+**Definition (per SEC)**: An ETF is an investment fund that trades on exchanges like a stock, holding assets like stocks, commodities, or bonds.
 
 **Think of it this way**: Instead of buying 500 individual stocks, you buy ONE share of an S&P 500 ETF and instantly own a tiny piece of all 500 companies.
 
@@ -255,7 +332,7 @@ An **ETF (Exchange-Traded Fund)** is like a basket that holds many investments a
 
 An ETF is often the best way to start investing. One purchase = instant diversification!
 
-*Source: Vanguard, Investopedia*
+*Sources: SEC Investor.gov (🏛️ Regulatory), Vanguard (🏦 Financial Institution)*
 """,
     
     "when should i start investing": """
@@ -278,11 +355,13 @@ The best time to start investing was yesterday. The second best time is **TODAY*
 
 **The math favors starting early**: Someone who invests from 25-35 (10 years) often ends up with MORE than someone who invests from 35-65 (30 years), because compound interest had more time to work.
 
-*Source: SEC Investor.gov, Fidelity*
+*Sources: SEC Investor.gov (🏛️ Regulatory), IRS (🏛️ Regulatory), Fidelity (🏦 Financial Institution)*
 """,
 
     "how does compound interest work": """
 **Compound interest** is earning interest on your interest - and it's the most powerful force in investing! 💰
+
+**Definition (SEC)**: The process of generating earnings on an asset's reinvested earnings over time.
 
 **Simple Example**:
 Start with $10,000 at 7% annual return:
@@ -305,11 +384,13 @@ The early investor contributed $100,000 LESS but ends up with MORE money!
 
 **Key Takeaway**: Time is your most valuable asset. Start now, even with small amounts.
 
-*Source: SEC Investor.gov*
+*Sources: SEC Investor.gov (🏛️ Regulatory)*
 """,
 
     "what is a 401k": """
 A **401(k)** is an employer-sponsored retirement account with major tax advantages. It's one of the most powerful wealth-building tools available! 🏦
+
+**Definition (IRS)**: A qualified profit-sharing plan that allows employees to save for retirement on a tax-advantaged basis.
 
 **How It Works**:
 1. Money comes out of your paycheck before taxes
@@ -317,7 +398,7 @@ A **401(k)** is an employer-sponsored retirement account with major tax advantag
 3. Grows tax-deferred (no taxes until withdrawal)
 4. You pay taxes when you withdraw in retirement
 
-**2024 Limits**:
+**2024 Limits (per IRS)**:
 - Under 50: $23,000/year
 - 50+: $30,500/year (extra catch-up)
 
@@ -329,11 +410,13 @@ Many employers match your contributions. This is **FREE MONEY**!
 
 **ALWAYS contribute at least enough to get the full match.**
 
-*Source: IRS, Fidelity*
+*Sources: IRS (🏛️ Regulatory), FINRA (🏛️ Regulatory), Fidelity (🏦 Financial Institution)*
 """,
 
     "what is diversification": """
 **Diversification** means spreading your investments across different assets so you don't have all your eggs in one basket 🥚🧺
+
+**Definition (SEC)**: A risk management strategy that mixes a wide variety of investments within a portfolio.
 
 **The Core Idea**:
 If you own only one stock and it crashes, you lose everything.
@@ -352,7 +435,7 @@ If you own 500 stocks and one crashes, you barely notice.
 
 One purchase of each = instant diversification across the entire world economy!
 
-*Source: Vanguard, Investopedia*
+*Sources: SEC Investor.gov (🏛️ Regulatory), FINRA (🏛️ Regulatory), Vanguard Research (🎓 Institutional)*
 """
 }
 

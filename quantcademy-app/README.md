@@ -1,23 +1,37 @@
-# QuantCademy - AI-Powered Investing Education
+# QuantCademy - Capstone-Grade AI Investing Education
 
-> **Learn investing YOUR way** - Personalized, simulation-backed education that adapts to your goals.
+> **Learn investing YOUR way** - Personalized, simulation-backed education with capstone-grade RAG.
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red)
+![RAG](https://img.shields.io/badge/RAG-Capstone--Grade-gold)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-## 🎯 What Makes This Different
+## 🏆 Capstone-Grade RAG Features
 
-Unlike static content sites (Investopedia, etc.), QuantCademy teaches through:
+This isn't a toy demo—it's production-quality RAG with:
 
-| Feature | Investopedia | QuantCademy |
-|---------|-------------|-------------|
-| Content | Static articles | Interactive modules |
-| Personalization | None | Adapts to YOUR numbers |
-| Learning path | Random browsing | Sequenced curriculum |
-| Risk explanation | Text definitions | YOUR portfolio simulations |
-| Outcomes | Generic examples | Monte Carlo with YOUR inputs |
-| AI Tutor | None | RAG-powered chat with trusted sources |
+| Feature | What It Does |
+|---------|-------------|
+| **Source Tiering** | SEC/FINRA (Tier 1) > Fed/CFA (Tier 2) > Fidelity (Tier 3) > Investopedia (Tier 4) |
+| **Hybrid Retrieval** | BM25 keyword search + semantic embeddings |
+| **Reranking** | Cross-encoder reranks top 20 → top 5 |
+| **Confidence Gating** | Refuses when retrieval confidence is low |
+| **Multi-Query** | Decomposes complex questions into 2-4 subqueries |
+| **Citation-Required** | Every answer includes source citations |
+| **Stock-Picking Refusal** | Politely declines to recommend individual stocks |
+
+### ✅ RAG Checklist (All Implemented)
+
+- [x] Curated sources with tiering
+- [x] Structured chunking + metadata
+- [x] Hybrid retrieval + reranking
+- [x] Citation-required answers
+- [x] Confidence gating + safe refusal
+- [x] Multi-step retrieval for complex questions
+- [x] Source attribution with tier badges
+
+---
 
 ## 🚀 Quick Start
 
@@ -40,14 +54,10 @@ pip install -r requirements.txt
 Create a `.env` file in the `quantcademy-app` directory:
 
 ```bash
-# Option 1: Using terminal
-cat > .env << 'EOF'
+# Using your editor, create a .env file with:
 LLM_PROVIDER=gemini
 GEMINI_API_KEY=your_api_key_here
 GEMINI_MODEL=models/gemini-1.5-flash-latest
-EOF
-
-# Option 2: Create manually with your editor
 ```
 
 **Get your free Gemini API key:**
@@ -66,22 +76,152 @@ The app will open at `http://localhost:8501`
 
 ---
 
-## 🤖 AI Tutor Features
+## 🤖 AI Tutor Architecture
 
-The AI Tutor uses **Retrieval-Augmented Generation (RAG)** with:
+### Source Tiers (Trust Hierarchy)
 
-- **20+ curated documents** from SEC, Investopedia, Vanguard, Fidelity, Bogleheads
-- **Semantic search** using sentence-transformers for accurate retrieval
-- **Gemini Flash** for fast, accurate responses
-- **Source citations** for every answer
+```
+🏛️ Tier 1 (Highest): SEC, FINRA, IRS, Treasury
+        ↓
+🎓 Tier 2: Federal Reserve, CFA Institute, Vanguard Research
+        ↓
+🏦 Tier 3: Fidelity, Schwab, Bogleheads Wiki
+        ↓
+📚 Tier 4: Investopedia, NerdWallet
+        ↓
+📰 Tier 5: General sources
+```
 
-### Without API Key
+### Hybrid Retrieval Pipeline
 
-The app still works! You can:
-- ✅ Use all Learning Modules (6 modules, 30+ lessons)
-- ✅ Get quick responses to common questions
-- ✅ Access the knowledge base directly
-- ❌ AI-generated personalized answers (needs API key)
+```
+User Query → [Multi-Query Decomposition (if complex)]
+                            ↓
+              ┌─────────────┴─────────────┐
+              ↓                           ↓
+         BM25 Search                Semantic Search
+        (keyword match)            (embedding similarity)
+              ↓                           ↓
+              └─────────────┬─────────────┘
+                            ↓
+                   Hybrid Merge (40% BM25 + 60% Semantic)
+                            ↓
+                   Tier Boost (prefer regulatory sources)
+                            ↓
+                   Cross-Encoder Rerank (top 20 → top 5)
+                            ↓
+                   Confidence Scoring
+                            ↓
+         ┌──────────────────┴──────────────────┐
+         ↓                                     ↓
+   Confident (>35%)                    Not Confident
+         ↓                                     ↓
+   Generate Answer                    Safe Refusal
+   with Citations                     "Not enough sources..."
+```
+
+### Knowledge Base Stats
+
+- **25+ semantic chunks** from authoritative sources
+- **5 chunk types**: definitions, concepts, examples, procedures, tables
+- **Full metadata**: source tier, category, difficulty, key terms
+
+---
+
+## 📊 Features by Capability
+
+### 1. Source-Tiered Responses
+
+When answering, the system:
+- Prefers Tier 1 (SEC/FINRA) sources over Tier 4 (Investopedia)
+- Applies a tier boost during retrieval
+- Shows source tier badges in citations
+
+### 2. Confidence Gating
+
+```python
+# If confidence < 35%, refuses to answer:
+"I don't have enough reliable information in my sources to answer this confidently."
+```
+
+### 3. Stock-Picking Refusal
+
+```python
+# Triggers: "which stock", "should I buy", "is Tesla"
+# Response: Educational explanation of why index funds are better
+```
+
+### 4. Multi-Query Decomposition
+
+Complex queries like:
+> "Compare 401k and Roth IRA and tell me which is better for a 30 year old"
+
+Get decomposed into:
+1. "What is a 401k?"
+2. "What is a Roth IRA?"
+3. "How does 401k compare to Roth IRA?"
+
+---
+
+## 🧪 Test the Capstone Features
+
+Try these queries:
+
+| Query | Expected Behavior |
+|-------|------------------|
+| "What is an ETF?" | High-confidence answer with SEC citations |
+| "Which stock should I buy?" | Polite refusal + index fund explanation |
+| "Compare 401k and IRA" | Multi-query decomposition |
+| "Kelly criterion for crypto" | Low-confidence refusal |
+
+---
+
+## 🔧 Technical Architecture
+
+```
+quantcademy-app/
+├── app.py                    # Main Streamlit application
+├── requirements.txt          # Dependencies
+├── .env                      # Your API keys (create this, not committed)
+├── pages/
+│   ├── learning_modules.py   # Interactive learning content
+│   ├── ai_tutor.py          # Capstone RAG chat interface
+│   └── investor_insight.py   # Additional tools
+├── rag/
+│   ├── knowledge_base.py    # Legacy knowledge base
+│   ├── knowledge_base_v2.py # Capstone: Chunked KB with source tiering
+│   ├── retrieval.py         # Capstone: Hybrid + rerank + confidence
+│   ├── vector_store.py      # Semantic search with ChromaDB
+│   ├── llm_provider.py      # Gemini/Ollama with citations
+│   └── ollama_agent.py      # RAG orchestration
+├── data/
+│   └── curriculum.py        # Learning paths, quizzes
+└── simulations/
+    └── portfolio_sim.py     # Monte Carlo, risk calculations
+```
+
+---
+
+## 🔑 Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `LLM_PROVIDER` | Yes | `gemini` (recommended) or `ollama` |
+| `GEMINI_API_KEY` | For Gemini | Get from [Google AI Studio](https://aistudio.google.com/app/apikey) |
+| `GEMINI_MODEL` | Optional | Default: `models/gemini-1.5-flash-latest` |
+| `OLLAMA_BASE_URL` | For Ollama | Default: `http://localhost:11434` |
+| `OLLAMA_MODEL` | For Ollama | Default: `llama3` |
+
+### Using Ollama Instead (Local, Free)
+
+```bash
+# Install Ollama from https://ollama.ai
+ollama serve  # In one terminal
+ollama pull llama3  # In another terminal
+
+# Update .env
+LLM_PROVIDER=ollama
+```
 
 ---
 
@@ -135,60 +275,30 @@ The app still works! You can:
 
 ---
 
-## 🔧 Technical Architecture
-
-```
-quantcademy-app/
-├── app.py                    # Main Streamlit application
-├── requirements.txt          # Dependencies
-├── .env                      # Your API keys (create this, not committed)
-├── pages/
-│   ├── learning_modules.py   # Interactive learning content
-│   ├── ai_tutor.py          # RAG-powered chat interface
-│   └── investor_insight.py   # Additional tools
-├── rag/
-│   ├── knowledge_base.py    # 20+ curated documents
-│   ├── vector_store.py      # Semantic search with ChromaDB
-│   ├── llm_provider.py      # Gemini/Ollama integration
-│   └── ollama_agent.py      # RAG orchestration
-├── data/
-│   └── curriculum.py        # Learning paths, quizzes
-└── simulations/
-    └── portfolio_sim.py     # Monte Carlo, risk calculations
-```
-
----
-
-## 🔑 Environment Variables
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `LLM_PROVIDER` | Yes | `gemini` (recommended) or `ollama` |
-| `GEMINI_API_KEY` | For Gemini | Get from [Google AI Studio](https://aistudio.google.com/app/apikey) |
-| `GEMINI_MODEL` | Optional | Default: `models/gemini-1.5-flash-latest` |
-| `OLLAMA_BASE_URL` | For Ollama | Default: `http://localhost:11434` |
-| `OLLAMA_MODEL` | For Ollama | Default: `llama3` |
-
-### Using Ollama Instead (Local, Free)
-
-If you prefer running locally without an API key:
-
-```bash
-# Install Ollama from https://ollama.ai
-ollama serve  # In one terminal
-ollama pull llama3  # In another terminal
-
-# Update .env
-LLM_PROVIDER=ollama
-```
-
----
-
 ## 📊 Data Sources
 
-- **Knowledge Base**: SEC, Investopedia, Vanguard, Fidelity, Bogleheads, FINRA
-- **Simulations**: Based on historical market parameters
-- **EDA Insights**: SCF 2022 and Reddit community analysis
+### Knowledge Base Sources (by Tier)
+
+**🏛️ Tier 1 - Regulatory:**
+- SEC Investor.gov
+- FINRA Investor Education
+- IRS Retirement Plans
+- TreasuryDirect.gov
+
+**🎓 Tier 2 - Institutional:**
+- Federal Reserve
+- CFA Institute
+- Vanguard Research
+- SPIVA Research
+
+**🏦 Tier 3 - Financial Institutions:**
+- Fidelity Learning Center
+- Schwab Education
+- Bogleheads Wiki
+
+**📚 Tier 4 - Educational:**
+- Investopedia
+- NerdWallet
 
 ---
 
@@ -198,8 +308,11 @@ LLM_PROVIDER=ollama
 # Run with auto-reload
 streamlit run app.py --server.runOnSave true
 
-# Initialize vector store (optional, improves search)
-python -c "from rag.vector_store import get_vector_store; get_vector_store()"
+# Test retrieval system
+python -m rag.retrieval "What is an ETF?"
+
+# Check knowledge base stats
+python -c "from rag.knowledge_base_v2 import get_knowledge_base_stats; print(get_knowledge_base_stats())"
 ```
 
 ---

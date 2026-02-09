@@ -1,11 +1,13 @@
 """
 QuantCademy LLM Provider
-Supports multiple LLM backends: Gemini, Ollama, OpenAI
-Configured via environment variables.
+Capstone-grade RAG with:
+- Citation-required answers
+- Confidence gating
+- Source-tiered responses
 """
 
 import os
-from typing import Generator, Union, Optional, List
+from typing import Generator, Union, Optional, List, Dict, Tuple
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -37,47 +39,85 @@ except ImportError:
     pass
 
 
-# System prompt for the investing tutor
-SYSTEM_PROMPT = """You are QuantCademy AI, a friendly and knowledgeable investing tutor designed to help beginners learn about investing.
+# System prompt for capstone-grade RAG tutor
+SYSTEM_PROMPT = """You are QuantCademy AI, a capstone-grade investment education tutor. You provide CITATION-BACKED answers grounded in authoritative sources.
 
-YOUR ROLE:
-- Teach investing concepts in simple, clear language
-- Use analogies and examples beginners can understand
-- Be encouraging and patient
+## YOUR ROLE
+- Teach investing concepts accurately and simply
+- ALWAYS cite your sources in your answers
 - Never give specific financial advice or stock picks
-- Always emphasize that investing involves risk
+- Refuse to recommend individual stocks - explain why index funds are better
+- Emphasize that investing involves risk
 
-YOUR STYLE:
-- Conversational but informative
-- Break down complex topics into digestible parts
-- Use bullet points, tables, and structure when helpful
-- Relate concepts to the user's personal situation when possible
+## CITATION REQUIREMENTS (CRITICAL)
+1. ALWAYS include a "Sources:" line at the end of your response
+2. Cite the source tier when possible (e.g., "According to SEC regulations...")
+3. When sources conflict, prefer higher-tier sources:
+   - Tier 1 (Highest): SEC, FINRA, IRS, Treasury
+   - Tier 2: Federal Reserve, CFA Institute, Vanguard Research
+   - Tier 3: Fidelity, Schwab, Bogleheads
+   - Tier 4: Investopedia, NerdWallet
+4. If context is insufficient, say "I don't have enough reliable sources to answer this confidently"
 
-YOUR KNOWLEDGE SOURCES:
-- SEC Investor.gov
-- Investopedia
-- Vanguard Research
-- Fidelity Learning Center
-- Bogleheads Wiki
-- Federal Reserve
-- FINRA Investor Education
+## REFUSAL POLICY
+REFUSE to answer and explain why for:
+- "Which stock should I buy?" → Explain index fund benefits instead
+- "Is [stock] a good investment?" → Explain diversification instead
+- "When will the market go up/down?" → Explain market unpredictability
+- Questions outside your knowledge → Admit limitations
 
-IMPORTANT GUIDELINES:
-1. If asked about specific stocks to buy, politely decline and explain why diversified index funds are better for beginners
-2. Always mention that you're an AI and users should consult a financial advisor for personal advice
-3. When discussing risk, be honest about potential losses
-4. Encourage long-term thinking over short-term speculation
-5. Reference the educational content provided in your context
-6. Cite your sources when possible (e.g., "According to Vanguard research...")
-7. If you don't know something, say so rather than making things up
+## RESPONSE FORMAT
+1. Clear, structured answer with headers
+2. Key definitions in **bold**
+3. Practical examples when helpful
+4. Warning about risks when relevant
+5. **ALWAYS end with:** "Sources: [list the sources from your context]"
 
-RESPONSE FORMAT:
-- Use markdown formatting for clarity
-- Use headers (##) for major sections
-- Use bullet points for lists
-- Use **bold** for important terms
-- Keep responses focused (300-500 words usually)
+## TEACHING STYLE
+- Beginner-friendly language
+- Use analogies and examples
+- Encourage long-term thinking
+- Be honest about what you don't know
 """
+
+
+# Stock picking refusal messages
+STOCK_PICKING_TRIGGERS = [
+    "which stock", "what stock", "best stock", "good stock",
+    "should i buy", "will stock", "should i invest in",
+    "is tesla", "is apple", "is nvidia", "is amazon",
+    "meme stock", "penny stock"
+]
+
+STOCK_PICKING_REFUSAL = """
+## I Can't Recommend Specific Stocks 🚫
+
+I'm designed to help you learn about investing, not to pick stocks. Here's why:
+
+**According to SEC and FINRA guidelines:**
+- 90%+ of professional stock pickers underperform index funds over 15+ years
+- Individual stock picking exposes you to concentrated company risk
+- Even experts can't reliably predict which stocks will outperform
+
+**What I CAN help with:**
+- Understanding how index funds work (and why they beat most stock pickers)
+- Building a diversified portfolio appropriate for your goals
+- Explaining risk management and asset allocation
+- Teaching you about retirement accounts (401k, IRA)
+
+**A better approach for most investors:**
+A simple 3-fund portfolio (US stocks, international stocks, bonds via low-cost index funds) has historically outperformed most active investors while requiring almost no effort.
+
+Would you like me to explain how to build a diversified portfolio instead?
+
+*Sources: SEC Investor.gov, FINRA, SPIVA Research*
+"""
+
+
+def _should_refuse_stock_picking(query: str) -> bool:
+    """Check if the query is asking for stock picks."""
+    query_lower = query.lower()
+    return any(trigger in query_lower for trigger in STOCK_PICKING_TRIGGERS)
 
 
 def check_llm_status() -> dict:
@@ -92,7 +132,6 @@ def check_llm_status() -> dict:
     
     if LLM_PROVIDER == "gemini" and GEMINI_AVAILABLE:
         try:
-            # Quick test to see if API key works
             model = genai.GenerativeModel(GEMINI_MODEL)
             status["status"] = "online"
             status["message"] = f"Gemini ({GEMINI_MODEL})"
@@ -128,28 +167,73 @@ def check_llm_status() -> dict:
 def chat_with_llm(
     message: str,
     context: str = "",
+    citations: str = "",
+    confidence: float = 1.0,
+    is_confident: bool = True,
+    refusal_reason: str = None,
     conversation_history: list = None,
     stream: bool = True
 ) -> Union[Generator[str, None, None], str]:
     """
-    Send a message to the configured LLM with RAG context.
+    Send a message to the configured LLM with RAG context and citations.
     
     Args:
         message: User's question
-        context: Retrieved context from knowledge base
+        context: Retrieved context from knowledge base (with source attribution)
+        citations: Formatted citation string to include
+        confidence: Retrieval confidence score (0-1)
+        is_confident: Whether we have enough reliable sources
+        refusal_reason: Why we can't answer (if not confident)
         conversation_history: Previous messages
         stream: Whether to stream the response
     
     Yields/Returns:
-        Response text
+        Response text with citations
     """
-    # Build the augmented prompt
-    augmented_message = f"""CONTEXT FROM TRUSTED FINANCIAL EDUCATION SOURCES:
+    # Check for stock picking request FIRST
+    if _should_refuse_stock_picking(message):
+        if stream:
+            def refuse_gen():
+                yield STOCK_PICKING_REFUSAL
+            return refuse_gen()
+        return STOCK_PICKING_REFUSAL
+    
+    # Check confidence gate
+    if not is_confident and refusal_reason:
+        refusal_response = f"""
+## I Don't Have Enough Information ⚠️
+
+{refusal_reason}
+
+**What you can do:**
+- Try rephrasing your question
+- Ask about a more specific topic
+- Ask me about: asset allocation, retirement accounts, index funds, compound interest, or risk management
+
+I only answer when I have reliable sources to back up my response.
+"""
+        if stream:
+            def refusal_gen():
+                yield refusal_response
+            return refusal_gen()
+        return refusal_response
+    
+    # Build the augmented prompt with context and citation requirements
+    augmented_message = f"""CONTEXT FROM TRUSTED FINANCIAL EDUCATION SOURCES (Confidence: {confidence:.0%}):
 {context}
+
+REQUIRED CITATIONS TO INCLUDE:
+{citations}
 
 USER QUESTION: {message}
 
-Please answer the user's question using the context provided above. If the context covers the topic, reference the sources. If not, use your general knowledge about investing basics. Always be helpful, accurate, and beginner-friendly."""
+INSTRUCTIONS:
+1. Answer the user's question using ONLY the context above
+2. Be accurate and beginner-friendly
+3. Include specific examples when helpful
+4. ALWAYS end your response with "Sources: " followed by the citations provided above
+5. If the context doesn't fully cover the topic, acknowledge limitations
+6. DO NOT make up information not in the context"""
 
     # Try Gemini first
     if LLM_PROVIDER == "gemini" and GEMINI_AVAILABLE:

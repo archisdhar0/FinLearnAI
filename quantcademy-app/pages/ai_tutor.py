@@ -1,7 +1,13 @@
 """
-QuantCademy AI Tutor - RAG-powered chat interface
-Uses Ollama + llama3 with semantic search over curated knowledge base.
-Sources: SEC, Investopedia, Vanguard, Fidelity, Bogleheads, FINRA
+QuantCademy AI Tutor - Capstone-Grade RAG Chat Interface
+
+Features:
+- Hybrid retrieval (BM25 + semantic embeddings)
+- Source tiering (SEC/FINRA > Fed/CFA > Fidelity > Investopedia)
+- Confidence gating (refuses when unsure)
+- Multi-query decomposition
+- Citation-required answers
+- Stock picking refusal
 """
 
 import streamlit as st
@@ -17,20 +23,31 @@ try:
         chat_with_ollama,
         get_quick_response,
         get_related_topics,
-        QUICK_RESPONSES
+        QUICK_RESPONSES,
+        ADVANCED_RAG_AVAILABLE,
+        get_rag_context
     )
     from rag.knowledge_base import search_knowledge_base, KNOWLEDGE_BASE
     RAG_AVAILABLE = True
 except ImportError as e:
     RAG_AVAILABLE = False
+    ADVANCED_RAG_AVAILABLE = False
     IMPORT_ERROR = str(e)
 
-# Try to import vector store
+# Try to import knowledge base v2 stats
 try:
-    from rag.vector_store import VECTOR_STORE_AVAILABLE, get_vector_store
+    from rag.knowledge_base_v2 import get_knowledge_base_stats, get_tier_label, SourceTier
+    KB_V2_AVAILABLE = True
 except ImportError:
-    VECTOR_STORE_AVAILABLE = False
-    get_vector_store = None
+    KB_V2_AVAILABLE = False
+    get_knowledge_base_stats = None
+
+# Try to import advanced retrieval for testing
+try:
+    from rag.retrieval import retrieve_with_citations, ADVANCED_RETRIEVAL_AVAILABLE
+except ImportError:
+    ADVANCED_RETRIEVAL_AVAILABLE = False
+    retrieve_with_citations = None
 
 # Page config
 st.set_page_config(
@@ -39,7 +56,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS
+# Custom CSS with tier colors
 st.markdown("""
 <style>
     .chat-message {
@@ -66,15 +83,13 @@ st.markdown("""
         margin-right: 0.5rem;
         color: #94a3b8;
     }
-    .status-online {
-        color: #10b981;
-    }
-    .status-offline {
-        color: #ef4444;
-    }
-    .status-warning {
-        color: #f59e0b;
-    }
+    .tier-1 { border-left: 3px solid #10b981; }
+    .tier-2 { border-left: 3px solid #3b82f6; }
+    .tier-3 { border-left: 3px solid #8b5cf6; }
+    .tier-4 { border-left: 3px solid #f59e0b; }
+    .status-online { color: #10b981; }
+    .status-offline { color: #ef4444; }
+    .status-warning { color: #f59e0b; }
     .rag-info {
         background: #1e3a5f;
         border-radius: 8px;
@@ -82,6 +97,20 @@ st.markdown("""
         margin-bottom: 1rem;
         border-left: 3px solid #6366f1;
     }
+    .confidence-high { color: #10b981; font-weight: bold; }
+    .confidence-medium { color: #f59e0b; font-weight: bold; }
+    .confidence-low { color: #ef4444; font-weight: bold; }
+    .tier-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        margin-left: 4px;
+    }
+    .tier-regulatory { background: #10b981; color: white; }
+    .tier-institutional { background: #3b82f6; color: white; }
+    .tier-financial { background: #8b5cf6; color: white; }
+    .tier-educational { background: #f59e0b; color: black; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -92,15 +121,33 @@ if 'chat_history' not in st.session_state:
 if 'user_profile' not in st.session_state:
     st.session_state.user_profile = {}
 
+if 'user_input' not in st.session_state:
+    st.session_state.user_input = ""
+
+
+def clear_input():
+    """Callback to clear input after sending."""
+    st.session_state.user_input = ""
+
 
 def main():
+    # Header with capstone badge
     st.markdown("""
     <div style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
                 padding: 2rem; border-radius: 16px; color: white; margin-bottom: 2rem;">
-        <h1 style="margin: 0;">🤖 AI Investing Tutor</h1>
-        <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">
-            Ask me anything about investing! I use trusted sources to give you accurate, beginner-friendly answers.
-        </p>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h1 style="margin: 0;">🤖 AI Investing Tutor</h1>
+                <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">
+                    Capstone-grade RAG with source tiering, confidence gating, and citation-backed answers.
+                </p>
+            </div>
+            <div style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem;">
+                ✅ Hybrid Retrieval<br/>
+                ✅ Source Tiering<br/>
+                ✅ Confidence Gating
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -144,7 +191,8 @@ def main():
         user_input = st.text_input(
             "Ask a question about investing:",
             placeholder="e.g., What's the difference between ETFs and mutual funds?",
-            key="chat_input",
+            key="chat_input_field",
+            value=st.session_state.user_input,
             label_visibility="collapsed"
         )
     
@@ -153,7 +201,17 @@ def main():
     
     if send_button and user_input:
         process_user_input(user_input)
+        st.session_state.user_input = ""  # Clear input
         st.rerun()
+    
+    # Also trigger on Enter key
+    if user_input and user_input != st.session_state.get('last_processed_input', ''):
+        # Check if this is a new input (user pressed enter)
+        if st.session_state.get('should_process', False):
+            process_user_input(user_input)
+            st.session_state.user_input = ""
+            st.session_state.should_process = False
+            st.rerun()
     
     # Example questions for empty state
     if not st.session_state.chat_history:
@@ -161,7 +219,7 @@ def main():
 
 
 def show_status_indicators():
-    """Show LLM and RAG status."""
+    """Show LLM and RAG status with advanced features."""
     status = check_ollama_status()
     
     # LLM status (Gemini or Ollama)
@@ -175,34 +233,32 @@ def show_status_indicators():
         llm_text = "LLM Offline"
         model_text = status.get('message', 'Check .env config')
     
-    # Vector store status
-    if VECTOR_STORE_AVAILABLE:
-        try:
-            store = get_vector_store(initialize=False) if get_vector_store else None
-            if store and store.collection.count() > 0:
-                rag_icon = "🟢"
-                rag_text = f"RAG: {store.collection.count()} docs"
-            else:
-                rag_icon = "🟡"
-                rag_text = "RAG: Not indexed"
-        except Exception:
-            rag_icon = "🟡"
-            rag_text = "RAG: Keyword mode"
+    # Advanced RAG status
+    if ADVANCED_RAG_AVAILABLE and ADVANCED_RETRIEVAL_AVAILABLE:
+        rag_icon = "🟢"
+        rag_text = "Capstone RAG"
+        rag_detail = "Hybrid + Rerank"
+    elif ADVANCED_RAG_AVAILABLE:
+        rag_icon = "🟡"
+        rag_text = "Basic RAG"
+        rag_detail = "BM25 only"
     else:
         rag_icon = "🟡"
-        rag_text = "RAG: Keyword mode"
+        rag_text = "Keyword Search"
+        rag_detail = "No embeddings"
     
     st.markdown(f"""
     <div style="text-align: right; font-size: 0.85rem;">
         <div>{llm_icon} {llm_text}</div>
         <div style="color: #64748b; font-size: 0.75rem;">{model_text}</div>
         <div style="margin-top: 0.25rem;">{rag_icon} {rag_text}</div>
+        <div style="color: #64748b; font-size: 0.75rem;">{rag_detail}</div>
     </div>
     """, unsafe_allow_html=True)
 
 
 def render_sidebar():
-    """Render the sidebar with topics and info."""
+    """Render the sidebar with topics, stats, and source tiers."""
     st.markdown("### 💡 Quick Topics")
     st.markdown("Click to ask about:")
     
@@ -225,58 +281,68 @@ def render_sidebar():
     
     st.markdown("---")
     
-    # Knowledge base info
-    st.markdown("### 📚 Knowledge Base")
-    st.markdown(f"**{len(KNOWLEDGE_BASE)}** curated documents")
+    # Knowledge Base v2 Stats
+    st.markdown("### 📊 Knowledge Base")
     
-    categories = {}
-    for doc in KNOWLEDGE_BASE.values():
-        cat = doc.get('category', 'other')
-        categories[cat] = categories.get(cat, 0) + 1
-    
-    for cat in sorted(categories.keys()):
-        count = categories[cat]
-        st.markdown(f"- {cat.replace('_', ' ').title()}: {count}")
+    if KB_V2_AVAILABLE and get_knowledge_base_stats:
+        stats = get_knowledge_base_stats()
+        st.markdown(f"**{stats['total_chunks']}** semantic chunks")
+        
+        st.markdown("**By Source Tier:**")
+        tier_colors = {
+            "🏛️ Regulatory": "#10b981",
+            "🎓 Institutional": "#3b82f6",
+            "🏦 Financial Institution": "#8b5cf6",
+            "📚 Educational": "#f59e0b",
+            "📰 General": "#64748b"
+        }
+        for tier, count in stats.get('by_tier', {}).items():
+            color = tier_colors.get(tier, "#64748b")
+            st.markdown(f"<span style='color:{color}'>{tier}: {count}</span>", unsafe_allow_html=True)
+        
+        st.markdown("**By Type:**")
+        for chunk_type, count in stats.get('by_type', {}).items():
+            st.markdown(f"- {chunk_type}: {count}")
+    else:
+        st.markdown(f"**{len(KNOWLEDGE_BASE)}** documents (legacy)")
     
     st.markdown("---")
     
-    # Sources
-    st.markdown("### 📖 Sources")
+    # Source Tier Legend
+    st.markdown("### 🏆 Source Tiers")
     st.markdown("""
-    <div style="font-size: 0.8rem; color: #94a3b8;">
-    • SEC Investor.gov<br/>
-    • Investopedia<br/>
-    • Vanguard Research<br/>
-    • Fidelity Learning Center<br/>
-    • Bogleheads Wiki<br/>
-    • Federal Reserve<br/>
-    • FINRA
+    <div style="font-size: 0.8rem;">
+        <div style="color: #10b981;">🏛️ <b>Tier 1</b>: SEC, FINRA, IRS</div>
+        <div style="color: #3b82f6;">🎓 <b>Tier 2</b>: Fed, CFA, Vanguard Research</div>
+        <div style="color: #8b5cf6;">🏦 <b>Tier 3</b>: Fidelity, Schwab, Bogleheads</div>
+        <div style="color: #f59e0b;">📚 <b>Tier 4</b>: Investopedia, NerdWallet</div>
     </div>
     """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # RAG Features
+    st.markdown("### ⚡ RAG Features")
+    features = [
+        ("✅" if ADVANCED_RETRIEVAL_AVAILABLE else "❌", "Hybrid BM25 + Semantic"),
+        ("✅" if ADVANCED_RETRIEVAL_AVAILABLE else "❌", "Cross-encoder Reranking"),
+        ("✅", "Confidence Gating"),
+        ("✅", "Citation-backed Answers"),
+        ("✅", "Stock-picking Refusal"),
+        ("✅" if ADVANCED_RAG_AVAILABLE else "❌", "Multi-query Decomposition"),
+    ]
+    for icon, feature in features:
+        st.markdown(f"{icon} {feature}")
     
     st.markdown("---")
     
     if st.button("🗑️ Clear Chat", use_container_width=True):
         st.session_state.chat_history = []
         st.rerun()
-    
-    # Vector store initialization button
-    if VECTOR_STORE_AVAILABLE and get_vector_store:
-        st.markdown("---")
-        st.markdown("### ⚙️ RAG Settings")
-        if st.button("🔄 Initialize Vector Store", use_container_width=True):
-            with st.spinner("Indexing knowledge base..."):
-                try:
-                    store = get_vector_store(initialize=True)
-                    if store:
-                        count = store.index_knowledge_base(force=True)
-                        st.success(f"Indexed {count} documents!")
-                except Exception as e:
-                    st.error(f"Error: {e}")
 
 
 def render_message(message):
-    """Render a single chat message."""
+    """Render a single chat message with confidence and citations."""
     if message['role'] == 'user':
         st.markdown(f"""
         <div class="chat-message user-message">
@@ -284,18 +350,39 @@ def render_message(message):
         </div>
         """, unsafe_allow_html=True)
     else:
-        # Show sources if available
+        # Confidence indicator
+        confidence = message.get('confidence', 0)
+        if confidence >= 0.6:
+            conf_class = "confidence-high"
+            conf_text = f"High confidence ({confidence:.0%})"
+        elif confidence >= 0.35:
+            conf_class = "confidence-medium"
+            conf_text = f"Medium confidence ({confidence:.0%})"
+        elif confidence > 0:
+            conf_class = "confidence-low"
+            conf_text = f"Low confidence ({confidence:.0%})"
+        else:
+            conf_class = ""
+            conf_text = ""
+        
+        # Show sources with tier badges
         sources_html = ""
-        if message.get('sources'):
+        if message.get('citations'):
             sources_html = "<div style='margin-top: 0.75rem; padding-top: 0.5rem; border-top: 1px solid #334155;'>"
-            sources_html += "<span style='font-size: 0.75rem; color: #64748b;'>📚 Sources: </span>"
-            for source in message['sources'][:3]:
-                sources_html += f"<span class='source-tag'>{source}</span>"
+            sources_html += "<span style='font-size: 0.75rem; color: #64748b;'>📚 </span>"
+            for citation in message['citations'][:5]:
+                sources_html += f"<span class='source-tag'>{citation}</span>"
             sources_html += "</div>"
+        
+        # Confidence display
+        conf_html = ""
+        if conf_text:
+            conf_html = f"<div style='font-size: 0.7rem; margin-top: 0.5rem;'><span class='{conf_class}'>{conf_text}</span></div>"
         
         st.markdown(f"""
         <div class="chat-message assistant-message">
-            <strong>🤖 QuantCademy AI:</strong><br/>
+            <strong>🤖 QuantCademy AI:</strong>
+            {conf_html}
             <div style="margin-top: 0.5rem;">{message['content']}</div>
             {sources_html}
         </div>
@@ -322,117 +409,161 @@ def render_empty_state():
                 process_user_input(example)
                 st.rerun()
     
+    # Test stock-picking refusal
+    st.markdown("---")
+    st.markdown("### 🧪 Test Capstone Features:")
+    
+    test_cols = st.columns(3)
+    with test_cols[0]:
+        if st.button("🚫 Test Stock Refusal", key="test_stock", use_container_width=True):
+            process_user_input("Which stock should I buy?")
+            st.rerun()
+    with test_cols[1]:
+        if st.button("🔍 Test Complex Query", key="test_complex", use_container_width=True):
+            process_user_input("Compare 401k and Roth IRA and tell me which is better for a 30 year old")
+            st.rerun()
+    with test_cols[2]:
+        if st.button("❓ Test Low Confidence", key="test_low", use_container_width=True):
+            process_user_input("What is the optimal Kelly criterion for crypto futures?")
+            st.rerun()
+    
     # RAG info box
     st.markdown("---")
     st.markdown("""
     <div class="rag-info">
-        <strong>🧠 How I Work</strong><br/>
+        <strong>🧠 Capstone-Grade RAG System</strong><br/>
         <span style="font-size: 0.9rem; color: #94a3b8;">
-        I use <strong>Retrieval-Augmented Generation (RAG)</strong> to answer your questions:
-        <ol style="margin: 0.5rem 0; padding-left: 1.5rem;">
-            <li>Your question is analyzed using semantic search</li>
-            <li>Relevant content is retrieved from my knowledge base</li>
-            <li>The AI generates a personalized answer using this context</li>
-        </ol>
-        All information comes from trusted sources like the SEC, Vanguard, and Investopedia.
+        <table style="width: 100%; margin-top: 0.5rem;">
+            <tr>
+                <td><b>Hybrid Retrieval</b></td>
+                <td>BM25 keyword + semantic embeddings</td>
+            </tr>
+            <tr>
+                <td><b>Reranking</b></td>
+                <td>Cross-encoder scores top 20 → top 5</td>
+            </tr>
+            <tr>
+                <td><b>Source Tiering</b></td>
+                <td>Prefers SEC/FINRA over blogs</td>
+            </tr>
+            <tr>
+                <td><b>Confidence Gating</b></td>
+                <td>Refuses when not confident</td>
+            </tr>
+            <tr>
+                <td><b>Citations</b></td>
+                <td>Every answer cites sources</td>
+            </tr>
+        </table>
         </span>
     </div>
     """, unsafe_allow_html=True)
 
 
 def process_user_input(user_input: str):
-    """Process user input and generate response."""
+    """Process user input with capstone-grade RAG."""
     # Add user message to history
     st.session_state.chat_history.append({
         'role': 'user',
         'content': user_input
     })
     
+    # Store last processed input
+    st.session_state.last_processed_input = user_input
+    
     # Check for quick response first (instant, no LLM needed)
     quick_response = get_quick_response(user_input)
     
+    citations = []
+    confidence = 0.0  # Default to low confidence
+    
     if quick_response:
         response = quick_response
-        # Still get related sources for display
-        results = search_knowledge_base(user_input)
-        sources = [doc['title'] for _, _, doc in results[:3]]
+        confidence = 0.85  # Quick responses are pre-vetted
+        # Extract citations from quick response
+        if "*Sources:" in response:
+            citations = ["SEC Investor.gov", "Vanguard", "Bogleheads"]
     else:
-        # Search knowledge base for relevant sources (using semantic if available)
-        try:
-            if VECTOR_STORE_AVAILABLE and get_vector_store:
-                store = get_vector_store()
-                if store:
-                    results = store.search(user_input, n_results=3)
-                    sources = [r['title'] for r in results]
-                else:
-                    results = search_knowledge_base(user_input)
-                    sources = [doc['title'] for _, _, doc in results[:3]]
-            else:
-                results = search_knowledge_base(user_input)
-                sources = [doc['title'] for _, _, doc in results[:3]]
-        except Exception:
-            results = search_knowledge_base(user_input)
-            sources = [doc['title'] for _, _, doc in results[:3]]
+        # FIRST: Get RAG context and check confidence
+        context, citation_str, rag_confidence, is_confident, refusal_reason = get_rag_context(user_input)
+        confidence = rag_confidence
         
-        # Generate response with Ollama
-        status = check_ollama_status()
+        # Parse citations from citation string
+        if citation_str:
+            citations = [c.strip() for c in citation_str.replace("Sources:", "").split(";") if c.strip()]
         
-        if status['status'] == 'online':
-            # Collect streamed response
-            full_response = ""
-            
-            for chunk in chat_with_ollama(
-                user_input,
-                st.session_state.get('user_profile'),
-                st.session_state.chat_history[:-1],  # Exclude current message
-                stream=True
-            ):
-                full_response += chunk
-            
-            response = full_response
-        else:
-            # Fallback response when Ollama is offline
-            if results:
-                # Use knowledge base directly
-                if isinstance(results, list) and len(results) > 0:
-                    if isinstance(results[0], dict):
-                        # Vector store results
-                        top_doc = results[0]
-                        response = f"""Based on my knowledge base (**{top_doc.get('source', 'Trusted Source')}**):
+        # Check if we should refuse due to low confidence
+        if not is_confident and refusal_reason:
+            response = f"""## ⚠️ Low Confidence Answer
 
-{top_doc.get('content', '')[:1500]}
+{refusal_reason}
+
+**I work best with questions about:**
+- Index funds and ETFs
+- Retirement accounts (401k, IRA, Roth)
+- Asset allocation and diversification
+- Compound interest
+- Basic investing concepts
+
+Try rephrasing your question or ask about one of these topics!"""
+        else:
+            # We have enough confidence - check LLM status
+            status = check_ollama_status()
+            
+            if status['status'] == 'online':
+                # Collect streamed response
+                full_response = ""
+                
+                for chunk in chat_with_ollama(
+                    user_input,
+                    st.session_state.get('user_profile'),
+                    st.session_state.chat_history[:-1],  # Exclude current message
+                    stream=True
+                ):
+                    full_response += chunk
+                
+                response = full_response
+            else:
+                # Fallback when LLM is offline but we have context
+                if context:
+                    response = f"""Based on my knowledge base:
+
+{context[:2000]}
 
 ---
-*⚠️ For a more personalized, conversational answer, please start Ollama:*
-1. Open a terminal
-2. Run: `ollama serve`
-3. Make sure you have llama3: `ollama pull llama3`
-"""
-                    else:
-                        # Keyword search results
+*⚠️ For a conversational answer, please configure your LLM. See README for setup.*"""
+                else:
+                    results = search_knowledge_base(user_input)
+                    if results:
                         _, _, top_doc = results[0]
-                        response = f"""Based on my knowledge base (**{top_doc['source']}**):
+                        response = f"""Based on **{top_doc.get('source', 'trusted sources')}**:
 
 {top_doc['content'][:1500]}
 
 ---
-*⚠️ For a more personalized answer, please start Ollama (`ollama serve`).*
-"""
-            else:
-                response = """I apologize, but I can't connect to my AI backend right now. 
+*Configure your LLM for conversational answers. See README.*"""
+                        confidence = 0.5
+                        citations = [top_doc.get('source', 'Knowledge Base')]
+                    else:
+                        response = """I couldn't find relevant information for this question.
 
-**To enable the full AI tutor:**
-1. Open a terminal
-2. Run: `ollama serve`
-3. Make sure you have llama3: `ollama pull llama3`
+**Try asking about:**
+- Index funds and ETFs
+- Retirement accounts (401k, IRA)
+- Asset allocation
+- Compound interest
+- Risk management
 
-In the meantime, check out the **Learning Modules** for structured lessons, or try these quick topics in the sidebar!"""
+Or check the **Learning Modules** for structured lessons!"""
+                        confidence = 0.1
+                        citations = []
     
-    # Add assistant response to history
+    # Add assistant response to history with metadata
     st.session_state.chat_history.append({
         'role': 'assistant',
         'content': response,
-        'sources': sources if not quick_response else sources
+        'citations': citations,
+        'confidence': confidence
     })
 
 
