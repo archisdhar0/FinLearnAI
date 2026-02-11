@@ -73,98 +73,652 @@ if 'completed_lessons' not in st.session_state:
 
 # Module definitions
 MODULES = {
-    "market_mechanics": {
+    "foundations": {
         "number": "1",
-        "title": "Market Mechanics",
-        "level": "beginner",
-        "icon": "🏛️",
-        "description": "Foundational knowledge of market structure, participants, and order execution.",
-        "source": "SEC, Investopedia, FINRA",
+        "title": "The Foundation",
+        "level": "Beginner",
+        "icon": "🎯",
+        "description": "Core concepts every first-time investor should know.",
+        "source": "Various",
         "lessons": [
-            {"id": "stock_equity", "title": "What is a Stock & Equity?"},
-            {"id": "order_book", "title": "The Order Book (Bid/Ask/Spread)"},
-            {"id": "order_types", "title": "Market vs Limit vs Stop Orders"},
-            {"id": "liquidity", "title": "Liquidity Providers vs Takers"},
-            {"id": "exchanges", "title": "Exchanges vs Dark Pools"}
+            {
+  "id": "what_is_investing",
+  "title": "What is Investing?",
+  "content": 
+"""
+## Overview
+Investing is the practice of using your money today to potentially grow it in the future. Unlike saving, which focuses on safety and liquidity, investing accepts some risk to aim for higher returns over time.
+
+---
+
+## 💰 Saving vs Investing
+| Feature | Saving | Investing |
+|--------|--------|-----------|
+| Risk | Low | Medium to High |
+| Return | Low | Potentially Higher |
+| Time Horizon | Short-Term | Long-Term |
+| Liquidity | High | Medium |
+| Goal | Preserve money | Grow money |
+
+> **Interactive Tip:** Think about your own goals — which ones are short-term and which ones are long-term? Highlight your top 3 and consider which category (saving or investing) fits each.
+
+---
+
+## 📉 Inflation: Why Cash Loses Value
+- Inflation reduces what your money can buy over time.
+- Even if your cash amount stays the same, its **purchasing power declines**.
+- Investing helps combat this by aiming for returns above inflation.
+
+![Inflation Graphic](https://via.placeholder.com/400x150.png?text=Inflation+reduces+cash+value+over+time)
+
+> **Try This:** Imagine $100 today and 3% annual inflation — what would it be worth in 10 years? (Hint: roughly $74)
+
+---
+
+## ⏳ Long-Term vs Short-Term Mindset
+- **Short-Term:** Low risk, lower returns, focused on money needed soon.
+- **Long-Term:** Accept temporary ups and downs, benefit from compounding, potentially higher growth.
+  
+![Time Horizon Graphic](https://via.placeholder.com/400x150.png?text=Short-term+vs+Long-term+Investing)
+
+> **Activity:** Draw your own timeline. Mark where you want money for emergencies, medium-term goals, and long-term goals. Consider which should be saved and which invested.
+
+---
+
+## 🏠 Real-Life Beginner Examples
+1. **Emergency Fund:** Keeping 3–6 months of expenses in cash.
+2. **Retirement Investing:** Contributing regularly to a diversified portfolio.
+3. **Inflation Awareness:** Realizing that holding cash long-term reduces purchasing power.
+4. **Consistent Small Investments:** Starting small and building habits over time rather than timing the market.
+
+> **Interactive Exercise:** List two personal goals. Decide if saving or investing is more appropriate for each.
+
+---
+
+## Key Takeaways
+- Saving protects money; investing grows it.  
+- Inflation erodes cash value over time.  
+- Long-term mindset allows compounding and higher potential returns.  
+- Start small, be consistent, and align investments with your goals.
+
+""",
+  "quiz": [
+    {
+      "question": "Which of the following best describes investing?",
+      "options": [
+        "Keeping money in a savings account to avoid risk",
+        "Using money to grow purchasing power over time while accepting some risk",
+        "Hoarding cash to protect against inflation",
+        "Spending money quickly to achieve immediate gains"
+      ],
+      "correct": 1
+    }
+  ]
+}
+,
+           {"id": "what_youre_actually_buying", "title": "What You're Actually Buying", "content": 
+"""
+## Understanding What You Own When You Invest
+
+Investing can feel complicated, but at its core, it's about **ownership and lending**. Let’s break down the main types of investments.
+
+---
+
+### 1. Stocks — Owning a Piece of a Company
+When you buy a **stock**, you own a small piece of a company.  
+
+**Visual:**  
+[Company] —> [You own a slice 🍰]
+
+
+- Stocks can increase in value if the company does well.
+- Some stocks pay **dividends**, which are small cash payments to shareholders.
+- Stocks can also lose value if the company struggles.
+
+---
+
+### 2. ETFs — Baskets of Investments
+An **ETF (Exchange-Traded Fund)** is like buying a **basket of stocks or bonds**.  
+
+**Visual:**  
+[ETF Basket] = [Stock A] + [Stock B] + [Stock C] + …
+
+
+- ETFs let you **diversify** easily without buying each stock individually.
+- They trade like a stock on the market.
+
+---
+
+### 3. Index Funds — Following the Market
+An **index fund** is a special type of ETF that **mirrors a market index**, like the S&P 500.  
+
+**Visual:**  
+[Index Fund] = [All companies in the index]
+
+
+- Designed to track the market, not beat it.
+- Simple and often low-cost.
+
+---
+
+### 4. Bonds — Lending Money
+Buying a **bond** means you’re **lending money** to a company or government.  
+
+**Visual:**  
+[You] —> lend money —> [Company/Government] —> pays interest 💰
+
+
+- You earn **interest payments** over time.
+- Bonds are generally less risky than stocks but may offer lower returns.
+
+---
+
+### 5. Cash & Cash Equivalents
+Cash or cash-like assets (like money market funds) are the **safest**, but grow slowly.  
+
+**Visual:**  
+[Cash] = safe but slow-growing
+
+
+- Good for emergencies or short-term goals.
+
+---
+
+### Key Takeaways
+- **Stocks:** ownership in companies, higher risk/reward  
+- **ETFs:** baskets of investments, good diversification  
+- **Index Funds:** track the market, low-cost  
+- **Bonds:** lend money, lower risk  
+- **Cash:** safest, slow growth  
+
+""", 
+"quiz": [{"question": "Which investment gives you direct ownership in a company?", "options": ["Bond", "Stock", "ETF", "Cash"], "correct": 1}]},
+            {"id": "how_markets_function", "title": "How Markets Function", "content": 
+"""
+## How Markets Work — Simple & Visual
+
+Markets like the stock market might seem mysterious, but **they’re really about people agreeing (or disagreeing) on price**. At every moment, buyers and sellers interact, and prices adjust based on their choices. :contentReference[oaicite:0]{index=0}
+
+---
+
+### 🧑‍🤝‍🧑 Buyers & Sellers — Where It All Begins
+
+Think of a market like an auction:
+
+- **Buyers** want to buy at prices they like.  
+- **Sellers** want to sell at prices they like.
+
+When a buyer and seller agree on a price, a trade happens. :contentReference[oaicite:1]{index=1}  
+
+📌 **Visualization (simple):**  
+Buyers 🟢 — want lower price
+Sellers 🔴 — want higher price
+Price 🔄 adjusts until someone agrees!
+
+
+---
+
+### 📊 Supply & Demand — The Invisible Push & Pull
+
+**Supply** is how much sellers are offering.  
+**Demand** is how much buyers want to buy.
+
+- If *more people want to buy than sell* → **demand > supply** → price goes up.  
+- If *more people want to sell than buy* → **supply > demand** → price goes down. :contentReference[oaicite:2]{index=2}
+
+📌 **Visualization:**  
+Demand ↑ + Supply ↓ → Price ↑
+Demand ↓ + Supply ↑ → Price ↓
+
+
+**Equilibrium price** is the point where supply and demand balance — no one needs to bargain further. :contentReference[oaicite:3]{index=3}
+
+---
+
+### 📉 Why Prices Move — Not Random, Just Responses
+
+Price movements happen because **demand or supply changes**:
+
+- More buyers enter → price moves **up**.  
+- More sellers enter → price moves **down**.  
+- If buyers and sellers are balanced, prices can stabilize (for a bit). :contentReference[oaicite:4]{index=4}
+
+📌 Another way to see it:  
+Buy pressure → 🔼 price
+Sell pressure → 🔽 price
+
+
+Remember, every trade *always* has a buyer and a seller — price changes because **the price at which they agree changes**. :contentReference[oaicite:5]{index=5}
+
+---
+
+### 📰 News & Reality — Sorting Signal from Noise
+
+You might hear that *the news moves prices*. But here’s the clearer way to put it:
+
+🧠 **News doesn’t magically change prices — it changes *expectations***.  
+When new information arrives:
+- Buyers adjust how much they *want* to buy.  
+- Sellers adjust how much they *want* sell.  
+That changes supply and/or demand, and *that causes prices to move*. :contentReference[oaicite:6]{index=6}
+
+🔍 Example:
+- Good earnings news → more buyers want in → demand goes up → price rises.  
+- Bad economic news → more sellers want out → supply rises → price falls. :contentReference[oaicite:7]{index=7}
+
+📌 **Reality Check:**  
+Not all news actually affects fundamentals — sometimes prices move simply because expectations change faster than reality. :contentReference[oaicite:8]{index=8}
+
+""", 
+"quiz": [{"question": "When does price tend to rise in a market?", "options": ["When supply increases", "When demand decreases", "When demand exceeds supply", "When news mentions the word “growth”"], "correct": 2}]},
+            {"id": "time_compounding", "title": "Time and Compounding", "content": 
+"""
+## The Power of Time in Investing
+
+Investing is not just about picking the “right” stocks — **time and consistency** are often more important than skill. Let’s explore why.
+
+---
+
+### ⏳ Time Horizon — How Long You’re Investing
+
+Your **time horizon** is the length of time you expect to hold an investment before needing the money.
+
+**Visual:**  
+Short-term horizon → small risk tolerance
+Long-term horizon → can weather ups and downs 🌊
+
+
+- Longer horizons allow you to **ride out market fluctuations**.
+- Helps guide what types of investments are appropriate.
+
+---
+
+### 💹 Compounding — Money Making Money
+
+**Compounding** is when your earnings generate their own earnings over time.
+
+**Visual Example:**  
+$100 invested at 5% → Year 1: $105
+Year 2: $105 × 1.05 = $110.25
+Year 3: $110.25 × 1.05 = $115.76
+
+
+- Your money grows faster the longer it’s invested.
+- Small contributions early can become much larger than big contributions later.
+
+---
+
+### 🚀 Why Starting Early Matters
+
+Starting early gives compounding **more time to work**.
+
+**Visual:**  
+Alice starts at 25 → $10,000 grows to $40,000+ by 40
+Bob starts at 35 → $10,000 grows to $16,000+ by 40
+
+
+- Even modest contributions matter if started early.
+- Waiting even a few years can significantly reduce total growth.
+
+---
+
+### 🔄 Consistency Over Skill
+
+Consistently investing a little is often more powerful than trying to time the market perfectly.
+
+**Visual:**  
+$100 every month → builds wealth steadily
+vs
+Trying to pick the “perfect” stock → risky, inconsistent
+
+
+- Discipline and habit create long-term growth.
+- Small, regular contributions add up more than occasional large bets.
+
+---
+
+## Key Takeaways
+- Time horizon shapes investment choices.  
+- Compounding magnifies returns over time.  
+- Starting early gives you a big advantage.  
+- Consistency beats skill in the long run.
+
+
+""", 
+"quiz": [{"question": "Why is starting to invest early so important?", "options": ["You can take more risks in the short term", "Compounding has more time to grow your money", "You will always pick better stocks", "It avoids paying taxes"], "correct": 1}]},
+           {"id": "basics_of_risk", "title": "The Basics of Risk", "content": 
+"""
+## Understanding Risk in Investing
+
+Investing always involves **risk**, but understanding it can help you make smarter decisions. Let’s break down the essentials.
+
+---
+
+### ⚡ Volatility — The Ups and Downs
+
+**Volatility** measures how much the price of an investment moves up and down over time.
+
+**Visual:**  
+Stock A: 📈📉📈📉 (high volatility)
+Stock B: 📈➡️📈➡️ (low volatility)
+
+
+- High volatility = bigger swings in value  
+- Low volatility = smoother ride, smaller swings  
+- Short-term ups and downs are normal — not all losses are permanent.
+
+---
+
+### 💸 Losing Money vs Long-Term Loss
+
+- **Short-term loss:** temporary drop in price. You might recover if you hold long enough.  
+- **Long-term loss:** occurs if the value never recovers before you need the money.
+
+**Visual:**  
+Price drops today → could bounce back later 🌱
+Sell too early → realize a long-term loss ❌
+
+
+- Patience is key for long-term investors.
+
+---
+
+### 🧺 Diversification — Don’t Put All Eggs in One Basket
+
+Diversification means spreading investments across different **stocks, bonds, or other assets**.
+
+**Visual:**  
+Portfolio = Stock A + Stock B + Bond C + ETF D
+
+
+- Reduces risk of one big loss.  
+- Helps smooth out returns over time.
+
+---
+
+### 🧠 Risk Tolerance — Know Yourself
+
+**Risk tolerance** is your ability and willingness to handle investment ups and downs.
+
+- High risk tolerance → can handle big swings for higher potential returns  
+- Low risk tolerance → prefer stability, may accept lower returns  
+- Your risk tolerance should guide **how you allocate assets**.
+
+**Visual:**  
+Aggressive → 80% stocks, 20% bonds
+Moderate → 50% stocks, 50% bonds
+Conservative → 20% stocks, 80% bonds
+
+
+---
+
+## Key Takeaways
+- Volatility = normal price swings.  
+- Short-term drops ≠ long-term loss if you stay invested.  
+- Diversification spreads risk across multiple investments.  
+- Know your risk tolerance before building a portfolio.
+
+---
+
+## Quick Knowledge Check
+
+**Which strategy helps reduce the risk of losing all your money in one investment?**  
+- A) Holding only one stock you trust  
+- B) Diversifying across multiple assets  
+- C) Checking the news daily  
+- D) Investing only in volatile stocks
+
+""", 
+"quiz": [{"question": "Which strategy helps reduce the risk of losing all your money in one investment?", "options": ["Holding only one stock you trust", "Diversifying across multiple assets", "Checking the news daily", "Investing only in volatile stocks"], "correct": 1}]},
+            {"id": "accounts_setup", "title": "Accounts and Setup", "content": 
+"""
+## Accounts and Setup — Investing from the Ground Up
+
+Before you can invest, it helps to understand the **types of accounts you use**, how **money enters the market**, and how **automation** can help you stay consistent.
+
+---
+
+### 🏦 Brokerage Accounts — Your Investing Home Base
+
+A **brokerage account** is a type of financial account that lets you **buy and sell investments** like stocks, bonds, mutual funds, and ETFs. It doesn’t carry special tax advantages like a retirement account, but it gives you flexibility and access to the markets. When you place an order, your broker executes that trade on your behalf. :contentReference[oaicite:0]{index=0}
+
+**Visual analogy:**  
+Your Money 💵 → Brokerage 🏦 → Investments 📊
+
+
+- You fund it with money you already have.  
+- You can access your cash anytime — no penalties.  
+- Taxes on dividends, interest, and gains may apply. :contentReference[oaicite:1]{index=1}
+
+---
+
+### 🌟 Roth IRA Basics — A Tax‑Free Growth Account
+
+A **Roth IRA** is a special retirement account designed to help your money **grow tax‑free over time**. You contribute money **after taxes**, and if you follow a few rules, your withdrawals in retirement can be tax‑free. :contentReference[oaicite:2]{index=2}
+
+**Simple visual:**  
+After‑tax money 🏦 → Invest → Grows tax‑free 🚫💰
+
+
+- You don’t get a tax break now, but withdrawals in retirement can be tax‑free. :contentReference[oaicite:3]{index=3}  
+- There are **annual contribution limits** (e.g., $7,500 in 2026 for most people). :contentReference[oaicite:4]{index=4}  
+- You can withdraw your **original contributions** at any time without penalty — only earnings have conditions. :contentReference[oaicite:5]{index=5}
+
+---
+
+### 💸 How Money Enters the Market
+
+When you invest, your money doesn’t disappear — it **flows into financial markets** to buy a share of something:
+
+**Visual flow:**  
+You deposit cash → Brokerage holds it
+You buy stock/fund → cash moves to seller
+Market updates price based on trades 📈📉
+
+
+- Your cash becomes **ownership (stocks, funds)** or a **loan (bonds)**.  
+- Every trade requires a **buyer and a seller** agreeing on a price.  
+- Your participation helps **set prices** along with millions of others. :contentReference[oaicite:6]{index=6}
+
+---
+
+### 🤖 Automation — Set It and Forget It
+
+Automation helps you build good habits and **remove emotion from investing**.
+
+Common kinds of automation:
+- **Recurring contributions:** Automatically invest a set amount each month.  
+- **Dividend reinvestment:** Automatically use dividends to buy more shares.  
+- **Rebalancing tools:** Periodically adjust your portfolio to stay on track.
+
+**Visual:**  
+Every month 📅 → Auto‑invest $100 → Portfolio grows steadily 📈
+
+
+Automation helps you stay consistent and take advantage of market opportunities over time.
+
+---
+
+### 🔑 Key Takeaways
+
+- **Brokerage accounts** let you trade freely but don’t offer tax breaks.  
+- **Roth IRAs** let investments grow tax‑free for retirement with rules on timing.  
+- Investing means converting your cash into financial assets in the market.  
+- **Automation** keeps your investing habits steady and discipline strong.
+
+""", 
+"quiz": [{"question": "Which account lets your investments grow tax‑free for retirement?", "options": ["Brokerage account", "Roth IRA", "Savings account", "Checking account"], "correct": 1}]},
+            {"id": "first_time_mindset", "title": "First Time Investor Mindset", "content": 
+"""
+## Developing the Right Mindset for Investing
+
+Investing isn’t just about numbers — it’s also about **how you think and behave** when markets move. Your emotions and expectations can strongly influence your decisions. Let’s explore common psychological challenges and how to build a healthier investing mindset.
+
+---
+
+### 😨 Fear — It’s Normal, But Don’t Let It Drive Decisions
+
+Many new investors feel fear when starting out or when markets drop. Fear can make you **hesitate, delay investing, or sell at the worst times**. But emotions like fear often lead to poor decisions if acted on impulsively. Staying aware of how fear feels helps you pause and **stick to your long‑term plan** instead of reacting to short‑term swings. :contentReference[oaicite:0]{index=0}
+
+**Visual:**  
+Fear spikes 😨 → Impulsive moves ⛔
+Pause, plan, stay focused 📈
+
+
+- Feeling nervous about losing money is common.  
+- Short‑term fluctuations do **not always mean long‑term losses**. :contentReference[oaicite:1]{index=1}
+
+---
+
+### 📊 FOMO — Fear of Missing Out
+
+FOMO happens when you see others talking about a rising investment and feel pressure to join in. It’s a **behavioral bias** where social pressure pushes you to act without strategy. Investors who act on FOMO often **buy high and sell low**, harming long‑term outcomes. :contentReference[oaicite:2]{index=2}
+
+**Visual:**  
+Rising hype 📈 → FOMO 😵 → Buy without plan → Price drops ⬇️
+
+
+- Don’t chase headlines or “hot picks.”  
+- Keep your **own goals and plan** front and center. :contentReference[oaicite:3]{index=3}
+
+---
+
+### 🕰️ Patience — Let Time Work for You
+
+Successful investing is often more about **time in the market** than timing the market. Patience lets your strategy play out and **benefit from compounding** and market recoveries. :contentReference[oaicite:4]{index=4}
+
+**Visual:**  
+Short‑term noise 📉📈
+Long‑term focus 🕰️ → Steady growth 📊
+
+
+- Markets fluctuate, but history shows *long-term investors tend to benefit from staying invested*. :contentReference[oaicite:5]{index=5}  
+- **Patience reduces emotional trading** like reacting to every headline. :contentReference[oaicite:6]{index=6}
+
+---
+
+### 🎯 Expectations — Set Realistic Goals
+
+Setting clear expectations helps you navigate ups and downs without emotional overload. A goal‑focused mindset anchors your decisions in purpose, not fear or hype. :contentReference[oaicite:7]{index=7}
+
+**Visual:**  
+Dream bigger 🏆
+Plan it 📋
+Execute calmly 🧘‍♂️
+
+
+- Know **why you’re investing** (retirement, house, education) before reacting to market noise. :contentReference[oaicite:8]{index=8}  
+- Expectations grounded in planning help prevent impulsive reactions to short‑term events. :contentReference[oaicite:9]{index=9}
+
+---
+
+## Key Mindset Principles
+
+- **Fear is human —** acknowledge it, but don’t act on it.  
+- **FOMO clouds judgment —** follow your plan instead of trends.  
+- **Patience beats panic —** time in the market matters.  
+- **Expectations rooted in goals** keep actions deliberate.
+
+""", 
+"quiz": [{"question": "Which mindset habit can help you avoid impulsive investment decisions?", "options": ["Reacting to every market headline", "Focusing on your long‑term plan", "Following every social media trend", "Trying to time the market"], "correct": 1}]}
         ]
     },
-    "macro_economics": {
+    "investor_insight": {
         "number": "2",
-        "title": "Macro Economics",
-        "level": "beginner",
-        "icon": "🌍",
-        "description": "Understanding the global economic forces that drive asset prices.",
-        "source": "Federal Reserve, Investopedia, Fidelity",
+        "title": "Investor Insight",
+        "level": "intermediate",
+        "icon": "🔍",
+        "description": "Deeper thinking about markets and behavior.",
+        "source": "Various",
         "lessons": [
-            {"id": "interest_rates", "title": "Interest Rates & The Fed"},
-            {"id": "inflation", "title": "Inflation & Purchasing Power"},
-            {"id": "gdp", "title": "GDP & Economic Cycles"},
-            {"id": "currency", "title": "Currency & Exchange Rates"},
-            {"id": "geopolitics", "title": "Geopolitical Risk Factors"}
+            {"id": "what_moves_markets", "title": "What Moves Markets", "content": """
+## What Moves Markets
+
+Brief placeholder: macro, news, flows, earnings, liquidity.
+
+""", "quiz": [{"question": "Which typically has the most impact on stock prices over the long term?", "options": ["Daily social media trends", "Company earnings and fundamentals", "What a celebrity tweets", "The moon phase"], "correct": 1, "misconception_if_wrong": {0: "Short-term noise doesn't drive long-term price trends.", 2: "Celebrity tweets create temporary noise, not durable value.", 3: "Markets are driven by economics, not astrology."}}]},
+            {"id": "investor_psychology", "title": "Investor Psychology", "content": """
+## Investor Psychology
+
+Brief placeholder: cognitive biases, herd behavior, loss aversion.
+
+""", "quiz": [{"question": "What is 'loss aversion'?", "options": ["Fear of winning money", "Feeling worse about losses than equal gains", "Avoiding all risky investments", "Selling winners too early"], "correct": 1, "misconception_if_wrong": {0: "Loss aversion is about emotional pain from losses, not gains.", 2: "Some risk is necessary for growth.", 3: "That's a separate bias called 'disposition effect'."}}]},
+            {"id": "hype_vs_fundamentals", "title": "Hype vs Fundamentals", "content": """
+## Hype vs Fundamentals
+
+Brief placeholder: distinguishing noise from durable changes to value.
+
+""", "quiz": [{"question": "What's the best way to distinguish hype from real opportunity?", "options": ["Follow influencer tips", "Look at company financials and earnings", "Buy what went up the most", "Listen to hot tips"], "correct": 1, "misconception_if_wrong": {0: "Influencer tips are often unreliable.", 2: "Past performance doesn't predict future returns.", 3: "Hot tips often lead to losses."}}]},
+            {"id": "types_of_investing", "title": "Types of Investing", "content": """
+## Types of Investing
+
+Brief placeholder: active, passive, value, growth, quant, income.
+
+""", "quiz": [{"question": "Which investment approach typically costs less and is easier for beginners?", "options": ["Active stock picking", "Passive index fund investing", "Options trading", "Forex trading"], "correct": 1, "misconception_if_wrong": {0: "Active picking often has higher fees and underperforms indexes.", 2: "Options trading is advanced and risky.", 3: "Forex trading is complex and speculative."}}]},
+            {"id": "risk_portfolio_thinking", "title": "Risk and Portfolio Thinking", "content": """
+## Risk and Portfolio Thinking
+
+Brief placeholder: correlation, allocation, rebalancing basics.
+
+""", "quiz": [{"question": "What is the primary benefit of rebalancing your portfolio?", "options": ["Make trading commissions", "Lock in losses", "Maintain your target risk level", "Guarantee higher returns"], "correct": 2, "misconception_if_wrong": {0: "Rebalancing should minimize costs.", 1: "Rebalancing is about maintaining discipline, not locking in losses.", 3: "Rebalancing helps manage risk but doesn't guarantee returns."}}]},
+            {"id": "reading_market_signals", "title": "Reading Basic Market Signals", "content": """
+## Reading Basic Market Signals
+
+Brief placeholder: volumes, breadth, yields, simple indicators.
+
+""", "quiz": [{"question": "What does unusually high trading volume often signal?", "options": ["The stock will go up", "There's significant interest or disagreement about price", "A company is bankrupt", "Retail investors are winners"], "correct": 1, "misconception_if_wrong": {0: "High volume can precede price moves in either direction.", 2: "Bankruptcy is revealed through financial data, not just volume.", 3: "High volume just means lots of trading, doesn't predict outcomes."}}]},
         ]
     },
-    "technical_analysis": {
+    "applied_investing": {
         "number": "3",
-        "title": "Technical Analysis",
-        "level": "intermediate",
-        "icon": "📊",
-        "description": "Mastering chart reading, indicators, and price action patterns.",
-        "source": "Investopedia, TradingView, CMT Association",
-        "lessons": [
-            {"id": "candlesticks", "title": "Candlestick Patterns"},
-            {"id": "support_resistance", "title": "Support & Resistance"},
-            {"id": "moving_averages", "title": "Moving Averages (SMA, EMA)"},
-            {"id": "indicators", "title": "RSI, MACD & Momentum"},
-            {"id": "volume", "title": "Volume Analysis"},
-            {"id": "chart_patterns", "title": "Chart Patterns"}
-        ]
-    },
-    "fundamental_analysis": {
-        "number": "3.5",
-        "title": "Fundamental Analysis",
-        "level": "intermediate",
-        "icon": "📈",
-        "description": "Evaluating the intrinsic value of a company using financial statements and ratios.",
-        "source": "Fidelity, Morningstar, SEC EDGAR",
-        "lessons": [
-            {"id": "financial_statements", "title": "Reading Financial Statements"},
-            {"id": "pe_ratio", "title": "P/E Ratio & Valuation Metrics"},
-            {"id": "growth", "title": "Revenue & Earnings Growth"},
-            {"id": "balance_sheet", "title": "Balance Sheet Analysis"},
-            {"id": "cash_flow", "title": "Cash Flow Analysis"},
-            {"id": "moats", "title": "Competitive Moats"}
-        ]
-    },
-    "quant_strategies": {
-        "number": "4",
-        "title": "Quant Strategies",
+        "title": "Applied Investing",
         "level": "advanced",
-        "icon": "🤖",
-        "description": "Systematic trading, algorithm design, and statistical edges.",
-        "source": "AQR Capital, Two Sigma Research, Academic Papers",
+        "icon": "⚙️",
+        "description": "Practical steps to build and manage your portfolio.",
+        "source": "Various",
         "lessons": [
-            {"id": "factor_investing", "title": "Factor Investing"},
-            {"id": "mean_reversion", "title": "Mean Reversion Strategies"},
-            {"id": "momentum", "title": "Momentum Strategies"},
-            {"id": "stat_arb", "title": "Statistical Arbitrage"},
-            {"id": "backtesting", "title": "Backtesting & Validation"},
-            {"id": "risk_systems", "title": "Risk Management Systems"}
-        ]
-    },
-    "advanced_options": {
-        "number": "5",
-        "title": "Advanced Options",
-        "level": "expert",
-        "icon": "⚡",
-        "description": "Complex derivative strategies for income generation and portfolio protection.",
-        "source": "CBOE, Options Industry Council, Tastytrade",
-        "lessons": [
-            {"id": "greeks", "title": "Options Greeks Deep Dive"},
-            {"id": "vertical_spreads", "title": "Vertical Spreads"},
-            {"id": "iron_condor", "title": "Iron Condors & Butterflies"},
-            {"id": "calendar_spreads", "title": "Calendar & Diagonal Spreads"},
-            {"id": "vol_trading", "title": "Volatility Trading"},
-            {"id": "hedging", "title": "Portfolio Hedging"}
+            {"id": "costs_fees_taxes", "title": "Costs, Fees, and Taxes", "content": """
+## Costs, Fees, and Taxes
+
+Brief placeholder: expense ratios, trading costs, tax-efficient investing.
+
+""", "quiz": [{"question": "Over 30 years, what impact does a 1% annual fee have compared to a 0.1% fee?", "options": ["Not much difference", "Huge difference—can reduce your returns by 20% or more", "Only matters for rich people", "Fees don't really matter if you hold long-term"], "correct": 1, "misconception_if_wrong": {0: "Compound costs are as powerful as compound returns.", 2: "Fee impact affects everyone equally.", 3: "Fees reduce your final amount regardless of time horizon."}}]},
+            {"id": "what_do_in_crash", "title": "What to do in a market crash", "content": """
+## What to do in a market crash
+
+Brief placeholder: checklist, rebalance, contributions, safeguarding plans.
+
+""", "quiz": [{"question": "What should you typically do during a market crash if you have a long time horizon?", "options": ["Sell everything to avoid further losses", "Panic and check your portfolio daily", "Stay the course and keep investing", "Move all money to cash"], "correct": 2, "misconception_if_wrong": {0: "Selling locks in losses; historically markets recover.", 1: "Anxiety hurts performance; discipline matters.", 3: "Cash loses value to inflation; staying invested is usually better."}}]},
+            {"id": "setting_long_term_structure", "title": "Setting a Long term structure", "content": """
+## Setting a Long term structure
+
+Brief placeholder: target allocation, glidepaths, rules-based plans.
+
+""", "quiz": [{"question": "What is a 'glidepath' in investing?", "options": ["The path stocks are trending", "A gradual shift toward more conservative allocations as you approach your goal", "A price chart pattern", "A type of mutual fund"], "correct": 1, "misconception_if_wrong": {0: "Glidepath is about your own asset allocation strategy, not stock trends.", 2: "Glidepath is a personal strategy, not a chart pattern.", 3: "Glidepath is a strategy you implement, not a specific fund."}}]},
+            {"id": "realistic_expectations", "title": "Realistic Expectations About Returns", "content": """
+## Realistic Expectations About Returns
+
+Brief placeholder: long-term averages, variability, and avoiding guarantees.
+
+""", "quiz": [{"question": "What is a realistic long-term average annual return for a diversified stock portfolio?", "options": ["50% per year", "7-10% per year", "0% (stocks are too risky)", "20%+ guaranteed"], "correct": 1, "misconception_if_wrong": {0: "50% yearly is unrealistic and unsustainable.", 2: "Historically, stocks have beaten inflation over long periods.", 3: "No investment guarantees returns; 7-10% is a historical average, not a guarantee."}}]},
+            {"id": "charts_101", "title": "Charts 101", "content": """
+## Charts 101
+
+Brief placeholder: reading basic price charts, trends, support/resistance.
+
+""", "quiz": [{"question": "What does a chart showing a long uptrend tell you?", "options": ["The stock will keep going up forever", "Prices have been rising, but past performance doesn't guarantee future results", "You should buy immediately", "The company is definitely profitable"], "correct": 1, "misconception_if_wrong": {0: "Trends don't guarantee future movements.", 2: "Momentum investors buy trends, but this is speculative.", 3: "Price trends don't directly reflect profitability."}}]},
+            {"id": "market_pulse", "title": "Market Pulse", "content": """
+## Market Pulse
+
+Brief placeholder: tracking sentiment, news flow, and key indicators.
+
+""", "quiz": [{"question": "When market sentiment is very negative, what does this typically signal for long-term investors?", "options": ["Don't invest until sentiment improves", "Fear may create buying opportunities", "The market is permanently broken", "Sell everything"], "correct": 1, "misconception_if_wrong": {0: "Extreme fear is often associated with market bottoms.", 2: "Markets recover historically; sentiment swings are normal.", 3: "Panicked selling often marks the worst time to sell."}}]},
+            {"id": "asset_allocation", "title": "Asset Allocation", "content": """
+## Asset Allocation
+
+Brief placeholder: constructing diversified portfolios across asset classes.
+
+""", "quiz": [{"question": "What is the goal of asset allocation?", "options": ["Eliminate all risk", "Maximize short-term gains", "Match your risk tolerance and time horizon", "Own only growth stocks"], "correct": 2, "misconception_if_wrong": {0: "No allocation eliminates risk; allocation manages it.", 1: "Asset allocation focuses on long-term goals, not short-term gains.", 3: "Growth stocks alone create concentration risk."}}]}
         ]
     }
 }
@@ -336,6 +890,9 @@ def render_lesson_view():
     # Render lesson content
     render_lesson_content(mod_id, lesson_id)
     
+    # Render quiz if available
+    render_lesson_quiz(mod_id, lesson_id)
+    
     # Completion button
     st.markdown("---")
     
@@ -361,29 +918,77 @@ def render_lesson_view():
 def render_lesson_content(mod_id, lesson_id):
     """Render the actual lesson content."""
     
-    # ==================== MODULE 1: MARKET MECHANICS ====================
+    # Try rendering from MODULES data first (markdown stored in lesson['content']).
+    mod = MODULES.get(mod_id)
+    if mod:
+        lesson = next((l for l in mod['lessons'] if l['id'] == lesson_id), None)
+        if lesson and lesson.get('content'):
+            st.markdown(lesson['content'], unsafe_allow_html=True)
+            return
+    
+    # Fallback to existing per-module render functions for compatibility
     if mod_id == "market_mechanics":
         render_market_mechanics_content(lesson_id)
-    
-    # ==================== MODULE 2: MACRO ECONOMICS ====================
     elif mod_id == "macro_economics":
         render_macro_economics_content(lesson_id)
-    
-    # ==================== MODULE 3: TECHNICAL ANALYSIS ====================
     elif mod_id == "technical_analysis":
         render_technical_analysis_content(lesson_id)
-    
-    # ==================== MODULE 3.5: FUNDAMENTAL ANALYSIS ====================
     elif mod_id == "fundamental_analysis":
         render_fundamental_analysis_content(lesson_id)
-    
-    # ==================== MODULE 4: QUANT STRATEGIES ====================
     elif mod_id == "quant_strategies":
         render_quant_strategies_content(lesson_id)
-    
-    # ==================== MODULE 5: ADVANCED OPTIONS ====================
     elif mod_id == "advanced_options":
         render_advanced_options_content(lesson_id)
+
+
+def render_lesson_quiz(mod_id, lesson_id):
+    """Render a quiz for the lesson if available."""
+    mod = MODULES.get(mod_id)
+    if mod:
+        lesson = next((l for l in mod['lessons'] if l['id'] == lesson_id), None)
+        if lesson and lesson.get('quiz'):
+            st.markdown("---")
+            st.markdown("### ✅ Quick Check: Test Your Understanding")
+            
+            quiz_questions = lesson['quiz']
+            quiz_key = f"quiz_{mod_id}_{lesson_id}"
+            
+            # Initialize quiz state
+            if quiz_key not in st.session_state:
+                st.session_state[quiz_key] = {
+                    "answered": [False] * len(quiz_questions),
+                    "selected": [None] * len(quiz_questions),
+                    "submitted": False
+                }
+            
+            quiz_state = st.session_state[quiz_key]
+            
+            for i, q in enumerate(quiz_questions):
+                with st.container():
+                    st.markdown(f"**Question {i+1}: {q['question']}**")
+                    
+                    # Radio button for options
+                    selected_idx = st.radio(
+                        label="hidden",
+                        options=range(len(q['options'])),
+                        format_func=lambda x: q['options'][x],
+                        key=f"{quiz_key}_q{i}",
+                        label_visibility="collapsed"
+                    )
+                    
+                    quiz_state['selected'][i] = selected_idx
+                    
+                    # Check answer
+                    if st.button("Check Answer", key=f"{quiz_key}_check_{i}"):
+                        quiz_state['answered'][i] = True
+                        if selected_idx == q['correct']:
+                            st.success("✅ Correct!")
+                        else:
+                            st.error(f"❌ Incorrect. The correct answer is: **{q['options'][q['correct']]}**")
+                            if selected_idx in q.get('misconception_if_wrong', {}):
+                                st.info(f"💡 {q['misconception_if_wrong'][selected_idx]}")
+                    
+                    st.markdown("---")
 
 
 # ==================== MODULE 1: MARKET MECHANICS ====================
