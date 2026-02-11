@@ -236,9 +236,14 @@ class AdvancedRetriever:
         
         return reranked
     
-    def _hybrid_search(self, query: str, top_k: int = TOP_K_INITIAL) -> List[RetrievalResult]:
+    def _hybrid_search(self, query: str, top_k: int = TOP_K_INITIAL, current_lesson_id: Optional[str] = None) -> List[RetrievalResult]:
         """
         Hybrid search combining BM25 and semantic search.
+        
+        Args:
+            query: Search query
+            top_k: Number of results to return
+            current_lesson_id: Optional lesson ID to prioritize (e.g., "what_is_investing")
         """
         # BM25 search
         bm25_results = self.bm25.search(query, top_k=top_k)
@@ -270,6 +275,11 @@ class AdvancedRetriever:
             # Boost by source tier
             tier_boost = int(self.chunks[idx].source_tier) / 5.0  # 0.2 to 1.0
             combined = combined * (0.8 + 0.2 * tier_boost)
+            
+            # PRIORITIZE: Boost chunks from current lesson by 50%
+            # This ensures content relevant to the current lesson is prioritized
+            if current_lesson_id and self.chunks[idx].lesson_id == current_lesson_id:
+                combined = combined * 1.5
             
             results.append(RetrievalResult(
                 chunk=self.chunks[idx],
@@ -332,13 +342,20 @@ class AdvancedRetriever:
         self, 
         query: str, 
         top_k: int = TOP_K_FINAL,
-        min_confidence: float = CONFIDENCE_THRESHOLD
+        min_confidence: float = CONFIDENCE_THRESHOLD,
+        current_lesson_id: Optional[str] = None
     ) -> RetrievalResponse:
         """
         Main retrieval function with hybrid search, reranking, and confidence gating.
+        
+        Args:
+            query: Search query
+            top_k: Number of results to return
+            min_confidence: Minimum confidence threshold
+            current_lesson_id: Optional lesson ID to prioritize (e.g., "what_is_investing")
         """
         # Step 1: Hybrid search (BM25 + semantic)
-        candidates = self._hybrid_search(query, top_k=TOP_K_INITIAL)
+        candidates = self._hybrid_search(query, top_k=TOP_K_INITIAL, current_lesson_id=current_lesson_id)
         
         if not candidates:
             return RetrievalResponse(
@@ -469,10 +486,17 @@ class MultiQueryRetriever:
         self, 
         query: str, 
         top_k: int = TOP_K_FINAL,
-        min_confidence: float = CONFIDENCE_THRESHOLD
+        min_confidence: float = CONFIDENCE_THRESHOLD,
+        current_lesson_id: Optional[str] = None
     ) -> RetrievalResponse:
         """
         Retrieve with optional query decomposition for complex questions.
+        
+        Args:
+            query: Search query
+            top_k: Number of results to return
+            min_confidence: Minimum confidence threshold
+            current_lesson_id: Optional lesson ID to prioritize (e.g., "what_is_investing")
         """
         subqueries = None
         
@@ -487,7 +511,7 @@ class MultiQueryRetriever:
         all_citations = []
         
         for subquery in subqueries:
-            response = self.retriever.retrieve(subquery, top_k=top_k)
+            response = self.retriever.retrieve(subquery, top_k=top_k, current_lesson_id=current_lesson_id)
             all_results.extend(response.results)
             all_citations.extend(response.citations)
         
@@ -546,10 +570,17 @@ def get_retriever() -> MultiQueryRetriever:
 def retrieve_with_citations(
     query: str,
     top_k: int = TOP_K_FINAL,
-    min_confidence: float = CONFIDENCE_THRESHOLD
+    min_confidence: float = CONFIDENCE_THRESHOLD,
+    current_lesson_id: Optional[str] = None
 ) -> RetrievalResponse:
     """
     Main retrieval function with all advanced features.
+    
+    Args:
+        query: Search query
+        top_k: Number of results to return
+        min_confidence: Minimum confidence threshold
+        current_lesson_id: Optional lesson ID to prioritize (e.g., "what_is_investing")
     
     Returns a RetrievalResponse with:
     - results: List of chunks with scores
@@ -559,7 +590,7 @@ def retrieve_with_citations(
     - refusal_reason: Why we can't answer (if not confident)
     """
     retriever = get_retriever()
-    return retriever.retrieve(query, top_k, min_confidence)
+    return retriever.retrieve(query, top_k, min_confidence, current_lesson_id)
 
 
 def format_context_with_citations(response: RetrievalResponse) -> Tuple[str, str]:

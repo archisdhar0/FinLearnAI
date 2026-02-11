@@ -49,16 +49,38 @@ SOURCE_TIERS = {
     "Bogleheads Wiki": SourceTier.TIER_3_MAJOR_FINANCIAL,
     "NYSE": SourceTier.TIER_3_MAJOR_FINANCIAL,
     "NASDAQ": SourceTier.TIER_3_MAJOR_FINANCIAL,
+    "Wells Fargo": SourceTier.TIER_3_MAJOR_FINANCIAL,
+    "Morgan Stanley": SourceTier.TIER_3_MAJOR_FINANCIAL,
+    "U.S. Bank": SourceTier.TIER_3_MAJOR_FINANCIAL,
+    "Western Southern": SourceTier.TIER_3_MAJOR_FINANCIAL,
+    "St. Louis Fed": SourceTier.TIER_2_INSTITUTIONAL,
+    "Federal Reserve": SourceTier.TIER_2_INSTITUTIONAL,
+    "DFI Washington": SourceTier.TIER_1_REGULATORY,
     
     # Tier 4: Educational
     "Investopedia": SourceTier.TIER_4_EDUCATIONAL,
     "NerdWallet": SourceTier.TIER_4_EDUCATIONAL,
     "Consumer Finance Protection Bureau": SourceTier.TIER_4_EDUCATIONAL,
     "HealthCare.gov": SourceTier.TIER_4_EDUCATIONAL,
+    "Khan Academy": SourceTier.TIER_4_EDUCATIONAL,
+    "Better Explained": SourceTier.TIER_4_EDUCATIONAL,
+    "EconLib": SourceTier.TIER_4_EDUCATIONAL,
+    "Rasmussen": SourceTier.TIER_4_EDUCATIONAL,
     
     # Tier 5: General
     "Portfolio Visualizer": SourceTier.TIER_5_GENERAL,
     "Historical Data": SourceTier.TIER_5_GENERAL,
+    "Visual Capitalist": SourceTier.TIER_5_GENERAL,
+    "Burrows Capital": SourceTier.TIER_5_GENERAL,
+    "Blue Mountain": SourceTier.TIER_5_GENERAL,
+    "Riverbridge": SourceTier.TIER_5_GENERAL,
+    "Andrew Temte": SourceTier.TIER_5_GENERAL,
+    "FinRed": SourceTier.TIER_5_GENERAL,
+    "The Week": SourceTier.TIER_5_GENERAL,
+    "Wealthify": SourceTier.TIER_5_GENERAL,
+    "Disnat": SourceTier.TIER_5_GENERAL,
+    "TurboTax": SourceTier.TIER_5_GENERAL,
+    "SBI Securities": SourceTier.TIER_5_GENERAL,
 }
 
 
@@ -98,6 +120,8 @@ class Chunk:
     category: str
     difficulty: str
     key_terms: List[str] = field(default_factory=list)
+    lesson_id: Optional[str] = None  # ID of the lesson this chunk belongs to (e.g., "what_is_investing")
+    module_id: Optional[str] = None   # ID of the module (e.g., "foundations")
     
     def to_dict(self) -> Dict:
         return {
@@ -113,6 +137,8 @@ class Chunk:
             "category": self.category,
             "difficulty": self.difficulty,
             "key_terms": self.key_terms,
+            "lesson_id": self.lesson_id,
+            "module_id": self.module_id,
         }
     
     def get_citation(self) -> str:
@@ -969,8 +995,127 @@ RECOMMENDATION: For beginners and most investors, diversified index funds (like 
     ))
 
 
+def add_fetched_content_chunks(fetched_content_list: List[Dict]):
+    """
+    Add chunks from fetched web content to the knowledge base.
+    
+    Args:
+        fetched_content_list: List of dicts with keys:
+            - lesson_id: str (e.g., "what_is_investing")
+            - module_id: str (e.g., "foundations")
+            - url: str
+            - source: str (e.g., "Vanguard")
+            - title: str
+            - content: str (the actual text content)
+            - chunk_index: int (0-based index of this chunk)
+            - total_chunks: int (total chunks for this URL)
+    """
+    global CHUNKED_KNOWLEDGE_BASE
+    
+    for item in fetched_content_list:
+        lesson_id = item.get('lesson_id')
+        module_id = item.get('module_id', 'foundations')
+        url = item.get('url', '')
+        source = item.get('source', 'Unknown')
+        title = item.get('title', '')
+        content = item.get('content', '')
+        chunk_idx = item.get('chunk_index', 0)
+        total_chunks = item.get('total_chunks', 1)
+        
+        if not content:
+            continue
+        
+        # Determine source tier
+        source_tier = get_source_tier(source)
+        
+        # Determine category based on lesson
+        category_map = {
+            "what_is_investing": "basics",
+            "what_youre_actually_buying": "asset_classes",
+            "how_markets_function": "market_mechanics",
+            "time_compounding": "basics",
+            "basics_of_risk": "risk",
+            "accounts_setup": "accounts",
+            "first_time_mindset": "behavioral",
+        }
+        category = category_map.get(lesson_id, "basics")
+        
+        # Determine chunk type (try to infer from content)
+        chunk_type = "concept"  # default
+        content_lower = content.lower()
+        if any(word in content_lower for word in ["definition", "defined as", "means", "is when"]):
+            chunk_type = "definition"
+        elif any(word in content_lower for word in ["example", "for instance", "consider", "imagine"]):
+            chunk_type = "example"
+        elif any(word in content_lower for word in ["step", "how to", "process", "procedure"]):
+            chunk_type = "procedure"
+        
+        # Extract key terms (simple extraction - first few capitalized words)
+        key_terms = []
+        words = content.split()
+        for word in words[:50]:  # Check first 50 words
+            if word and word[0].isupper() and len(word) > 3:
+                clean_word = word.strip('.,!?;:()[]{}')
+                if clean_word not in key_terms and len(clean_word) > 3:
+                    key_terms.append(clean_word)
+                    if len(key_terms) >= 5:
+                        break
+        
+        # Create section name
+        section = f"{title} - Part {chunk_idx + 1}" if total_chunks > 1 else title
+        
+        # Generate document ID from URL
+        doc_id = url.replace("https://", "").replace("http://", "").replace("/", "_")[:50]
+        
+        # Create chunk
+        chunk = Chunk(
+            id=generate_chunk_id(doc_id, section, chunk_idx),
+            document_id=doc_id,
+            content=content,
+            chunk_type=chunk_type,
+            section=section,
+            source=source,
+            source_tier=source_tier,
+            url=url,
+            category=category,
+            difficulty="beginner",  # Foundation module is beginner
+            key_terms=key_terms[:10],  # Limit to 10 terms
+            lesson_id=lesson_id,
+            module_id=module_id
+        )
+        
+        CHUNKED_KNOWLEDGE_BASE.append(chunk)
+
+
+def load_fetched_content_from_cache(cache_file: str = "rag/fetched_content_cache.json"):
+    """
+    Load previously fetched content from cache and add to knowledge base.
+    Useful for avoiding re-fetching on every app restart.
+    """
+    import json
+    from pathlib import Path
+    
+    cache_path = Path(cache_file)
+    if not cache_path.exists():
+        return False
+    
+    try:
+        with open(cache_path, 'r') as f:
+            fetched_content = json.load(f)
+        
+        add_fetched_content_chunks(fetched_content)
+        return True
+    except Exception as e:
+        print(f"Error loading cache: {e}")
+        return False
+
+
 # Initialize on import
 build_chunked_knowledge_base()
+
+# Optionally load cached fetched content if available
+# Uncomment the line below to auto-load cached content on startup
+# load_fetched_content_from_cache()
 
 
 def get_all_chunks() -> List[Chunk]:

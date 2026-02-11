@@ -10,6 +10,7 @@ yfinance>=0.2.30
 
 # API
 requests>=2.31.0
+beautifulsoup4>=4.12.0
 
 # Environment variables
 python-dotenv>=1.0.0
