@@ -10,10 +10,14 @@ Capstone-grade RAG agent with:
 
 import os
 from typing import Generator, Union, Optional, List, Dict
-from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+# Load environment variables (optional - only if python-dotenv is installed)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # python-dotenv not installed - environment variables will use system defaults
+    pass
 
 # Import knowledge base functions (legacy fallback)
 from .knowledge_base import search_knowledge_base, format_context_for_llm, KNOWLEDGE_BASE

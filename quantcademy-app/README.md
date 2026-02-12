@@ -49,7 +49,24 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 2. Configure AI Tutor (Required for Chat Feature)
+### 2. Build Knowledge Base (Required for AI Tutor)
+
+The AI tutor uses content fetched from URLs in `rag/links.md`. Build the knowledge base:
+
+```bash
+# Make sure you're in quantcademy-app directory and venv is activated
+python -m rag.build_knowledge_base
+```
+
+This will:
+- Fetch content from all URLs in `rag/links.md`
+- Chunk the content using a sliding window approach
+- Store it in the knowledge base for the RAG system
+- Take a few minutes (fetches from ~50+ URLs)
+
+**Note:** This only needs to be run once (or when you update `links.md`). The content is cached locally.
+
+### 3. Configure AI Tutor (Required for Chat Feature)
 
 Create a `.env` file in the `quantcademy-app` directory:
 
@@ -66,7 +83,7 @@ GEMINI_MODEL=models/gemini-1.5-flash-latest
 3. Click "Create API Key"
 4. Copy and paste into your `.env` file
 
-### 3. Run the App
+### 4. Run the App
 
 ```bash
 streamlit run app.py

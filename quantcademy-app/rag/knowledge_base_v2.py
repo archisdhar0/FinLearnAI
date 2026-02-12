@@ -993,6 +993,95 @@ RECOMMENDATION: For beginners and most investors, diversified index funds (like 
         difficulty="beginner",
         key_terms=["stock picking", "individual stocks", "diversification", "index funds"]
     ))
+    
+    # =========================================================
+    # LOAD FETCHED CONTENT FROM CACHE (if available)
+    # This content is fetched from links.md and stored in fetched_content_cache.json
+    # =========================================================
+    try:
+        import json
+        from pathlib import Path
+        cache_file = Path(__file__).parent / "fetched_content_cache.json"
+        if cache_file.exists():
+            with open(cache_file, 'r') as f:
+                fetched_content = json.load(f)
+            # Add fetched chunks directly to knowledge base
+            for item in fetched_content:
+                lesson_id = item.get('lesson_id')
+                module_id = item.get('module_id', 'foundations')
+                url = item.get('url', '')
+                source = item.get('source', 'Unknown')
+                title = item.get('title', '')
+                content = item.get('content', '')
+                chunk_idx = item.get('chunk_index', 0)
+                total_chunks = item.get('total_chunks', 1)
+                
+                if not content:
+                    continue
+                
+                # Determine source tier
+                source_tier = get_source_tier(source)
+                
+                # Determine category based on lesson
+                category_map = {
+                    "what_is_investing": "basics",
+                    "what_youre_actually_buying": "asset_classes",
+                    "how_markets_function": "market_mechanics",
+                    "time_compounding": "basics",
+                    "basics_of_risk": "risk",
+                    "accounts_setup": "accounts",
+                    "first_time_mindset": "behavioral",
+                }
+                category = category_map.get(lesson_id, "basics")
+                
+                # Determine chunk type
+                chunk_type = "concept"
+                content_lower = content.lower()
+                if any(word in content_lower for word in ["definition", "defined as", "means", "is when"]):
+                    chunk_type = "definition"
+                elif any(word in content_lower for word in ["example", "for instance", "consider", "imagine"]):
+                    chunk_type = "example"
+                elif any(word in content_lower for word in ["step", "how to", "process", "procedure"]):
+                    chunk_type = "procedure"
+                
+                # Extract key terms
+                key_terms = []
+                words = content.split()
+                for word in words[:50]:
+                    if word and word[0].isupper() and len(word) > 3:
+                        clean_word = word.strip('.,!?;:()[]{}')
+                        if clean_word not in key_terms and len(clean_word) > 3:
+                            key_terms.append(clean_word)
+                            if len(key_terms) >= 5:
+                                break
+                
+                # Create section name
+                section = f"{title} - Part {chunk_idx + 1}" if total_chunks > 1 else title
+                
+                # Generate document ID from URL
+                doc_id = url.replace("https://", "").replace("http://", "").replace("/", "_")[:50]
+                
+                # Create chunk
+                chunk = Chunk(
+                    id=generate_chunk_id(doc_id, section, chunk_idx),
+                    document_id=doc_id,
+                    content=content,
+                    chunk_type=chunk_type,
+                    section=section,
+                    source=source,
+                    source_tier=source_tier,
+                    url=url,
+                    category=category,
+                    difficulty="beginner",
+                    key_terms=key_terms[:10],
+                    lesson_id=lesson_id,
+                    module_id=module_id
+                )
+                
+                CHUNKED_KNOWLEDGE_BASE.append(chunk)
+    except Exception as e:
+        # Silently fail if cache doesn't exist or is invalid
+        pass
 
 
 def add_fetched_content_chunks(fetched_content_list: List[Dict]):
@@ -1112,10 +1201,7 @@ def load_fetched_content_from_cache(cache_file: str = "rag/fetched_content_cache
 
 # Initialize on import
 build_chunked_knowledge_base()
-
-# Optionally load cached fetched content if available
-# Uncomment the line below to auto-load cached content on startup
-# load_fetched_content_from_cache()
+# Note: build_chunked_knowledge_base() now automatically loads from fetched_content_cache.json
 
 
 def get_all_chunks() -> List[Chunk]:

@@ -6,6 +6,22 @@ eda/archive*
 __pycache__/
 *.pyc
 venv/
+*.egg-info/
+
+# Environment variables (NEVER commit!)
+.env
+.env.local
+.env.*
 
 # macOS
 .DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# ChromaDB vector store
+chroma_db/
+
+# RAG Knowledge Base Cache (generated from links.md)
+quantcademy-app/rag/fetched_content_cache.json

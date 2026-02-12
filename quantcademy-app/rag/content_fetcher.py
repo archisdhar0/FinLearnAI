@@ -114,9 +114,7 @@ def fetch_url_content(url: str, timeout: int = 10) -> Optional[Dict[str, str]]:
         title = soup.find('title')
         title_text = title.get_text(strip=True) if title else extract_domain_name(url)
         
-        # Limit content length (keep first 10000 chars to avoid huge chunks)
-        if len(content) > 10000:
-            content = content[:10000] + "... [Content truncated]"
+        # No need to truncate - sliding window chunking will handle long content
         
         return {
             'content': content,
@@ -157,34 +155,59 @@ def parse_links_file(file_path: str) -> Dict[str, List[str]]:
     return lessons
 
 
-def chunk_content(content: str, max_chunk_size: int = 2000, overlap: int = 200) -> List[str]:
+def chunk_content(content: str, chunk_size: int = 2000, overlap: int = 400) -> List[str]:
     """
-    Split content into chunks with overlap for better context preservation.
+    Split content into chunks using a sliding window approach.
+    
+    Uses a true sliding window that moves across the text with overlap,
+    ensuring all content is covered and context is preserved across boundaries.
+    
+    Args:
+        content: The text content to chunk
+        chunk_size: Target size for each chunk (characters)
+        overlap: Number of characters to overlap between chunks
+    
+    Returns:
+        List of text chunks
     """
-    if len(content) <= max_chunk_size:
+    if len(content) <= chunk_size:
         return [content]
     
     chunks = []
     start = 0
+    step_size = chunk_size - overlap  # How much to move the window forward
     
     while start < len(content):
-        end = start + max_chunk_size
+        # Calculate end position
+        end = min(start + chunk_size, len(content))
         
-        # Try to break at sentence boundary
-        if end < len(content):
-            # Look for sentence endings near the chunk boundary
-            for i in range(end, max(start, end - 200), -1):
+        # Extract chunk
+        chunk = content[start:end].strip()
+        
+        # If this is not the last chunk, try to break at a sentence boundary
+        if end < len(content) and len(chunk) > chunk_size * 0.8:  # Only if chunk is substantial
+            # Look backwards from end for sentence boundary (within last 20% of chunk)
+            search_start = max(start, end - int(chunk_size * 0.2))
+            for i in range(end - 1, search_start, -1):
                 if content[i] in '.!?\n':
+                    # Found sentence boundary - adjust end
                     end = i + 1
+                    chunk = content[start:end].strip()
                     break
         
-        chunk = content[start:end].strip()
+        # Only add non-empty chunks
         if chunk:
             chunks.append(chunk)
         
-        # Move start forward with overlap
-        start = end - overlap
-        if start >= len(content):
+        # Move window forward by step_size (sliding window)
+        start += step_size
+        
+        # If we're at the end but haven't covered everything, ensure we get the last bit
+        if start >= len(content) and end < len(content):
+            # Get remaining content
+            remaining = content[end:].strip()
+            if remaining:
+                chunks.append(remaining)
             break
     
     return chunks
