@@ -8,10 +8,20 @@ Capstone-grade RAG with:
 
 import os
 from typing import Generator, Union, Optional, List, Dict, Tuple
-from dotenv import load_dotenv
+from pathlib import Path
 
-# Load environment variables
-load_dotenv()
+# Load environment variables - try multiple locations
+try:
+    from dotenv import load_dotenv
+    # Try loading from quantcademy-app directory first
+    env_path = Path(__file__).parent.parent.parent / ".env"
+    if env_path.exists():
+        load_dotenv(env_path)
+    else:
+        # Fallback to default location
+        load_dotenv()
+except ImportError:
+    pass
 
 # Configuration
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini").lower()
@@ -23,14 +33,24 @@ OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3")
 # Import providers based on availability
 GEMINI_AVAILABLE = False
 OLLAMA_AVAILABLE = False
+genai = None
 
+# Try new package first (google-genai)
 try:
-    import google.generativeai as genai
+    import google.genai as genai
     if GEMINI_API_KEY:
         genai.configure(api_key=GEMINI_API_KEY)
         GEMINI_AVAILABLE = True
-except ImportError:
-    pass
+except (ImportError, AttributeError):
+    # Fallback to old package name for compatibility
+    try:
+        import google.generativeai as genai
+        if GEMINI_API_KEY:
+            genai.configure(api_key=GEMINI_API_KEY)
+            GEMINI_AVAILABLE = True
+    except (ImportError, AttributeError):
+        genai = None
+        pass
 
 try:
     import requests
@@ -130,14 +150,16 @@ def check_llm_status() -> dict:
         "ollama_available": False
     }
     
-    if LLM_PROVIDER == "gemini" and GEMINI_AVAILABLE:
+    if LLM_PROVIDER == "gemini" and GEMINI_AVAILABLE and genai is not None:
         try:
             model = genai.GenerativeModel(GEMINI_MODEL)
             status["status"] = "online"
             status["message"] = f"Gemini ({GEMINI_MODEL})"
+            status["available"] = True  # Add for compatibility
             return status
         except Exception as e:
             status["message"] = f"Gemini error: {str(e)}"
+            status["available"] = False
     
     if LLM_PROVIDER == "ollama" or not GEMINI_AVAILABLE:
         try:
@@ -158,8 +180,15 @@ def check_llm_status() -> dict:
     if status["status"] == "offline":
         if not GEMINI_API_KEY:
             status["message"] = "No GEMINI_API_KEY in .env"
+        elif not GEMINI_AVAILABLE:
+            status["message"] = f"Gemini package not available. Install: pip install google-genai (or google-generativeai)"
+        elif genai is None:
+            status["message"] = "Gemini module failed to import"
         else:
             status["message"] = "No LLM provider available"
+        status["available"] = False
+    else:
+        status["available"] = True
     
     return status
 
@@ -258,6 +287,14 @@ def _chat_with_gemini(
     stream: bool = True
 ) -> Union[Generator[str, None, None], str]:
     """Chat using Google Gemini."""
+    if genai is None:
+        error_msg = "❌ Gemini module not available. Install: pip install google-genai"
+        if stream:
+            def error_gen():
+                yield error_msg
+            return error_gen()
+        return error_msg
+    
     try:
         model = genai.GenerativeModel(
             model_name=GEMINI_MODEL,

@@ -142,6 +142,31 @@ Investing is the practice of using your money today to potentially grow it in th
 - Start small, be consistent, and align investments with your goals.
 
 """,
+  "interactive_elements": [
+    {
+      "type": "inflation_calculator",
+      "initial_amount": 100,
+      "years": 10,
+      "inflation_rate": 3.0
+    },
+    {
+      "type": "saving_vs_investing",
+      "initial": 10000,
+      "monthly": 500,
+      "years": 20
+    },
+    {
+      "type": "concept_check",
+      "question": "Which is better for a 20-year retirement goal?",
+      "options": [
+        "Savings account (1% return)",
+        "Investment portfolio (7% return)",
+        "Not sure"
+      ],
+      "correct_index": 1,
+      "explanation": "For long-term goals, investing typically provides better returns due to compound growth."
+    }
+  ],
   "quiz": [
     {
       "question": "Which of the following best describes investing?",
@@ -887,8 +912,11 @@ def render_lesson_view():
     </div>
     """, unsafe_allow_html=True)
     
-    # Render lesson content
+    # Render lesson content (markdown)
     render_lesson_content(mod_id, lesson_id)
+    
+    # Render interactive elements (after content, before quiz)
+    render_lesson_interactive_elements(mod_id, lesson_id)
     
     # Render quiz if available
     render_lesson_quiz(mod_id, lesson_id)
@@ -916,7 +944,7 @@ def render_lesson_view():
 
 
 def render_lesson_content(mod_id, lesson_id):
-    """Render the actual lesson content."""
+    """Render the actual lesson content (markdown only)."""
     
     # Try rendering from MODULES data first (markdown stored in lesson['content']).
     mod = MODULES.get(mod_id)
@@ -939,6 +967,66 @@ def render_lesson_content(mod_id, lesson_id):
         render_quant_strategies_content(lesson_id)
     elif mod_id == "advanced_options":
         render_advanced_options_content(lesson_id)
+
+
+def render_lesson_interactive_elements(mod_id, lesson_id):
+    """Render interactive elements after lesson content but before quiz."""
+    mod = MODULES.get(mod_id)
+    if not mod:
+        return
+    
+    lesson = next((l for l in mod['lessons'] if l['id'] == lesson_id), None)
+    if not lesson or not lesson.get('interactive_elements'):
+        return
+    
+    # Render AI tutor sidebar (always available)
+    try:
+        from pages.components.interactive_elements import (
+            inflation_calculator,
+            saving_vs_investing_comparison,
+            compound_interest_calculator,
+            concept_check,
+            ai_tutor_sidebar
+        )
+        
+        # Render AI tutor sidebar
+        ai_tutor_sidebar(lesson_id, lesson.get('title', ''))
+        
+        # Add separator before interactive elements
+        st.markdown("---")
+        st.markdown("### 🎯 Interactive Learning Tools")
+        
+        # Render other interactive elements
+        for element in lesson.get('interactive_elements', []):
+            element_type = element.get('type')
+            if element_type == 'inflation_calculator':
+                inflation_calculator(
+                    initial_amount=element.get('initial_amount', 100),
+                    years=element.get('years', 10),
+                    default_inflation=element.get('inflation_rate', 3.0)
+                )
+            elif element_type == 'saving_vs_investing':
+                saving_vs_investing_comparison(
+                    initial=element.get('initial', 10000),
+                    monthly=element.get('monthly', 500),
+                    years=element.get('years', 20)
+                )
+            elif element_type == 'compound_interest':
+                compound_interest_calculator(
+                    principal=element.get('principal', 10000),
+                    monthly=element.get('monthly', 500),
+                    rate=element.get('rate', 7.0),
+                    years=element.get('years', 30)
+                )
+            elif element_type == 'concept_check':
+                concept_check(
+                    question=element.get('question', ''),
+                    options=element.get('options', []),
+                    correct_index=element.get('correct_index', 0),
+                    explanation=element.get('explanation', '')
+                )
+    except ImportError as e:
+        st.warning(f"Interactive components not available: {e}")
 
 
 def render_lesson_quiz(mod_id, lesson_id):
