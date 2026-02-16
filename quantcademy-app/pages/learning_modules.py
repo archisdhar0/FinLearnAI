@@ -77,7 +77,7 @@ MODULES = {
         "number": "1",
         "title": "The Foundation",
         "level": "Beginner",
-        "icon": "🎯",
+        "icon": "📖",
         "description": "Core concepts every first-time investor should know.",
         "source": "Various",
         "lessons": [
@@ -86,85 +86,117 @@ MODULES = {
   "title": "What is Investing?",
   "content": 
 """
-## Overview
-Investing is the practice of using your money today to potentially grow it in the future. Unlike saving, which focuses on safety and liquidity, investing accepts some risk to aim for higher returns over time.
+You've probably heard people talk about investing. Your friend who won't stop talking about their portfolio. That coworker who's always checking stock prices. Your parents telling you to "start investing early."
+
+But what does investing actually mean? And why should you care?
+
+Let me put it simply: investing is just using your money to make more money over time. Instead of letting your cash sit in a savings account earning next to nothing, you're putting it to work. You're buying pieces of companies, or lending money to governments, or owning a slice of the entire stock market.
+
+Think of it like this: if you stash $100 under your mattress, you'll still have $100 in ten years (minus whatever the mice eat). But if you invest that $100 and it grows at 7% per year, you'll have about $200. Your money made money while you slept.
+
+That's the whole point of investing. You're not gambling or day trading or trying to get rich quick. You're just letting your money work for you instead of the other way around.
 
 ---
 
-## 💰 Saving vs Investing
-| Feature | Saving | Investing |
-|--------|--------|-----------|
-| Risk | Low | Medium to High |
-| Return | Low | Potentially Higher |
-| Time Horizon | Short-Term | Long-Term |
-| Liquidity | High | Medium |
-| Goal | Preserve money | Grow money |
+## The Savings Account Trap
 
-> **Interactive Tip:** Think about your own goals — which ones are short-term and which ones are long-term? Highlight your top 3 and consider which category (saving or investing) fits each.
+Here's something that might surprise you: keeping all your money in a savings account is actually risky. Not risky like "you might lose it" risky, but risky like "it's definitely going to lose value" risky.
 
----
+See, there's this thing called inflation. Every year, stuff costs more. A gallon of milk that cost $3 last year might cost $3.10 this year. Your $100 can buy less stuff over time, even though it's still $100.
 
-## 📉 Inflation: Why Cash Loses Value
-- Inflation reduces what your money can buy over time.
-- Even if your cash amount stays the same, its **purchasing power declines**.
-- Investing helps combat this by aiming for returns above inflation.
+If inflation is 3% per year (which is pretty normal), that $100 under your mattress will only be worth about $74 in purchasing power after ten years. You didn't lose the money, but you lost what the money can actually buy.
 
-![Inflation Graphic](https://via.placeholder.com/400x150.png?text=Inflation+reduces+cash+value+over+time)
-
-> **Try This:** Imagine $100 today and 3% annual inflation — what would it be worth in 10 years? (Hint: roughly $74)
+Investing is how you fight back. Instead of watching your money slowly shrink, you're putting it somewhere that (historically, at least) grows faster than inflation. You're not trying to beat Warren Buffett or time the market perfectly. You're just trying to keep up with the rising cost of everything.
 
 ---
 
-## ⏳ Long-Term vs Short-Term Mindset
-- **Short-Term:** Low risk, lower returns, focused on money needed soon.
-- **Long-Term:** Accept temporary ups and downs, benefit from compounding, potentially higher growth.
-  
-![Time Horizon Graphic](https://via.placeholder.com/400x150.png?text=Short-term+vs+Long-term+Investing)
+## Saving vs Investing: What's the Difference?
 
-> **Activity:** Draw your own timeline. Mark where you want money for emergencies, medium-term goals, and long-term goals. Consider which should be saved and which invested.
+Okay, so saving and investing are different things, and you need both.
 
----
+**Saving** is like your safety net. It's the money you keep in a regular bank account for emergencies. Your car breaks down? Your savings account has you covered. You lose your job? Your savings buys you time to find a new one. This money needs to be safe and accessible, even if it's not growing much.
 
-## 🏠 Real-Life Beginner Examples
-1. **Emergency Fund:** Keeping 3–6 months of expenses in cash.
-2. **Retirement Investing:** Contributing regularly to a diversified portfolio.
-3. **Inflation Awareness:** Realizing that holding cash long-term reduces purchasing power.
-4. **Consistent Small Investments:** Starting small and building habits over time rather than timing the market.
+**Investing** is for the long game. This is money you're putting away for retirement, or a house down payment in five years, or your kid's college fund. You're okay with this money going up and down in value because you're not touching it for a while. You're playing the long game.
 
-> **Interactive Exercise:** List two personal goals. Decide if saving or investing is more appropriate for each.
+The key difference? Time. If you need the money in the next year or two, keep it in savings. If you don't need it for five, ten, or thirty years, that's when investing makes sense.
 
 ---
 
-## Key Takeaways
-- Saving protects money; investing grows it.  
-- Inflation erodes cash value over time.  
-- Long-term mindset allows compounding and higher potential returns.  
-- Start small, be consistent, and align investments with your goals.
+## Why Time Matters So Much
+
+Here's where it gets interesting. The earlier you start investing, the easier it is. Not because you have more money (you probably don't), but because time does most of the heavy lifting.
+
+Let's say you invest $100 when you're 25. By the time you're 65, that $100 could be worth $1,500 or more (assuming 7% average returns). But if you wait until you're 35 to invest that same $100, by 65 it might only be worth $750.
+
+Same $100. Same return rate. But starting ten years earlier means you end up with twice as much money.
+
+That's the power of compounding. Your money makes money, and then that money makes money, and it keeps going. The longer you let it run, the more it multiplies.
+
+This is why people get so excited about starting early. It's not about having a lot of money to start with. It's about giving your money as much time as possible to grow.
+
+---
+
+## The Reality Check
+
+Now, let's be honest. Investing isn't magic. Your money can go down. Sometimes it goes down a lot. The stock market has crashed before, and it'll crash again. That's just how it works.
+
+But here's the thing: if you're investing for the long term (like retirement), those crashes don't matter as much. Yeah, your portfolio might drop 20% or 30% in a bad year. But if you're not touching that money for decades, you have time to wait for it to recover. And historically, it always has.
+
+The people who get hurt are the ones who panic and sell when things drop. They lock in their losses and miss the recovery. But if you can just... not do that? If you can just leave your money alone and let time do its thing? You'll probably be fine.
+
+That's really what investing is about. It's not about being smart enough to pick the right stocks or time the market perfectly. It's about being patient enough to let your money grow over time, even when things get scary.
+
+---
+
+## So What Does This Mean for You?
+
+If you're reading this, you're probably thinking about starting to invest. Maybe you've got some money saved up. Maybe you're just curious. Either way, you're in the right place.
+
+The most important thing to understand right now is this: investing isn't complicated. You don't need to become a financial expert. You don't need to watch CNBC every day. You just need to understand the basics, start small, and be patient.
+
+You're not trying to beat the market. You're just trying to participate in it. And that's a lot simpler than most people make it sound.
 
 """,
   "interactive_elements": [
     {
+      "type": "concept_check",
+      "position": "after_paragraph_1",
+      "question": "What's the main difference between saving and investing?",
+      "options": [
+        "Saving is riskier than investing",
+        "Investing is for long-term goals, saving is for short-term needs",
+        "They're the same thing",
+        "Only rich people can invest"
+      ],
+      "correct_index": 1,
+      "explanation": "Investing is for money you won't need for years, while saving is for emergencies and short-term goals."
+    },
+    {
       "type": "inflation_calculator",
+      "position": "after_inflation_section",
       "initial_amount": 100,
       "years": 10,
       "inflation_rate": 3.0
     },
     {
+      "type": "concept_check",
+      "position": "after_time_section",
+      "question": "Why does starting to invest early matter so much?",
+      "options": [
+        "You have more money when you're young",
+        "Time allows compound interest to work its magic",
+        "Stocks always go up when you're young",
+        "It doesn't really matter"
+      ],
+      "correct_index": 1,
+      "explanation": "Starting early gives your money more time to compound, which can double or triple your returns over decades."
+    },
+    {
       "type": "saving_vs_investing",
+      "position": "end",
       "initial": 10000,
       "monthly": 500,
       "years": 20
-    },
-    {
-      "type": "concept_check",
-      "question": "Which is better for a 20-year retirement goal?",
-      "options": [
-        "Savings account (1% return)",
-        "Investment portfolio (7% return)",
-        "Not sure"
-      ],
-      "correct_index": 1,
-      "explanation": "For long-term goals, investing typically provides better returns due to compound growth."
     }
   ],
   "quiz": [
@@ -183,466 +215,485 @@ Investing is the practice of using your money today to potentially grow it in th
 ,
            {"id": "what_youre_actually_buying", "title": "What You're Actually Buying", "content": 
 """
-## Understanding What You Own When You Invest
+When you invest, what are you actually buying? This is probably the most confusing part for beginners. You hear words like "stocks" and "bonds" and "ETFs" and it all sounds like financial jargon designed to confuse you.
 
-Investing can feel complicated, but at its core, it's about **ownership and lending**. Let’s break down the main types of investments.
-
----
-
-### 1. Stocks — Owning a Piece of a Company
-When you buy a **stock**, you own a small piece of a company.  
-
-**Visual:**  
-[Company] —> [You own a slice 🍰]
-
-
-- Stocks can increase in value if the company does well.
-- Some stocks pay **dividends**, which are small cash payments to shareholders.
-- Stocks can also lose value if the company struggles.
+Let me break it down in plain English.
 
 ---
 
-### 2. ETFs — Baskets of Investments
-An **ETF (Exchange-Traded Fund)** is like buying a **basket of stocks or bonds**.  
+## Stocks: You Own a Tiny Piece of a Company
 
-**Visual:**  
-[ETF Basket] = [Stock A] + [Stock B] + [Stock C] + …
+When you buy a stock, you're buying a tiny piece of a company. That's it. If Apple has a billion shares and you own one, you own one billionth of Apple. You're a part-owner.
 
+Now, you don't get to make decisions or walk into the headquarters and demand a tour. But you do get to benefit if the company does well. If Apple's value goes up, your tiny piece becomes more valuable. If Apple pays dividends (which is just a fancy word for sharing profits with owners), you get a tiny cut.
 
-- ETFs let you **diversify** easily without buying each stock individually.
-- They trade like a stock on the market.
+The flip side? If Apple struggles, your piece becomes less valuable. That's the risk. You're betting that the company will be worth more in the future than it is today.
 
----
-
-### 3. Index Funds — Following the Market
-An **index fund** is a special type of ETF that **mirrors a market index**, like the S&P 500.  
-
-**Visual:**  
-[Index Fund] = [All companies in the index]
-
-
-- Designed to track the market, not beat it.
-- Simple and often low-cost.
+Most people think of stocks as these abstract things that go up and down on a screen. But really, you're just buying a small ownership stake in a real business. That business makes products, hires people, tries to grow. Your investment rises or falls based on how well that business does.
 
 ---
 
-### 4. Bonds — Lending Money
-Buying a **bond** means you’re **lending money** to a company or government.  
+## ETFs: The Easy Way to Own Everything
 
-**Visual:**  
-[You] —> lend money —> [Company/Government] —> pays interest 💰
+Here's where it gets interesting. Instead of buying one stock, what if you could buy a little bit of hundreds of stocks at once? That's what an ETF (Exchange-Traded Fund) does.
 
+Think of it like a basket. Instead of buying individual apples, oranges, and bananas, you buy a fruit basket that has a little bit of everything. If one fruit goes bad, you've still got the others. That's diversification, and it's one of the smartest things you can do as an investor.
 
-- You earn **interest payments** over time.
-- Bonds are generally less risky than stocks but may offer lower returns.
+An ETF might own shares of 500 different companies. When you buy one share of that ETF, you're buying a tiny piece of all 500 companies. You don't have to research each one. You don't have to decide which ones to pick. You just buy the basket and you're instantly diversified.
 
----
-
-### 5. Cash & Cash Equivalents
-Cash or cash-like assets (like money market funds) are the **safest**, but grow slowly.  
-
-**Visual:**  
-[Cash] = safe but slow-growing
-
-
-- Good for emergencies or short-term goals.
+The best part? ETFs trade just like stocks. You can buy and sell them throughout the day. They're simple, cheap, and they're probably what you should start with as a beginner.
 
 ---
 
-### Key Takeaways
-- **Stocks:** ownership in companies, higher risk/reward  
-- **ETFs:** baskets of investments, good diversification  
-- **Index Funds:** track the market, low-cost  
-- **Bonds:** lend money, lower risk  
-- **Cash:** safest, slow growth  
+## Index Funds: Following the Market
+
+An index fund is basically a special type of ETF. Instead of a fund manager picking which stocks to include, an index fund just copies a market index like the S&P 500.
+
+The S&P 500 is just a list of the 500 biggest companies in America. An S&P 500 index fund owns all 500 of them, in the same proportions. When the S&P 500 goes up 10%, your index fund goes up 10%. When it goes down, your fund goes down. You're not trying to beat the market. You're just trying to match it.
+
+This might sound boring, but here's the thing: most professional investors can't beat the market over the long term. So if you can just match it, you're doing better than most people who do this for a living.
+
+Index funds are also really cheap. Some charge as little as 0.03% per year. That means if you invest $10,000, you pay $3 in fees. Compare that to actively managed funds that might charge 1% or more, and you're saving hundreds of dollars a year.
+
+---
+
+## Bonds: You're the Bank
+
+Stocks are about ownership. Bonds are about lending.
+
+When you buy a bond, you're lending money to a company or government. They promise to pay you back with interest. It's like being a bank, except you're the customer.
+
+Let's say you buy a $1,000 bond that pays 5% interest. The company borrows your $1,000 and promises to pay you $50 per year in interest, then give you your $1,000 back when the bond "matures" (usually in 5, 10, or 30 years).
+
+Bonds are generally safer than stocks because you have a contract. The company has to pay you back. But they also usually grow slower. You're trading potential upside for more stability.
+
+Most people should have some bonds in their portfolio, especially as they get older. They smooth out the ride when stocks are volatile.
+
+---
+
+## Cash: The Safest, Slowest Option
+
+Cash is just... cash. Or cash-like things like money market funds. It's the safest option because it's not going anywhere. But it's also the slowest. Your money just sits there, maybe earning a tiny bit of interest, but mostly just... sitting.
+
+You need some cash for emergencies and short-term goals. But if you're investing for the long term, too much cash is actually risky because inflation will eat away at its value.
+
+---
+
+## The Big Picture
+
+Here's what you need to understand: when you invest, you're not gambling. You're not buying lottery tickets. You're buying real things. A piece of a company. A loan to a government. A basket of investments.
+
+These things have value because they represent real economic activity. Companies make products and services. Governments build infrastructure. The economy grows over time, and your investments grow with it.
+
+That's really what investing is. You're participating in the economy's growth. You're not trying to outsmart anyone or time the market perfectly. You're just putting your money where the economy is going, and letting it grow over time.
 
 """, 
 "quiz": [{"question": "Which investment gives you direct ownership in a company?", "options": ["Bond", "Stock", "ETF", "Cash"], "correct": 1}]},
             {"id": "how_markets_function", "title": "How Markets Function", "content": 
 """
-## How Markets Work — Simple & Visual
+The stock market can seem like this mysterious force that moves up and down for no reason. One day everything's up, the next day everything's down. It feels random, chaotic, like there's no logic to it.
 
-Markets like the stock market might seem mysterious, but **they’re really about people agreeing (or disagreeing) on price**. At every moment, buyers and sellers interact, and prices adjust based on their choices. :contentReference[oaicite:0]{index=0}
-
----
-
-### 🧑‍🤝‍🧑 Buyers & Sellers — Where It All Begins
-
-Think of a market like an auction:
-
-- **Buyers** want to buy at prices they like.  
-- **Sellers** want to sell at prices they like.
-
-When a buyer and seller agree on a price, a trade happens. :contentReference[oaicite:1]{index=1}  
-
-📌 **Visualization (simple):**  
-Buyers 🟢 — want lower price
-Sellers 🔴 — want higher price
-Price 🔄 adjusts until someone agrees!
-
+But there is logic. It's actually pretty simple once you understand what's happening.
 
 ---
 
-### 📊 Supply & Demand — The Invisible Push & Pull
+## It's Just People Buying and Selling
 
-**Supply** is how much sellers are offering.  
-**Demand** is how much buyers want to buy.
+At its core, the stock market is just a place where people buy and sell stocks. That's it. There's no magic. No mysterious forces. Just millions of people making decisions about what they think something is worth.
 
-- If *more people want to buy than sell* → **demand > supply** → price goes up.  
-- If *more people want to sell than buy* → **supply > demand** → price goes down. :contentReference[oaicite:2]{index=2}
+When you want to buy a stock, you place an order. Someone else who wants to sell places an order. When your prices match, a trade happens. The stock market is just a giant matching system, connecting buyers with sellers.
 
-📌 **Visualization:**  
-Demand ↑ + Supply ↓ → Price ↑
-Demand ↓ + Supply ↑ → Price ↓
-
-
-**Equilibrium price** is the point where supply and demand balance — no one needs to bargain further. :contentReference[oaicite:3]{index=3}
+Think of it like a farmers market, but instead of vegetables, people are trading pieces of companies. Some people think a company is worth more, so they're willing to pay more. Some people think it's worth less, so they want to sell. When they agree on a price, they make a deal.
 
 ---
 
-### 📉 Why Prices Move — Not Random, Just Responses
+## Supply and Demand: The Only Rule That Matters
 
-Price movements happen because **demand or supply changes**:
+You've probably heard of supply and demand. It's the only rule that really matters in markets.
 
-- More buyers enter → price moves **up**.  
-- More sellers enter → price moves **down**.  
-- If buyers and sellers are balanced, prices can stabilize (for a bit). :contentReference[oaicite:4]{index=4}
+If more people want to buy something than sell it, the price goes up. If more people want to sell than buy, the price goes down. That's it. That's the whole game.
 
-📌 Another way to see it:  
-Buy pressure → 🔼 price
-Sell pressure → 🔽 price
+Let's say a company announces great earnings. More people want to buy the stock because they think it's going to do well. But there aren't enough sellers at the current price. So buyers start offering more money. The price goes up until enough sellers are willing to part with their shares at that new price.
 
+Or the opposite happens. Bad news comes out. People want to sell. But there aren't enough buyers at the current price. So sellers start accepting lower offers. The price goes down until enough buyers are willing to step in.
 
-Remember, every trade *always* has a buyer and a seller — price changes because **the price at which they agree changes**. :contentReference[oaicite:5]{index=5}
+This happens millions of times per day, across thousands of stocks. It's just people reacting to information and adjusting what they're willing to pay.
 
 ---
 
-### 📰 News & Reality — Sorting Signal from Noise
+## Why Prices Move (It's Not Random)
 
-You might hear that *the news moves prices*. But here’s the clearer way to put it:
+Prices don't move randomly. They move because something changed. Maybe it's news about the company. Maybe it's news about the economy. Maybe it's just that more people woke up today and decided they wanted to buy or sell.
 
-🧠 **News doesn’t magically change prices — it changes *expectations***.  
-When new information arrives:
-- Buyers adjust how much they *want* to buy.  
-- Sellers adjust how much they *want* sell.  
-That changes supply and/or demand, and *that causes prices to move*. :contentReference[oaicite:6]{index=6}
+The key thing to understand is that prices reflect what people think something is worth right now. Not what it's actually worth. Not what it will be worth in the future. Just what people are willing to pay for it today.
 
-🔍 Example:
-- Good earnings news → more buyers want in → demand goes up → price rises.  
-- Bad economic news → more sellers want out → supply rises → price falls. :contentReference[oaicite:7]{index=7}
+And people's opinions change constantly. New information comes out. People change their minds. More buyers or sellers show up. Prices adjust.
 
-📌 **Reality Check:**  
-Not all news actually affects fundamentals — sometimes prices move simply because expectations change faster than reality. :contentReference[oaicite:8]{index=8}
+This is why the market is so volatile. It's not that companies are actually worth 20% more or less from one day to the next. It's that people's opinions about what they're worth changed. And when millions of people are making these decisions, prices can swing pretty dramatically.
+
+---
+
+## News Doesn't Move Prices. People's Reactions to News Do
+
+Here's something important: news doesn't directly move stock prices. People's reactions to news do.
+
+Let's say a company announces they're going to make a new product. The news itself doesn't change the stock price. What changes the price is how people react. Do they think this product will be successful? Do they think it will make the company more valuable? If enough people think yes, they start buying. That drives the price up.
+
+But here's the thing: people can be wrong. They can overreact. They can underreact. They can get caught up in hype or panic. So sometimes prices move way more than they should based on the actual news. And sometimes they barely move at all, even when the news seems significant.
+
+This is why trying to trade based on news is so hard. You're not just trying to understand the news. You're trying to understand how everyone else will react to the news. And that's nearly impossible.
+
+---
+
+## The Big Picture
+
+Here's what you need to know: the stock market is just a reflection of what millions of people think companies are worth. Those opinions change constantly. Prices adjust constantly. It's messy, it's noisy, and it's often irrational in the short term.
+
+But over the long term, prices tend to reflect reality. Good companies that grow their earnings tend to see their stock prices go up. Bad companies that struggle tend to see their prices go down. The market isn't perfectly efficient, but it's efficient enough that trying to outsmart it is really, really hard.
+
+For most investors, the best strategy is to just accept that prices will go up and down. Don't try to predict the movements. Don't try to time the market. Just invest in good companies (or better yet, index funds that own lots of companies) and let time do its thing.
+
+The market will do what it's going to do. Your job is just to stay invested and not panic when things get scary.
 
 """, 
-"quiz": [{"question": "When does price tend to rise in a market?", "options": ["When supply increases", "When demand decreases", "When demand exceeds supply", "When news mentions the word “growth”"], "correct": 2}]},
+"interactive_elements": [
+  {
+    "type": "stock_market_demo"
+  },
+  {
+    "type": "supply_demand_viz"
+  },
+  {
+    "type": "concept_check",
+    "question": "What causes stock prices to move?",
+    "options": [
+      "Random chance",
+      "Changes in supply and demand",
+      "The time of day",
+      "The weather"
+    ],
+    "correct_index": 1,
+    "explanation": "Prices move when the balance between buyers (demand) and sellers (supply) changes. More buyers = price goes up. More sellers = price goes down."
+  }
+],
+"quiz": [{"question": "When does price tend to rise in a market?", "options": ["When supply increases", "When demand decreases", "When demand exceeds supply", "When news mentions the word 'growth'"], "correct": 2}]},
             {"id": "time_compounding", "title": "Time and Compounding", "content": 
 """
-## The Power of Time in Investing
+Here's a secret that most people don't realize: when it comes to investing, time is more powerful than skill. You don't need to be a genius. You don't need to pick the perfect stocks. You just need to start early and be patient.
 
-Investing is not just about picking the “right” stocks — **time and consistency** are often more important than skill. Let’s explore why.
-
----
-
-### ⏳ Time Horizon — How Long You’re Investing
-
-Your **time horizon** is the length of time you expect to hold an investment before needing the money.
-
-**Visual:**  
-Short-term horizon → small risk tolerance
-Long-term horizon → can weather ups and downs 🌊
-
-
-- Longer horizons allow you to **ride out market fluctuations**.
-- Helps guide what types of investments are appropriate.
+Let me explain why.
 
 ---
 
-### 💹 Compounding — Money Making Money
+## Compounding: The Eighth Wonder of the World
 
-**Compounding** is when your earnings generate their own earnings over time.
+Albert Einstein supposedly called compound interest the eighth wonder of the world. Whether he actually said that or not, the sentiment is true. Compounding is magical.
 
-**Visual Example:**  
-$100 invested at 5% → Year 1: $105
-Year 2: $105 × 1.05 = $110.25
-Year 3: $110.25 × 1.05 = $115.76
+Here's how it works: when you invest money, it earns returns. Those returns then earn their own returns. Your money makes money, and then that money makes money. It's like a snowball rolling downhill, getting bigger and bigger.
 
+Let's say you invest $1,000 and it grows 10% in the first year. You now have $1,100. In the second year, that 10% growth is on $1,100, not $1,000. So you earn $110 instead of $100. In year three, you earn $121. The growth accelerates.
 
-- Your money grows faster the longer it’s invested.
-- Small contributions early can become much larger than big contributions later.
+This doesn't sound like much at first. But give it time. After 20 years, that $1,000 could be worth over $6,700. After 30 years, it could be worth over $17,000. After 40 years, it could be worth over $45,000.
 
----
-
-### 🚀 Why Starting Early Matters
-
-Starting early gives compounding **more time to work**.
-
-**Visual:**  
-Alice starts at 25 → $10,000 grows to $40,000+ by 40
-Bob starts at 35 → $10,000 grows to $16,000+ by 40
-
-
-- Even modest contributions matter if started early.
-- Waiting even a few years can significantly reduce total growth.
+Same $1,000. Same 10% return. Just time doing its thing.
 
 ---
 
-### 🔄 Consistency Over Skill
+## Why Starting Early is Everything
 
-Consistently investing a little is often more powerful than trying to time the market perfectly.
+The earlier you start, the less you actually need to invest. That's the crazy part.
 
-**Visual:**  
-$100 every month → builds wealth steadily
-vs
-Trying to pick the “perfect” stock → risky, inconsistent
+Let's say you want to have $1 million by age 65. If you start at 25 and earn 7% per year, you only need to invest about $300 per month. But if you wait until 35 to start, you need to invest about $700 per month. Wait until 45, and you need over $2,000 per month.
 
+Same goal. Same return. But starting ten years earlier means you only need to invest half as much per month.
 
-- Discipline and habit create long-term growth.
-- Small, regular contributions add up more than occasional large bets.
+This is why people get so excited about starting young. It's not about having a lot of money. It's about having a lot of time. Time is the secret ingredient that makes investing work.
 
 ---
 
-## Key Takeaways
-- Time horizon shapes investment choices.  
-- Compounding magnifies returns over time.  
-- Starting early gives you a big advantage.  
-- Consistency beats skill in the long run.
+## The Time Horizon Game
 
+Your time horizon is just how long you plan to keep your money invested before you need it. This matters because it determines how much risk you can take.
+
+If you need the money in a year, you can't afford to take big risks. What if the market crashes right before you need it? You'd be screwed. So you keep it safe, even if that means lower returns.
+
+But if you don't need the money for 30 years? You can handle some volatility. The market might crash next year, but you've got 29 more years for it to recover. History shows it will. So you can take more risk, which means higher potential returns.
+
+This is why retirement accounts are so powerful. You're locking that money away for decades. You can invest aggressively because you have time on your side. Short-term crashes don't matter when you're not touching the money for 30 years.
+
+---
+
+## Consistency Beats Everything
+
+Here's another thing most people get wrong: they think they need to invest big chunks of money. They wait until they have $5,000 or $10,000 saved up before they start investing.
+
+But that's backwards. Small, consistent investments are often more powerful than big, occasional ones.
+
+Let's say you invest $100 every month for 30 years. That's $36,000 total. But at 7% returns, it could grow to over $120,000. You turned $36,000 into $120,000 just by being consistent.
+
+Now let's say you wait 10 years, then invest $200 per month for 20 years. That's $48,000 total (more than the first example). But it only grows to about $100,000. Less money, even though you invested more total.
+
+The lesson? Start small. Start now. Be consistent. Time and consistency will do the heavy lifting.
+
+---
+
+## The Reality Check
+
+I know what you're thinking. "But I don't have much money. What's the point of investing $50 a month?"
+
+The point is that $50 a month, invested for 30 years at 7% returns, becomes about $60,000. That's not life-changing money, but it's real money. And if you can do $100 a month, that becomes $120,000. $200 a month becomes $240,000.
+
+You're not trying to get rich overnight. You're just trying to build something over time. And the best part? As you make more money, you can invest more. That $50 a month might become $100, then $200, then $500. And each increase compounds on top of what you've already built.
+
+The people who get wealthy from investing aren't the ones who made one brilliant trade. They're the ones who invested consistently for decades and let time do its thing.
+
+That's the real secret. It's not complicated. It's just patient.
 
 """, 
+"interactive_elements": [
+  {
+    "type": "compound_interest",
+    "principal": 100,
+    "monthly": 50,
+    "rate": 7.0,
+    "years": 30
+  }
+],
 "quiz": [{"question": "Why is starting to invest early so important?", "options": ["You can take more risks in the short term", "Compounding has more time to grow your money", "You will always pick better stocks", "It avoids paying taxes"], "correct": 1}]},
            {"id": "basics_of_risk", "title": "The Basics of Risk", "content": 
 """
-## Understanding Risk in Investing
+Let's talk about risk. This is probably the scariest part of investing for most people. The idea that you could lose money. That your hard-earned cash could just... disappear.
 
-Investing always involves **risk**, but understanding it can help you make smarter decisions. Let’s break down the essentials.
-
----
-
-### ⚡ Volatility — The Ups and Downs
-
-**Volatility** measures how much the price of an investment moves up and down over time.
-
-**Visual:**  
-Stock A: 📈📉📈📉 (high volatility)
-Stock B: 📈➡️📈➡️ (low volatility)
-
-
-- High volatility = bigger swings in value  
-- Low volatility = smoother ride, smaller swings  
-- Short-term ups and downs are normal — not all losses are permanent.
+I'm not going to sugarcoat it. Yes, you can lose money when you invest. But understanding risk is the key to managing it. And once you understand it, it's not as scary as it seems.
 
 ---
 
-### 💸 Losing Money vs Long-Term Loss
+## Volatility: The Price of Admission
 
-- **Short-term loss:** temporary drop in price. You might recover if you hold long enough.  
-- **Long-term loss:** occurs if the value never recovers before you need the money.
+First, let's talk about volatility. This is just a fancy word for how much prices go up and down.
 
-**Visual:**  
-Price drops today → could bounce back later 🌱
-Sell too early → realize a long-term loss ❌
+Some investments are really volatile. Their prices swing wildly. One day they're up 5%, the next day they're down 8%. It's a roller coaster.
 
+Other investments are more stable. Their prices move slowly, predictably. It's more like a gentle boat ride.
 
-- Patience is key for long-term investors.
+Here's the thing: volatility isn't necessarily bad. It's just... volatility. High volatility usually means higher potential returns. But it also means bigger swings. Your investment might drop 30% in a bad year, then gain 40% the next year. If you can handle that ride, you might be rewarded. If you can't, you might panic and sell at the worst time.
 
----
-
-### 🧺 Diversification — Don’t Put All Eggs in One Basket
-
-Diversification means spreading investments across different **stocks, bonds, or other assets**.
-
-**Visual:**  
-Portfolio = Stock A + Stock B + Bond C + ETF D
-
-
-- Reduces risk of one big loss.  
-- Helps smooth out returns over time.
+The key is understanding that short-term volatility is normal. Prices go up and down all the time. That's just how markets work. It doesn't mean you're losing money permanently. It just means prices are moving.
 
 ---
 
-### 🧠 Risk Tolerance — Know Yourself
+## The Difference Between Losing Money and Actually Losing Money
 
-**Risk tolerance** is your ability and willingness to handle investment ups and downs.
+This is important: there's a difference between seeing your portfolio value drop and actually losing money.
 
-- High risk tolerance → can handle big swings for higher potential returns  
-- Low risk tolerance → prefer stability, may accept lower returns  
-- Your risk tolerance should guide **how you allocate assets**.
+When the market crashes and your $10,000 investment drops to $7,000, you haven't actually lost $3,000 yet. You've only lost it if you sell. If you hold on, the value might come back. In fact, historically, it almost always does.
 
-**Visual:**  
-Aggressive → 80% stocks, 20% bonds
-Moderate → 50% stocks, 50% bonds
-Conservative → 20% stocks, 80% bonds
+This is why time horizon matters so much. If you need the money next year and the market crashes, you're in trouble. You might have to sell at a loss. But if you don't need the money for 20 years? Who cares if it drops this year? You've got 19 more years for it to recover.
 
+The people who actually lose money are usually the ones who panic and sell when things get scary. They lock in their losses and miss the recovery. But if you can just... not do that? If you can just wait it out? You'll probably be fine.
 
 ---
 
-## Key Takeaways
-- Volatility = normal price swings.  
-- Short-term drops ≠ long-term loss if you stay invested.  
-- Diversification spreads risk across multiple investments.  
-- Know your risk tolerance before building a portfolio.
+## Diversification: Don't Put All Your Eggs in One Basket
+
+This is probably the most important concept in investing: diversification.
+
+Diversification just means spreading your money across different investments. Instead of putting all your money in one stock, you put it in hundreds of stocks. Or thousands. That way, if one company goes bankrupt, you don't lose everything.
+
+Think of it like this: if you own one stock and that company goes under, you've lost everything. But if you own 500 stocks and one goes under, you've lost 0.2% of your money. Big difference.
+
+Most people achieve diversification by buying index funds or ETFs. One purchase gives you exposure to hundreds or thousands of companies. You don't have to pick individual stocks. You just buy the whole market.
+
+This is why index funds are so popular. They're automatically diversified. You're not betting on one company. You're betting on the entire economy. And the entire economy is a lot less likely to disappear than one company.
 
 ---
 
-## Quick Knowledge Check
+**See the difference for yourself:**
 
-**Which strategy helps reduce the risk of losing all your money in one investment?**  
-- A) Holding only one stock you trust  
-- B) Diversifying across multiple assets  
-- C) Checking the news daily  
-- D) Investing only in volatile stocks
+---
+
+## Risk Tolerance: Know Thyself
+
+Your risk tolerance is basically how much volatility you can handle without panicking. This is more about psychology than math.
+
+Some people can watch their portfolio drop 30% and just shrug. They know it'll come back. They're in it for the long haul. These people have high risk tolerance.
+
+Other people see their portfolio drop 10% and start having panic attacks. They can't sleep. They check their phone constantly. They're tempted to sell everything. These people have low risk tolerance.
+
+Neither is wrong. But you need to be honest with yourself about which one you are.
+
+If you have low risk tolerance, that's okay. You can still invest. You just need to invest more conservatively. More bonds, fewer stocks. Lower potential returns, but also lower stress. And honestly? Lower stress might be worth the lower returns if it means you'll actually stick with your plan.
+
+The worst thing you can do is invest aggressively when you have low risk tolerance. You'll panic at the first crash and sell everything, locking in losses. It's better to invest conservatively and actually stick with it.
+
+---
+
+## The Reality of Risk
+
+Here's the truth: you can't eliminate risk. Every investment has some risk. Even "safe" investments like bonds can lose value. Even cash loses value to inflation.
+
+The question isn't "how do I avoid risk?" The question is "how do I manage risk?"
+
+And the answer is: diversify, invest for the long term, invest according to your risk tolerance, and don't panic when things get scary.
+
+The market will crash. It always does. But it also always recovers. If you can just wait it out, you'll probably be fine. That's really all there is to it.
 
 """, 
+"interactive_elements": [
+  {
+    "type": "diversification_chart"
+  },
+  {
+    "type": "concept_check",
+    "question": "Why is diversification important?",
+    "options": [
+      "It guarantees higher returns",
+      "It reduces risk by spreading investments across many companies",
+      "It's required by law",
+      "It makes investing more complicated"
+    ],
+    "correct_index": 1,
+    "explanation": "Diversification doesn't guarantee higher returns, but it significantly reduces risk. If one company fails, you don't lose everything."
+  }
+],
 "quiz": [{"question": "Which strategy helps reduce the risk of losing all your money in one investment?", "options": ["Holding only one stock you trust", "Diversifying across multiple assets", "Checking the news daily", "Investing only in volatile stocks"], "correct": 1}]},
             {"id": "accounts_setup", "title": "Accounts and Setup", "content": 
 """
-## Accounts and Setup — Investing from the Ground Up
-
-Before you can invest, it helps to understand the **types of accounts you use**, how **money enters the market**, and how **automation** can help you stay consistent.
+Before you can invest, you need somewhere to put your money. That's what accounts are for. But there are different types of accounts, and they work differently. Let me break it down.
 
 ---
 
-### 🏦 Brokerage Accounts — Your Investing Home Base
+## Brokerage Accounts: Your Basic Investing Account
 
-A **brokerage account** is a type of financial account that lets you **buy and sell investments** like stocks, bonds, mutual funds, and ETFs. It doesn’t carry special tax advantages like a retirement account, but it gives you flexibility and access to the markets. When you place an order, your broker executes that trade on your behalf. :contentReference[oaicite:0]{index=0}
+A brokerage account is just a regular account where you can buy and sell investments. It's like a bank account, but instead of just holding cash, it holds stocks, bonds, ETFs, and other investments.
 
-**Visual analogy:**  
-Your Money 💵 → Brokerage 🏦 → Investments 📊
+You open one at a brokerage firm (like Fidelity, Vanguard, or Schwab). You transfer money in from your bank account. Then you use that money to buy investments. When you want to sell, the money goes back into the account, and you can transfer it back to your bank.
 
+The thing about brokerage accounts is they don't have special tax advantages. You pay taxes on dividends and interest as you earn them. When you sell investments for a profit, you pay taxes on those gains. It's straightforward, but not particularly tax-efficient.
 
-- You fund it with money you already have.  
-- You can access your cash anytime — no penalties.  
-- Taxes on dividends, interest, and gains may apply. :contentReference[oaicite:1]{index=1}
+The upside? You can take money out anytime, no penalties, no restrictions. It's your money, and you can do whatever you want with it.
 
 ---
 
-### 🌟 Roth IRA Basics — A Tax‑Free Growth Account
+## Roth IRAs: Tax-Free Growth
 
-A **Roth IRA** is a special retirement account designed to help your money **grow tax‑free over time**. You contribute money **after taxes**, and if you follow a few rules, your withdrawals in retirement can be tax‑free. :contentReference[oaicite:2]{index=2}
+A Roth IRA is a special type of retirement account. The key difference? Your money grows tax-free.
 
-**Simple visual:**  
-After‑tax money 🏦 → Invest → Grows tax‑free 🚫💰
+Here's how it works: you put money in after you've already paid taxes on it. So if you earn $100 and pay $20 in taxes, you can put that remaining $80 into a Roth IRA. Then, when you're 60 years old and ready to retire, you can take that money out completely tax-free.
 
+This is huge. If you invest $10,000 in a Roth IRA and it grows to $100,000 over 30 years, you get all $100,000 tax-free. In a regular brokerage account, you'd pay taxes on the $90,000 in gains.
 
-- You don’t get a tax break now, but withdrawals in retirement can be tax‑free. :contentReference[oaicite:3]{index=3}  
-- There are **annual contribution limits** (e.g., $7,500 in 2026 for most people). :contentReference[oaicite:4]{index=4}  
-- You can withdraw your **original contributions** at any time without penalty — only earnings have conditions. :contentReference[oaicite:5]{index=5}
+The catch? There are rules. You can only contribute so much per year (around $7,000 for most people). And you generally can't take the money out until you're 59 and a half without penalties. But you can always take out the money you originally put in, just not the earnings.
 
----
-
-### 💸 How Money Enters the Market
-
-When you invest, your money doesn’t disappear — it **flows into financial markets** to buy a share of something:
-
-**Visual flow:**  
-You deposit cash → Brokerage holds it
-You buy stock/fund → cash moves to seller
-Market updates price based on trades 📈📉
-
-
-- Your cash becomes **ownership (stocks, funds)** or a **loan (bonds)**.  
-- Every trade requires a **buyer and a seller** agreeing on a price.  
-- Your participation helps **set prices** along with millions of others. :contentReference[oaicite:6]{index=6}
+For most young people investing for retirement, a Roth IRA is the best place to start. You're probably in a lower tax bracket now than you will be in retirement, so paying taxes now and getting tax-free growth later is a great deal.
 
 ---
 
-### 🤖 Automation — Set It and Forget It
+## How Money Actually Moves
 
-Automation helps you build good habits and **remove emotion from investing**.
+When you invest, your money doesn't just disappear into the void. Here's what actually happens:
 
-Common kinds of automation:
-- **Recurring contributions:** Automatically invest a set amount each month.  
-- **Dividend reinvestment:** Automatically use dividends to buy more shares.  
-- **Rebalancing tools:** Periodically adjust your portfolio to stay on track.
+You transfer money from your bank account to your brokerage account. The brokerage holds it as cash. Then, when you decide to buy a stock or fund, you place an order. The brokerage finds someone who wants to sell at your price (or close to it), and the trade happens. Your cash becomes a stock or fund share. The seller's stock becomes cash.
 
-**Visual:**  
-Every month 📅 → Auto‑invest $100 → Portfolio grows steadily 📈
+It's all just ownership changing hands. You're not creating money out of thin air. You're buying something that someone else is selling. The price is just what you both agree it's worth at that moment.
 
-
-Automation helps you stay consistent and take advantage of market opportunities over time.
+When millions of people are doing this every day, prices adjust constantly based on what people are willing to pay. That's how markets work. It's just supply and demand, happening millions of times per second.
 
 ---
 
-### 🔑 Key Takeaways
+## Automation: The Secret Weapon
 
-- **Brokerage accounts** let you trade freely but don’t offer tax breaks.  
-- **Roth IRAs** let investments grow tax‑free for retirement with rules on timing.  
-- Investing means converting your cash into financial assets in the market.  
-- **Automation** keeps your investing habits steady and discipline strong.
+Here's the thing about investing: the hardest part isn't picking the right investments. It's actually doing it consistently, month after month, year after year.
+
+This is where automation comes in. Instead of having to remember to invest every month, you just set it up once. Link your bank account, set an amount, pick a date, and forget about it. Every month, the money automatically transfers and gets invested.
+
+This is powerful for a few reasons. First, you can't forget. Second, you can't talk yourself out of it when the market is scary. Third, you're buying consistently, which means you're buying at different prices over time. Sometimes you'll buy high, sometimes low. Over the long term, this averages out and works in your favor.
+
+Most successful investors automate everything. They set up automatic contributions, automatic dividend reinvestment, automatic rebalancing. They remove themselves from the decision-making process as much as possible. Because the more decisions you have to make, the more opportunities you have to make bad ones.
+
+---
+
+## The Big Picture
+
+Here's what you need to know: you'll probably want both types of accounts eventually. Start with a Roth IRA for retirement savings. Then, if you have more money to invest beyond the Roth IRA limits, open a regular brokerage account.
+
+The accounts themselves aren't complicated. They're just containers. The important part is what you put in them and how consistently you contribute. Get that right, and the accounts will take care of themselves.
 
 """, 
 "quiz": [{"question": "Which account lets your investments grow tax‑free for retirement?", "options": ["Brokerage account", "Roth IRA", "Savings account", "Checking account"], "correct": 1}]},
             {"id": "first_time_mindset", "title": "First Time Investor Mindset", "content": 
 """
-## Developing the Right Mindset for Investing
+Investing isn't just about numbers and strategies. It's also about how you think. Your mindset matters more than you might realize.
 
-Investing isn’t just about numbers — it’s also about **how you think and behave** when markets move. Your emotions and expectations can strongly influence your decisions. Let’s explore common psychological challenges and how to build a healthier investing mindset.
+Most people think investing is about being smart. But really, it's about being patient. It's about not panicking when things get scary. It's about sticking to a plan even when your emotions are telling you to do something else.
 
----
-
-### 😨 Fear — It’s Normal, But Don’t Let It Drive Decisions
-
-Many new investors feel fear when starting out or when markets drop. Fear can make you **hesitate, delay investing, or sell at the worst times**. But emotions like fear often lead to poor decisions if acted on impulsively. Staying aware of how fear feels helps you pause and **stick to your long‑term plan** instead of reacting to short‑term swings. :contentReference[oaicite:0]{index=0}
-
-**Visual:**  
-Fear spikes 😨 → Impulsive moves ⛔
-Pause, plan, stay focused 📈
-
-
-- Feeling nervous about losing money is common.  
-- Short‑term fluctuations do **not always mean long‑term losses**. :contentReference[oaicite:1]{index=1}
+Let me tell you about the psychological traps that catch most investors, and how to avoid them.
 
 ---
 
-### 📊 FOMO — Fear of Missing Out
+## Fear: The Enemy of Good Decisions
 
-FOMO happens when you see others talking about a rising investment and feel pressure to join in. It’s a **behavioral bias** where social pressure pushes you to act without strategy. Investors who act on FOMO often **buy high and sell low**, harming long‑term outcomes. :contentReference[oaicite:2]{index=2}
+Fear is normal. Everyone feels it. The market crashes, your portfolio drops 20%, and your first instinct is to sell everything and run. That's human nature.
 
-**Visual:**  
-Rising hype 📈 → FOMO 😵 → Buy without plan → Price drops ⬇️
+But here's the thing: fear makes you do stupid things. It makes you sell at the bottom, right when you should be buying. It makes you wait on the sidelines, missing out on recoveries. It makes you second-guess every decision.
 
+The key is to recognize fear for what it is: an emotion, not a signal. When you feel scared, that's not the market telling you something. That's your brain's ancient survival instincts kicking in. Your brain doesn't understand that a 20% drop in your portfolio isn't the same as a bear attacking you.
 
-- Don’t chase headlines or “hot picks.”  
-- Keep your **own goals and plan** front and center. :contentReference[oaicite:3]{index=3}
+So what do you do? You acknowledge the fear. You feel it. But you don't act on it. You stick to your plan. You remember why you're investing in the first place. You remember that markets have always recovered, eventually.
 
----
-
-### 🕰️ Patience — Let Time Work for You
-
-Successful investing is often more about **time in the market** than timing the market. Patience lets your strategy play out and **benefit from compounding** and market recoveries. :contentReference[oaicite:4]{index=4}
-
-**Visual:**  
-Short‑term noise 📉📈
-Long‑term focus 🕰️ → Steady growth 📊
-
-
-- Markets fluctuate, but history shows *long-term investors tend to benefit from staying invested*. :contentReference[oaicite:5]{index=5}  
-- **Patience reduces emotional trading** like reacting to every headline. :contentReference[oaicite:6]{index=6}
+The investors who succeed aren't the ones who never feel fear. They're the ones who feel it and do the right thing anyway.
 
 ---
 
-### 🎯 Expectations — Set Realistic Goals
+## FOMO: The Siren Song of Hot Stocks
 
-Setting clear expectations helps you navigate ups and downs without emotional overload. A goal‑focused mindset anchors your decisions in purpose, not fear or hype. :contentReference[oaicite:7]{index=7}
+FOMO is short for "fear of missing out," and it's probably responsible for more bad investment decisions than anything else.
 
-**Visual:**  
-Dream bigger 🏆
-Plan it 📋
-Execute calmly 🧘‍♂️
+You see a stock going up. Everyone's talking about it. Your friends are making money. You feel like you're missing out. So you buy in, right at the top. Then it crashes, and you're left holding the bag.
 
+This happens over and over. People chase whatever's hot. They buy high because they're afraid of missing out. Then they sell low because they're afraid of losing more. It's a recipe for disaster.
 
-- Know **why you’re investing** (retirement, house, education) before reacting to market noise. :contentReference[oaicite:8]{index=8}  
-- Expectations grounded in planning help prevent impulsive reactions to short‑term events. :contentReference[oaicite:9]{index=9}
+The antidote? Have a plan. Know what you're investing in and why. Don't invest in something just because everyone else is. Don't invest in something you don't understand. And most importantly, don't check your portfolio constantly and compare it to what other people are doing.
+
+Your investment journey is yours. It doesn't matter what other people are doing. What matters is whether you're sticking to your plan and making progress toward your goals.
 
 ---
 
-## Key Mindset Principles
+## Patience: The Superpower
 
-- **Fear is human —** acknowledge it, but don’t act on it.  
-- **FOMO clouds judgment —** follow your plan instead of trends.  
-- **Patience beats panic —** time in the market matters.  
-- **Expectations rooted in goals** keep actions deliberate.
+Patience is the most underrated skill in investing. Most people don't have it. They want results now. They want to see their money grow immediately. When it doesn't, they get frustrated and start making bad decisions.
+
+But investing doesn't work like that. It's slow. It's boring. It's years of small gains, occasional losses, and gradual growth. The people who get wealthy from investing aren't the ones who made one brilliant trade. They're the ones who invested consistently for decades and let time do its thing.
+
+Patience means not checking your portfolio every day. It means not panicking when the market drops. It means sticking with your plan even when it feels like nothing is happening. It means trusting the process, even when you can't see immediate results.
+
+This is hard. We're wired for instant gratification. But investing rewards patience more than anything else. The longer you can wait, the more time your money has to grow. It's that simple.
+
+---
+
+## Setting Realistic Expectations
+
+Here's something that trips up a lot of beginners: they expect investing to be exciting. They expect to beat the market. They expect to get rich quick.
+
+But that's not how it works. Investing is boring. You're not going to beat the market. You're probably going to match it, and that's actually really good. You're not going to get rich quick. You're going to get rich slowly, over decades.
+
+Setting realistic expectations is crucial. If you expect 20% returns every year, you're going to be disappointed. If you expect to beat the market, you're going to take unnecessary risks. If you expect to get rich in a year, you're going to make bad decisions.
+
+The reality? If you can earn 7-10% per year over the long term, you're doing great. That might not sound exciting, but over 30 years, that turns $100,000 into $700,000 or more. That's real money.
+
+So set your expectations accordingly. You're not trying to get rich quick. You're trying to build wealth slowly, steadily, over time. And that's actually a lot more achievable than trying to beat the market.
+
+---
+
+## The Bottom Line
+
+Investing is as much about psychology as it is about finance. The math is simple. The hard part is managing your emotions, staying patient, and sticking to your plan when everything in you wants to do something else.
+
+The good news? You can learn this. You can get better at it. It just takes practice. Start small. Make mistakes. Learn from them. And most importantly, be patient with yourself.
+
+You're going to feel fear. You're going to feel FOMO. You're going to want to check your portfolio constantly. That's all normal. The key is recognizing these feelings for what they are, and not letting them drive your decisions.
+
+Investing is a marathon, not a sprint. The people who finish aren't the fastest. They're the ones who keep going, even when it's hard.
 
 """, 
 "quiz": [{"question": "Which mindset habit can help you avoid impulsive investment decisions?", "options": ["Reacting to every market headline", "Focusing on your long‑term plan", "Following every social media trend", "Trying to time the market"], "correct": 1}]}
@@ -986,7 +1037,10 @@ def render_lesson_interactive_elements(mod_id, lesson_id):
             saving_vs_investing_comparison,
             compound_interest_calculator,
             concept_check,
-            ai_tutor_sidebar
+            ai_tutor_sidebar,
+            stock_market_movement_demo,
+            supply_demand_visualization,
+            portfolio_diversification_chart
         )
         
         # Render AI tutor sidebar
@@ -994,7 +1048,7 @@ def render_lesson_interactive_elements(mod_id, lesson_id):
         
         # Add separator before interactive elements
         st.markdown("---")
-        st.markdown("### 🎯 Interactive Learning Tools")
+        st.markdown("### Interactive Learning Tools")
         
         # Render other interactive elements
         for element in lesson.get('interactive_elements', []):
@@ -1025,6 +1079,12 @@ def render_lesson_interactive_elements(mod_id, lesson_id):
                     correct_index=element.get('correct_index', 0),
                     explanation=element.get('explanation', '')
                 )
+            elif element_type == 'stock_market_demo':
+                stock_market_movement_demo()
+            elif element_type == 'supply_demand_viz':
+                supply_demand_visualization()
+            elif element_type == 'diversification_chart':
+                portfolio_diversification_chart()
     except ImportError as e:
         st.warning(f"Interactive components not available: {e}")
 

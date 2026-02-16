@@ -271,6 +271,258 @@ def concept_check(question: str, options: list, correct_index: int, explanation:
     return answer == options[correct_index] if 'answer' in locals() else None
 
 
+def stock_market_movement_demo():
+    """
+    Interactive visualization showing how stock prices move based on supply and demand.
+    """
+    st.subheader("Watch How Stock Prices Move")
+    st.caption("This simulation shows how prices change when buyers and sellers interact")
+    
+    import plotly.graph_objects as go
+    import numpy as np
+    from datetime import datetime, timedelta
+    
+    # Generate realistic stock price movement
+    np.random.seed(42)
+    days = 30
+    base_price = 100
+    
+    # Simulate price movements with some trends
+    price_changes = np.random.normal(0, 2, days)
+    # Add some momentum
+    for i in range(1, days):
+        price_changes[i] += price_changes[i-1] * 0.1
+    
+    prices = [base_price]
+    for change in price_changes:
+        prices.append(max(50, prices[-1] + change))  # Floor at $50
+    
+    dates = [datetime.now() - timedelta(days=days-i) for i in range(days+1)]
+    
+    # Create candlestick-like visualization
+    fig = go.Figure()
+    
+    # Price line
+    fig.add_trace(go.Scatter(
+        x=dates,
+        y=prices,
+        mode='lines+markers',
+        name='Stock Price',
+        line=dict(color='#10b981', width=3),
+        marker=dict(size=6, color='#10b981'),
+        hovertemplate='<b>Price: $%{y:.2f}</b><br>Date: %{x}<extra></extra>'
+    ))
+    
+    # Add volume bars at bottom
+    volumes = np.random.randint(1000000, 5000000, days+1)
+    fig.add_trace(go.Bar(
+        x=dates,
+        y=volumes,
+        name='Trading Volume',
+        marker_color='rgba(99, 102, 241, 0.3)',
+        yaxis='y2',
+        hovertemplate='Volume: %{y:,}<extra></extra>'
+    ))
+    
+    fig.update_layout(
+        title="Stock Price Movement Over 30 Days",
+        xaxis_title="Date",
+        yaxis_title="Price ($)",
+        yaxis2=dict(
+            title="Volume",
+            overlaying='y',
+            side='right',
+            showgrid=False
+        ),
+        height=500,
+        hovermode='x unified',
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)'),
+        yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)'),
+        font=dict(color='white')
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+    
+    # Show key moments
+    st.markdown("**Key Moments:**")
+    col1, col2, col3 = st.columns(3)
+    
+    # Find highest and lowest
+    max_idx = prices.index(max(prices))
+    min_idx = prices.index(min(prices))
+    
+    with col1:
+        st.metric("Highest Price", f"${max(prices):.2f}", 
+                 f"Day {max_idx+1}")
+    with col2:
+        st.metric("Lowest Price", f"${min(prices):.2f}", 
+                 f"Day {min_idx+1}")
+    with col3:
+        change = prices[-1] - prices[0]
+        st.metric("30-Day Change", f"${change:+.2f}", 
+                 f"{(change/prices[0]*100):+.1f}%")
+    
+    st.info("Notice how the price moves up and down throughout the month. This is normal market behavior - prices fluctuate based on supply and demand, news, and investor sentiment.")
+
+
+def supply_demand_visualization():
+    """
+    Interactive visualization showing how supply and demand affect prices.
+    """
+    st.subheader("Supply and Demand in Action")
+    
+    import plotly.graph_objects as go
+    
+    # Simulate supply and demand curves
+    price_range = np.linspace(80, 120, 50)
+    
+    # Demand curve (downward sloping)
+    demand = 200 - price_range * 1.2
+    
+    # Supply curve (upward sloping)
+    supply = price_range * 0.8 - 40
+    
+    fig = go.Figure()
+    
+    # Demand curve
+    fig.add_trace(go.Scatter(
+        x=demand,
+        y=price_range,
+        mode='lines',
+        name='Demand',
+        line=dict(color='#10b981', width=3),
+        fill='tozerox',
+        fillcolor='rgba(16, 185, 129, 0.1)'
+    ))
+    
+    # Supply curve
+    fig.add_trace(go.Scatter(
+        x=supply,
+        y=price_range,
+        mode='lines',
+        name='Supply',
+        line=dict(color='#ef4444', width=3),
+        fill='tozerox',
+        fillcolor='rgba(239, 68, 68, 0.1)'
+    ))
+    
+    # Equilibrium point
+    equilibrium_price = 100
+    equilibrium_qty = 80
+    fig.add_trace(go.Scatter(
+        x=[equilibrium_qty],
+        y=[equilibrium_price],
+        mode='markers',
+        name='Equilibrium',
+        marker=dict(size=15, color='#fbbf24', symbol='star'),
+        hovertemplate='Equilibrium: $%{y:.0f} at %{x:.0f} units<extra></extra>'
+    ))
+    
+    fig.update_layout(
+        title="Supply and Demand Curves",
+        xaxis_title="Quantity",
+        yaxis_title="Price ($)",
+        height=400,
+        hovermode='closest',
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)'),
+        yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)'),
+        font=dict(color='white'),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+    
+    st.markdown("""
+    **How to read this:**
+    - **Green line (Demand):** As price goes up, fewer people want to buy
+    - **Red line (Supply):** As price goes up, more people want to sell
+    - **Yellow star:** Where they meet = the market price
+    
+    When more buyers show up, the demand curve shifts right → price goes up.
+    When more sellers show up, the supply curve shifts right → price goes down.
+    """)
+
+
+def portfolio_diversification_chart():
+    """
+    Visual comparison of diversified vs single-stock portfolio.
+    """
+    st.subheader("Diversification: See the Difference")
+    
+    import plotly.graph_objects as go
+    import numpy as np
+    
+    np.random.seed(42)
+    days = 252  # Trading days in a year
+    
+    # Single stock (high volatility)
+    single_stock = 100 + np.cumsum(np.random.normal(0, 3, days))
+    single_stock = np.maximum(single_stock, 50)  # Floor
+    
+    # Diversified portfolio (lower volatility)
+    diversified = 100 + np.cumsum(np.random.normal(0.05, 1.2, days))
+    diversified = np.maximum(diversified, 80)
+    
+    fig = go.Figure()
+    
+    # Single stock
+    fig.add_trace(go.Scatter(
+        x=list(range(days)),
+        y=single_stock,
+        mode='lines',
+        name='Single Stock Portfolio',
+        line=dict(color='#ef4444', width=2),
+        fill='tozeroy',
+        fillcolor='rgba(239, 68, 68, 0.1)'
+    ))
+    
+    # Diversified
+    fig.add_trace(go.Scatter(
+        x=list(range(days)),
+        y=diversified,
+        mode='lines',
+        name='Diversified Portfolio (10 stocks)',
+        line=dict(color='#10b981', width=3),
+        fill='tozeroy',
+        fillcolor='rgba(16, 185, 129, 0.1)'
+    ))
+    
+    fig.update_layout(
+        title="Portfolio Performance: Single Stock vs Diversified",
+        xaxis_title="Trading Days",
+        yaxis_title="Portfolio Value ($)",
+        height=400,
+        hovermode='x unified',
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)'),
+        yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)'),
+        font=dict(color='white')
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+    
+    # Calculate metrics
+    single_return = ((single_stock[-1] - single_stock[0]) / single_stock[0]) * 100
+    div_return = ((diversified[-1] - diversified[0]) / diversified[0]) * 100
+    single_vol = np.std(np.diff(single_stock)) * np.sqrt(252)
+    div_vol = np.std(np.diff(diversified)) * np.sqrt(252)
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("Single Stock", f"{single_return:+.1f}% return", 
+                 f"Volatility: {single_vol:.1f}%")
+    with col2:
+        st.metric("Diversified", f"{div_return:+.1f}% return", 
+                 f"Volatility: {div_vol:.1f}%")
+    
+    st.info("Notice how the diversified portfolio has smoother, less dramatic swings. That's the power of diversification - it reduces risk while still allowing for growth.")
+
+
 def ai_tutor_sidebar(lesson_id: str, lesson_title: str):
     """
     AI Tutor sidebar for lesson-specific questions.
