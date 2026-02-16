@@ -707,42 +707,712 @@ Investing is a marathon, not a sprint. The people who finish aren't the fastest.
         "description": "Deeper thinking about markets and behavior.",
         "source": "Various",
         "lessons": [
-            {"id": "what_moves_markets", "title": "What Moves Markets", "content": """
-## What Moves Markets
+            {
+  "id": "what_moves_markets",
+  "title": "What Moves Markets",
+  "content": 
+"""
+# 📊 What Moves Markets?
 
-Brief placeholder: macro, news, flows, earnings, liquidity.
+Financial markets are constantly shifting, but most of that movement is driven by a small set of powerful forces. Understanding these helps you move from reacting emotionally to thinking strategically.
 
-""", "quiz": [{"question": "Which typically has the most impact on stock prices over the long term?", "options": ["Daily social media trends", "Company earnings and fundamentals", "What a celebrity tweets", "The moon phase"], "correct": 1, "misconception_if_wrong": {0: "Short-term noise doesn't drive long-term price trends.", 2: "Celebrity tweets create temporary noise, not durable value.", 3: "Markets are driven by economics, not astrology."}}]},
-            {"id": "investor_psychology", "title": "Investor Psychology", "content": """
-## Investor Psychology
+---
 
-Brief placeholder: cognitive biases, herd behavior, loss aversion.
+## 1. 📈 Earnings — The Core Signal
 
-""", "quiz": [{"question": "What is 'loss aversion'?", "options": ["Fear of winning money", "Feeling worse about losses than equal gains", "Avoiding all risky investments", "Selling winners too early"], "correct": 1, "misconception_if_wrong": {0: "Loss aversion is about emotional pain from losses, not gains.", 2: "Some risk is necessary for growth.", 3: "That's a separate bias called 'disposition effect'."}}]},
-            {"id": "hype_vs_fundamentals", "title": "Hype vs Fundamentals", "content": """
-## Hype vs Fundamentals
+**Earnings** reflect how much profit a company generates. They act as a scoreboard for business performance.
 
-Brief placeholder: distinguishing noise from durable changes to value.
+### Why they matter:
+- Strong earnings often increase investor confidence.
+- Weak or surprising results can trigger rapid price drops.
+- Markets care more about **changes and expectations** than raw numbers.
 
-""", "quiz": [{"question": "What's the best way to distinguish hype from real opportunity?", "options": ["Follow influencer tips", "Look at company financials and earnings", "Buy what went up the most", "Listen to hot tips"], "correct": 1, "misconception_if_wrong": {0: "Influencer tips are often unreliable.", 2: "Past performance doesn't predict future returns.", 3: "Hot tips often lead to losses."}}]},
-            {"id": "types_of_investing", "title": "Types of Investing", "content": """
-## Types of Investing
+### Visual:
+Revenue → Costs → Earnings → Investor Reaction → Stock Price
 
-Brief placeholder: active, passive, value, growth, quant, income.
 
-""", "quiz": [{"question": "Which investment approach typically costs less and is easier for beginners?", "options": ["Active stock picking", "Passive index fund investing", "Options trading", "Forex trading"], "correct": 1, "misconception_if_wrong": {0: "Active picking often has higher fees and underperforms indexes.", 2: "Options trading is advanced and risky.", 3: "Forex trading is complex and speculative."}}]},
-            {"id": "risk_portfolio_thinking", "title": "Risk and Portfolio Thinking", "content": """
-## Risk and Portfolio Thinking
+💡 *Think of earnings as the “report card” investors use to judge companies.*
 
-Brief placeholder: correlation, allocation, rebalancing basics.
+---
 
-""", "quiz": [{"question": "What is the primary benefit of rebalancing your portfolio?", "options": ["Make trading commissions", "Lock in losses", "Maintain your target risk level", "Guarantee higher returns"], "correct": 2, "misconception_if_wrong": {0: "Rebalancing should minimize costs.", 1: "Rebalancing is about maintaining discipline, not locking in losses.", 3: "Rebalancing helps manage risk but doesn't guarantee returns."}}]},
-            {"id": "reading_market_signals", "title": "Reading Basic Market Signals", "content": """
-## Reading Basic Market Signals
+## 2. 💵 Interest Rates — The Price of Money
 
-Brief placeholder: volumes, breadth, yields, simple indicators.
+Interest rates influence nearly every asset class.
 
-""", "quiz": [{"question": "What does unusually high trading volume often signal?", "options": ["The stock will go up", "There's significant interest or disagreement about price", "A company is bankrupt", "Retail investors are winners"], "correct": 1, "misconception_if_wrong": {0: "High volume can precede price moves in either direction.", 2: "Bankruptcy is revealed through financial data, not just volume.", 3: "High volume just means lots of trading, doesn't predict outcomes."}}]},
+### When rates rise:
+- Borrowing becomes more expensive.
+- Stock valuations tend to fall.
+- Bonds become more attractive.
+
+### When rates fall:
+- Businesses invest more.
+- Consumers spend more.
+- Stocks usually benefit.
+
+### Visual:
+Low Rates → Cheap Loans → More Growth → Higher Asset Prices
+High Rates → Expensive Loans → Slower Growth → Lower Prices
+
+
+---
+
+## 3. 🔥 Inflation — The Silent Force
+
+Inflation measures how quickly prices rise over time.
+
+### Why investors care:
+- High inflation reduces purchasing power.
+- It often leads to higher interest rates.
+- It changes which assets perform best.
+
+### Common market reactions:
+| Inflation Environment | Typical Winners |
+|----------------------|-----------------|
+| Low & Stable         | Stocks, Growth  |
+| High & Rising        | Commodities, Real Assets |
+
+---
+
+## 4. 📰 News Cycles — Short-Term Volatility
+
+Markets don’t wait for perfect information — they move on headlines.
+
+### Examples of market-moving news:
+- Central bank announcements  
+- Corporate scandals  
+- Geopolitical conflicts  
+- New regulations  
+
+### Visual:
+News → Investor Emotion → Rapid Trading → Price Swings
+
+
+⚠️ News often drives **short-term noise**, not long-term value.
+
+---
+
+## 5. 🧠 Economic Expectations — Beliefs Shape Reality
+
+Markets respond more to **what people think will happen** than what already happened.
+
+### Why expectations matter:
+- If investors expect a recession, they sell before it happens.
+- If growth is expected, prices rise early.
+- Perception often becomes self-fulfilling.
+
+### Visual:
+Expectation → Behavior → Market Movement → Economic Outcome
+
+
+---
+
+## Putting It All Together
+
+Markets move due to a mix of:
+- **Fundamentals** (earnings, inflation)
+- **Policy** (interest rates)
+- **Psychology** (news and expectations)
+
+Successful investors learn to:
+- Filter noise from signal  
+- Think in probabilities, not certainties  
+- Focus on long-term drivers  
+
+---
+
+## 🧪 Try This Reflection
+
+Think about a recent market event:
+- Was it driven by **real data** or **investor emotion**?
+- Did prices move because something changed — or because people *thought* it would?
+
+This habit builds true market intuition.
+""",
+  "quiz": [
+    {
+      "question": "Which factor most directly influences investor behavior before an economic event actually occurs?",
+      "options": [
+        "Corporate earnings",
+        "Inflation rate",
+        "Economic expectations",
+        "Interest rates"
+      ],
+      "correct": 2
+    }
+  ]
+},
+            {
+  "id": "investor_psychology",
+  "title": "Investor Psychology",
+  "content":
+"""
+# 🧠 Investor Psychology
+
+Markets are not driven by numbers alone — they are driven by **human behavior**. Emotions, biases, and shared stories often explain why prices move more dramatically than fundamentals justify.
+
+---
+
+## 1. 🐑 Herd Behavior — Following the Crowd
+
+Herd behavior occurs when investors copy what others are doing instead of thinking independently.
+
+### Why it happens:
+- Fear of missing out (FOMO)
+- Belief that “everyone else knows something”
+- Social proof feels safer than analysis
+
+### Visual:
+One buyer → More buyers → Media attention → Mass participation
+
+
+⚠️ Herds amplify both **bubbles** and **crashes**.
+
+---
+
+## 2. 🚨 Panic Selling — Fear Takes Control
+
+Panic selling is emotionally driven selling during sharp market drops.
+
+### Common triggers:
+- Sudden bad news  
+- Rapid price declines  
+- Loss of confidence  
+
+### Emotional cycle:
+Shock → Fear → Selling → Regret → Reflection
+
+
+Most panic selling locks in losses that might have recovered.
+
+---
+
+## 3. 🧠 Overconfidence — The Invisible Risk
+
+Overconfidence makes investors believe they are more skilled than they really are.
+
+### Typical symptoms:
+- Trading too frequently  
+- Ignoring risk  
+- Underestimating uncertainty  
+
+### Visual:
+Early success → Confidence spike → Larger risks → Bigger losses
+
+
+Overconfidence is dangerous because it **feels like intelligence**.
+
+---
+
+## 4. 📖 Market Narratives — Stories That Move Money
+
+Narratives are simple explanations people use to justify complex market behavior.
+
+Examples:
+- “Tech will always outperform”
+- “This time is different”
+- “The economy is about to collapse”
+
+### Narrative feedback loop:
+Story → Belief → Investment behavior → Price movement → Stronger story
+
+
+Markets often move on **stories first, data second**.
+
+---
+
+## Putting It All Together
+
+These forces interact constantly:
+
+| Bias | Risk |
+|------|------|
+| Herd behavior | Buying near peaks |
+| Panic selling | Selling near bottoms |
+| Overconfidence | Excessive risk |
+| Narratives | Ignoring evidence |
+
+Great investors focus on:
+- Self-awareness  
+- Long-term thinking  
+- Rules over emotions  
+
+---
+
+## 🎯 Self-Check Exercise
+
+Next time you feel the urge to trade, ask:
+- Am I reacting to **information or emotion**?
+- Would I make this decision if no one else were watching?
+
+Building this habit protects you from your own brain.
+""",
+  "quiz": [
+    {
+      "question": "Which psychological factor most often causes investors to buy at market peaks?",
+      "options": [
+        "Overconfidence",
+        "Herd behavior",
+        "Panic selling",
+        "Risk management"
+      ],
+      "correct": 1
+    }
+  ]
+},
+            {
+  "id": "hype_vs_fundamentals",
+  "title": "Hype vs Fundamentals",
+  "content":
+"""
+# 🔊 Hype vs Fundamentals
+
+Modern markets are louder than ever. With constant headlines, trending posts, and viral opinions, investors must learn to separate **signal from noise**.
+
+---
+
+## 1. 📢 Media Noise — Information Overload
+
+Media noise refers to the flood of short-term news that creates urgency without lasting importance.
+
+### Why it’s dangerous:
+- Encourages frequent trading  
+- Amplifies fear and excitement  
+- Distracts from long-term goals  
+
+### Visual:
+Headlines → Emotion → Action → Regret
+
+
+Not all information is useful — some of it is just **distraction in disguise**.
+
+---
+
+## 2. 📱 Social Media — Crowd Emotion at Scale
+
+Social platforms turn opinions into market-moving forces.
+
+### Common effects:
+- Viral stock picks  
+- Echo chambers  
+- Fear of missing out  
+
+### Feedback loop:
+Post → Hype → Buying → Price spike → More posts
+
+
+Social media accelerates herd behavior faster than any tool in history.
+
+---
+
+## 3. 🎲 Speculation — Betting on Uncertainty
+
+Speculation focuses on short-term price movement rather than business value.
+
+### Speculators often rely on:
+- Timing the market  
+- Rumors or trends  
+- Quick profits  
+
+### Visual:
+Guess → Trade → Volatility → Stress
+
+
+Speculation feels exciting, but it replaces strategy with luck.
+
+---
+
+## 4. 🌱 Long-Term Value — Quiet but Powerful
+
+Long-term investing focuses on steady growth over time.
+
+### Core principles:
+- Compounding  
+- Patience  
+- Fundamentals over hype  
+
+### Visual:
+Time + Discipline → Compounding → Wealth
+
+
+Long-term value usually looks boring — until you zoom out.
+
+---
+
+## The Big Contrast
+
+| Hype-Based Thinking | Fundamentals-Based Thinking |
+|---------------------|-----------------------------|
+| React to news       | Focus on data               |
+| Chase trends        | Hold quality                |
+| Short-term gains    | Long-term growth            |
+| Emotional decisions | Rational decisions          |
+
+---
+
+## 🎯 Reflection Exercise
+
+Before acting on any market tip, ask:
+- Will this matter in **5 years**?
+- Or just **5 minutes**?
+
+That single question filters 90% of bad decisions.
+""",
+  "quiz": [
+    {
+      "question": "Which behavior best represents long-term value investing?",
+      "options": [
+        "Buying trending stocks on social media",
+        "Trading frequently based on headlines",
+        "Holding quality assets through volatility",
+        "Timing short-term price movements"
+      ],
+      "correct": 2
+    }
+  ]
+},
+            {
+  "id": "types_of_investing",
+  "title": "Types of Investing",
+  "content":
+"""
+# 🧭 Types of Investing
+
+Not all investors play the same game. The way you invest depends on **how involved you want to be** and **how long you plan to stay invested**.
+
+---
+
+## 1. 🤖 Passive Investing — Letting the Market Work
+
+Passive investing focuses on matching the market rather than trying to beat it.
+
+### Key traits:
+- Low effort  
+- Broad diversification  
+- Long-term mindset  
+
+### Visual:
+Market Growth → Index Fund → Time → Compounding
+
+
+Passive strategies are built for consistency, not excitement.
+
+---
+
+## 2. 🎯 Active Investing — Trying to Outperform
+
+Active investors attempt to beat the market through research, timing, and selection.
+
+### Key traits:
+- Frequent decisions  
+- Higher risk  
+- Higher costs  
+
+### Visual:
+Analysis → Trade → Monitor → Repeat
+
+
+Active investing demands skill — and even then, results vary widely.
+
+---
+
+## 3. ⏳ Long-Term Investing — The Patience Advantage
+
+Long-term investors stay invested for years, focusing on growth and compounding.
+
+### Benefits:
+- Smoother returns  
+- Lower stress  
+- Tax efficiency  
+
+### Visual:
+Small Gains + Time = Large Results
+
+
+Time is the most powerful force in investing.
+
+---
+
+## 4. ⚡ Short-Term Investing — Speed and Speculation
+
+Short-term investing targets quick profits over days, weeks, or months.
+
+### Common approaches:
+- Trading  
+- Momentum strategies  
+- Event-based moves  
+
+### Visual:
+Volatility → Opportunity → Risk
+
+
+Short-term strategies require constant attention and emotional control.
+
+---
+
+## The Core Trade-Offs
+
+| Style | Risk | Effort | Typical Outcome |
+|------|------|--------|-----------------|
+| Passive | Low | Low | Market-level returns |
+| Active | High | High | Uncertain |
+| Long-term | Lower | Lower | Compounding growth |
+| Short-term | Higher | Higher | Volatile results |
+
+---
+
+## 🎯 Choose Your Time Horizon
+
+Ask yourself:
+- How long can I leave this money untouched?
+- Do I enjoy managing investments — or would I rather automate?
+
+Your strategy should fit **your lifestyle**, not just your goals.
+""",
+  "quiz": [
+    {
+      "question": "Which investing style relies most on patience and compounding over time?",
+      "options": [
+        "Active short-term trading",
+        "Passive long-term investing",
+        "Speculative investing",
+        "Momentum trading"
+      ],
+      "correct": 1
+    }
+  ]
+},
+            {
+  "id": "risk_portfolio_thinking",
+  "title": "Risk and Portfolio Thinking",
+  "content":
+"""
+# 🛡️ Risk and Portfolio Thinking
+
+Investing isn’t about picking winners — it’s about **structuring your decisions** so you understand risk, build resilience, and support your long-term goals. Concepts like diversification, asset classes, and allocation are foundational tools every investor should master. :contentReference[oaicite:0]{index=0}
+
+---
+
+## 🌈 1. Diversification — Safety in Variety
+
+### What it is:
+Diversification means spreading money **across different types of investments** so one loss doesn’t dominate your returns. :contentReference[oaicite:1]{index=1}
+
+### Why it matters:
+- Different asset types seldom rise and fall together. :contentReference[oaicite:2]{index=2}
+- When one asset underperforms, another might soften the blow. :contentReference[oaicite:3]{index=3}
+
+Single Investment → Big Risk
+Diversified Investments → Smoother Ride
+
+
+💡 True diversification happens **between asset classes** (stocks, bonds, cash) and **within them** (multiple sectors, sizes, regions). :contentReference[oaicite:4]{index=4}
+
+---
+
+## 🧱 2. Asset Classes — The Building Blocks
+
+Asset classes are broad categories of investments with similar risk and return behaviors:
+
+- **Stocks** → ownership & growth potential  
+- **Bonds** → income and often lower volatility  
+- **Cash & equivalents** → liquidity and safety :contentReference[oaicite:5]{index=5}
+
+Stocks ↔ Growth
+Bonds ↔ Stability
+Cash ↔ Safety
+
+
+Each reacts differently under changing market conditions — that’s what gives diversification its power. :contentReference[oaicite:6]{index=6}
+
+---
+
+## ⚖️ 3. Asset Allocation — The Strategic Mix
+
+### What it is:
+Asset allocation is how you **divide your investable money** among different asset classes based on your goals, risk tolerance, and timeline. :contentReference[oaicite:7]{index=7}
+
+### Why it’s powerful:
+Your *mix* matters more than each individual investment — research shows allocation drives most of a portfolio’s return and volatility. :contentReference[oaicite:8]{index=8}
+
+Aggressive → More Stocks
+Balanced → Stocks + Bonds
+Conservative → More Bonds/Cash
+
+
+This mix determines how much risk you take and how your portfolio behaves over time. :contentReference[oaicite:9]{index=9}
+
+---
+
+## 🗂️ 4. Why Portfolios Exist — More Than Just a Collection
+
+A portfolio is simply **the sum of your investments**, structured to reflect your financial plan. :contentReference[oaicite:10]{index=10}
+
+Portfolios help you:
+
+- Define risk levels  
+- Break large financial goals into manageable parts  
+- Avoid overexposure to any single trend or event :contentReference[oaicite:11]{index=11}
+
+Proper planning and periodic **rebalancing** ensure your allocation stays aligned with your goals even as the market shifts. :contentReference[oaicite:12]{index=12}
+
+---
+
+## 🧠 Quick Visual Summary
+
+Diversify → Spread Risks
+Asset Classes → Variety of Behaviors
+Allocation → Customized Risk
+Portfolio → Strategy + Discipline
+
+
+> **Remember:** Diversification does not guarantee profit, but it helps *manage* risk and reduces emotional stress during volatile markets. :contentReference[oaicite:13]{index=13}
+
+---
+
+## 🎯 Reflection Exercise
+
+Ask yourself:
+- If one part of my portfolio fell sharply, how much would it matter?
+- Am I diversified across different risks — not just different investments?
+- Does my allocation fit my long-term financial timeline?
+
+These questions help you think like a strategist, not a short-term trader.
+""",
+  "quiz": [
+    {
+      "question": "What is the main purpose of diversification in investing?",
+      "options": [
+        "To eliminate all investment risk",
+        "To reduce the impact of a single investment losing value",
+        "To guarantee the highest possible returns",
+        "To predict exact market movements"
+      ],
+      "correct": 1
+    }
+  ]
+},
+            {
+  "id": "reading_market_signals",
+  "title": "Reading Basic Market Signals",
+  "content":
+"""
+# 📈 Reading Basic Market Signals
+
+Markets constantly send signals about direction, risk, and investor behavior. Learning to read these patterns helps you **respond strategically instead of emotionally**.
+
+---
+
+## 1. 📊 Trends — Uptrend vs Downtrend
+
+A **trend** describes the general direction of market movement over time.
+
+### Two primary types:
+- **Uptrend**: prices make higher highs and higher lows  
+- **Downtrend**: prices make lower highs and lower lows  
+
+### Visual:
+Uptrend: / / /
+Downtrend: \ \ \
+
+
+Trends reveal whether optimism or pessimism currently dominates the market.
+
+---
+
+## 2. 🌪️ Volatility — How Wild Are the Swings?
+
+Volatility measures how much prices fluctuate.
+
+### Low volatility:
+- Calm markets  
+- Small price changes  
+
+### High volatility:
+- Uncertainty  
+- Large, rapid price swings  
+
+### Visual:
+Low Volatility: ~~~~~
+High Volatility: ////\
+
+
+Volatility doesn’t mean “bad” — it means **movement and risk**.
+
+---
+
+## 3. 🚀 Momentum — Strength of Movement
+
+Momentum reflects how strongly prices are moving in one direction.
+
+### High momentum:
+- Strong buying or selling pressure  
+- Trends accelerate  
+
+### Weak momentum:
+- Trend losing energy  
+- Possible reversal  
+
+### Visual:
+Slow climb → Faster climb → Steep surge
+
+
+Momentum shows not just *where* prices are going, but **how forcefully**.
+
+---
+
+## 4. 🔄 Cycles — Markets Move in Phases
+
+Markets don’t move in straight lines — they move in **repeating cycles**.
+
+### Typical phases:
+1. Expansion (growth)
+2. Peak (optimism)
+3. Contraction (decline)
+4. Trough (pessimism)
+
+### Visual:
+Growth → Peak → Decline → Recovery → Repeat
+
+
+Understanding cycles helps investors avoid thinking “this time is different”.
+
+---
+
+## Putting It Together
+
+| Signal | What It Tells You |
+|--------|-------------------|
+| Trend | Direction |
+| Volatility | Risk level |
+| Momentum | Strength |
+| Cycles | Long-term context |
+
+Great investors observe all four — not just price.
+
+---
+
+## 🎯 Reflection Exercise
+
+Look at a recent market chart and ask:
+- Is the trend rising or falling?
+- Are price swings calm or chaotic?
+- Is momentum building or fading?
+
+This turns charts into **decision tools**, not just pictures.
+""",
+  "quiz": [
+    {
+      "question": "Which signal best describes the strength behind a price movement?",
+      "options": [
+        "Trend",
+        "Volatility",
+        "Momentum",
+        "Cycle"
+      ],
+      "correct": 2
+    }
+  ]
+},
         ]
     },
     "applied_investing": {
@@ -753,36 +1423,671 @@ Brief placeholder: volumes, breadth, yields, simple indicators.
         "description": "Practical steps to build and manage your portfolio.",
         "source": "Various",
         "lessons": [
-            {"id": "costs_fees_taxes", "title": "Costs, Fees, and Taxes", "content": """
-## Costs, Fees, and Taxes
+           {
+  "id": "costs_fees_taxes",
+  "title": "Costs, Fees, and Taxes",
+  "content":
+"""
+# 💰 Costs, Fees, and Taxes in Investing
 
-Brief placeholder: expense ratios, trading costs, tax-efficient investing.
+Every investment comes with costs — and those costs **eat into your returns over time**. Understanding them is critical to building wealth efficiently.
 
-""", "quiz": [{"question": "Over 30 years, what impact does a 1% annual fee have compared to a 0.1% fee?", "options": ["Not much difference", "Huge difference—can reduce your returns by 20% or more", "Only matters for rich people", "Fees don't really matter if you hold long-term"], "correct": 1, "misconception_if_wrong": {0: "Compound costs are as powerful as compound returns.", 2: "Fee impact affects everyone equally.", 3: "Fees reduce your final amount regardless of time horizon."}}]},
-            {"id": "what_do_in_crash", "title": "What to do in a market crash", "content": """
-## What to do in a market crash
+---
 
-Brief placeholder: checklist, rebalance, contributions, safeguarding plans.
+## 1. 📊 Expense Ratios — The Ongoing Cost
 
-""", "quiz": [{"question": "What should you typically do during a market crash if you have a long time horizon?", "options": ["Sell everything to avoid further losses", "Panic and check your portfolio daily", "Stay the course and keep investing", "Move all money to cash"], "correct": 2, "misconception_if_wrong": {0: "Selling locks in losses; historically markets recover.", 1: "Anxiety hurts performance; discipline matters.", 3: "Cash loses value to inflation; staying invested is usually better."}}]},
-            {"id": "setting_long_term_structure", "title": "Setting a Long term structure", "content": """
-## Setting a Long term structure
+Expense ratios are annual fees charged by funds to manage your money.
 
-Brief placeholder: target allocation, glidepaths, rules-based plans.
+### Key points:
+- Expressed as a percentage of assets  
+- Paid automatically, reducing returns gradually  
+- Lower expense ratios mean more of your money stays invested
 
-""", "quiz": [{"question": "What is a 'glidepath' in investing?", "options": ["The path stocks are trending", "A gradual shift toward more conservative allocations as you approach your goal", "A price chart pattern", "A type of mutual fund"], "correct": 1, "misconception_if_wrong": {0: "Glidepath is about your own asset allocation strategy, not stock trends.", 2: "Glidepath is a personal strategy, not a chart pattern.", 3: "Glidepath is a strategy you implement, not a specific fund."}}]},
-            {"id": "realistic_expectations", "title": "Realistic Expectations About Returns", "content": """
-## Realistic Expectations About Returns
+### Visual:
+$10,000 investment
+Fund A 0.05% → $5/year
+Fund B 1% → $100/year
 
-Brief placeholder: long-term averages, variability, and avoiding guarantees.
 
-""", "quiz": [{"question": "What is a realistic long-term average annual return for a diversified stock portfolio?", "options": ["50% per year", "7-10% per year", "0% (stocks are too risky)", "20%+ guaranteed"], "correct": 1, "misconception_if_wrong": {0: "50% yearly is unrealistic and unsustainable.", 2: "Historically, stocks have beaten inflation over long periods.", 3: "No investment guarantees returns; 7-10% is a historical average, not a guarantee."}}]},
-            {"id": "charts_101", "title": "Charts 101", "content": """
-## Charts 101
+Even small differences compound over decades.
 
-Brief placeholder: reading basic price charts, trends, support/resistance.
+---
 
-""", "quiz": [{"question": "What does a chart showing a long uptrend tell you?", "options": ["The stock will keep going up forever", "Prices have been rising, but past performance doesn't guarantee future results", "You should buy immediately", "The company is definitely profitable"], "correct": 1, "misconception_if_wrong": {0: "Trends don't guarantee future movements.", 2: "Momentum investors buy trends, but this is speculative.", 3: "Price trends don't directly reflect profitability."}}]},
+## 2. 💸 Trading Fees — Paying for Activity
+
+Buying and selling investments often carries fees.
+
+### Examples:
+- Brokerage commissions  
+- Transaction fees  
+- Bid-ask spreads
+
+### Visual:
+Buy → Fee → Investment
+Sell → Fee → Investment
+
+
+High trading frequency amplifies these costs — another reason to **think long-term**.
+
+---
+
+## 3. 🏦 Taxes on Gains — Uncle Sam Wants a Cut
+
+Capital gains taxes apply when you sell assets at a profit.
+
+### Key points:
+- **Short-term gains** are taxed higher (ordinary income rate)  
+- **Long-term gains** enjoy lower rates  
+- Reinvesting dividends may also trigger taxes
+
+### Visual:
+Purchase → Hold → Sell → Pay tax on gain
+
+
+Tax planning can preserve wealth significantly.
+
+---
+
+## 4. ⚡ Low-Cost Funds — Keep More of What You Earn
+
+Index funds and ETFs often have **minimal expense ratios**.
+
+### Benefits:
+- Reduced drag on returns  
+- Efficient way to diversify  
+- Ideal for long-term growth
+
+### Visual:
+High-cost fund → Lower net growth
+Low-cost fund → Higher net growth
+
+
+---
+
+## 5. 🏦 Tax-Advantaged Accounts — Grow Without Penalty
+
+Accounts like IRAs, 401(k)s, and HSAs shelter investments from taxes.
+
+### Advantages:
+- Tax-deferred growth  
+- Tax-free withdrawals in some cases  
+- Encourages long-term saving
+
+### Visual:
+Taxable account → Growth taxed yearly
+Tax-advantaged account → Growth tax-deferred or free
+
+
+---
+
+## 💡 Key Takeaways
+
+| Cost Type | Effect |
+|-----------|--------|
+| Expense ratio | Reduces compounding returns |
+| Trading fees | Frequent trading magnifies costs |
+| Taxes | Long-term strategies and tax-advantaged accounts mitigate |
+| Low-cost funds | Keep more of your returns |
+
+---
+
+## 🎯 Reflection Exercise
+
+Before investing, ask yourself:
+- How much am I paying each year in fees?  
+- Can I use tax-advantaged accounts?  
+- Will lower-cost funds achieve similar results?
+
+Being mindful of costs and taxes can **add years of growth** to your portfolio.
+""",
+  "quiz": [
+    {
+      "question": "Which strategy helps maximize long-term investment growth?",
+      "options": [
+        "Choosing high-expense funds for active management",
+        "Minimizing fees and using tax-advantaged accounts",
+        "Trading frequently to capture short-term gains",
+        "Ignoring tax implications on dividends and gains"
+      ],
+      "correct": 1
+    }
+  ]
+},
+            {
+  "id": "what_do_in_crash",
+  "title": "What to do in a Market Crash",
+  "content":
+"""
+# ⚠️ What to Do in a Market Crash
+
+Market downturns are **normal and temporary**. Understanding how to respond can protect your portfolio and preserve long-term growth.
+
+---
+
+## 1. 📉 Market Downturns Are Normal
+
+Stock markets experience declines regularly, and recoveries are historically consistent.
+
+### Key points:
+- Drawdowns happen in all markets  
+- Historical data shows markets typically recover over time  
+- Downturns are opportunities for disciplined investors
+
+### Visual:
+Peak → Decline → Trough → Recovery → New Peak
+
+
+Knowing that downturns are expected reduces panic.
+
+---
+
+## 2. 🚫 Avoid Panic Selling
+
+Panic selling locks in losses and often results in **missing the recovery**.
+
+### Common mistakes:
+- Selling when prices are falling  
+- Reacting to short-term headlines  
+- Letting emotions override strategy
+
+### Visual:
+Market falls → Investor sells → Price rebounds → Missed gains
+
+
+Patience and discipline outperform emotional reactions.
+
+---
+
+## 3. ⏱️ Historical Recoveries
+
+Even severe bear markets eventually rebound.
+
+### Observations:
+- Short-term drops are sharper than recoveries  
+- Long-term investors benefit from staying invested  
+- Rebalancing ensures portfolio stays aligned with goals
+
+### Visual:
+Crash → Hold → Recovery → Compound growth
+
+
+Rebalancing can be done strategically rather than reacting impulsively.
+
+---
+
+## 4. 🧠 Emotional Discipline
+
+Investing is as much **psychology** as analysis.
+
+### Tips:
+- Recognize emotional triggers  
+- Follow a pre-defined investment plan  
+- Avoid checking portfolios constantly during volatility
+
+### Visual:
+Emotion → Impulse → Mistake
+Discipline → Strategy → Growth
+
+
+Controlling emotions ensures decisions are based on **strategy, not fear**.
+
+---
+
+## 💡 Quick Takeaways
+
+| Principle | Action |
+|-----------|--------|
+| Market downturns | Expect them |
+| Panic selling | Avoid |
+| Historical recoveries | Remain invested |
+| Emotional discipline | Stick to your plan |
+
+---
+
+## 🎯 Reflection Exercise
+
+Ask yourself:
+- Am I reacting to emotion or long-term goals?  
+- Could staying invested benefit me in the future?  
+- Is my portfolio aligned with my risk tolerance?
+
+Taking a calm, disciplined approach turns market drops into opportunities.
+""",
+  "quiz": [
+    {
+      "question": "During a market downturn, what is generally considered the best course of action?",
+      "options": [
+        "Sell all investments immediately",
+        "Panic and buy new high-risk stocks",
+        "Stay invested and maintain discipline",
+        "Ignore portfolio allocation completely"
+      ],
+      "correct": 2
+    }
+  ]
+},
+            {
+  "id": "setting_long_term_structure",
+  "title": "Setting a Long-Term Structure",
+  "content":
+"""
+# 🏗️ Setting a Long-Term Investment Structure
+
+Successful investing is less about timing the market and more about **consistent, disciplined execution**. Building a long-term structure helps you stay on track through ups and downs.
+
+---
+
+## 1. 💵 Recurring Investments — Dollar-Cost Averaging
+
+Investing a fixed amount regularly reduces risk from market timing.
+
+### Benefits:
+- Smooths out purchase prices over time  
+- Encourages discipline  
+- Reduces stress from short-term fluctuations
+
+### Visual:
+Invest $100/month
+Month 1 → Price $10 → 10 shares
+Month 2 → Price $20 → 5 shares
+Average cost → Balanced over time
+
+
+---
+
+## 2. 📅 Contribution Schedules — Consistency Matters
+
+Decide **how often** to contribute based on your income and goals.
+
+### Options:
+- Weekly, bi-weekly, or monthly contributions  
+- Automated transfers ensure habit formation  
+- Align schedule with paycheck or budgeting cycles
+
+### Visual:
+Weekly → Small, frequent contributions
+Monthly → Larger, scheduled contributions
+
+
+Consistency compounds over time.
+
+---
+
+## 3. ⚖️ Rebalancing Annually — Keep Risk in Check
+
+Portfolios drift as assets perform differently. Annual rebalancing restores your target allocation.
+
+### Key points:
+- Sell overweight assets  
+- Buy underweight assets  
+- Maintains intended risk profile
+
+### Visual:
+Stocks 60% → 65% after growth
+Bonds 40% → 35%
+Rebalance → Stocks 60%, Bonds 40%
+
+
+---
+
+## 4. 🔇 Ignoring Daily Noise — Stay Focused on Goals
+
+Short-term market swings are normal. Avoid reacting to every headline.
+
+### Tips:
+- Limit portfolio checks  
+- Focus on long-term objectives  
+- Avoid frequent trading
+
+### Visual:
+Daily news → Emotional reaction → Mistake
+Focus on long-term → Strategy → Growth
+
+
+---
+
+## 5. 📝 Reviewing Goals Annually — Course Correction
+
+Check your plan each year to ensure it aligns with goals and risk tolerance.
+
+### Steps:
+- Evaluate asset allocation  
+- Adjust contributions if needed  
+- Consider life changes
+
+### Visual:
+Annual review → Adjustments → Continue disciplined investing
+
+
+---
+
+## 6. 🔑 Staying Consistent — The Power of Discipline
+
+The combination of regular investing, ignoring noise, and periodic rebalancing produces **steady long-term growth**.
+
+### Visual:
+Recurring investments + Rebalancing + Patience → Compounded returns
+
+
+---
+
+## 🎯 Reflection Exercise
+
+Ask yourself:
+- Am I investing regularly, regardless of market movements?  
+- Do I review and rebalance my portfolio systematically?  
+- Am I staying consistent even when the market is volatile?
+
+Building a structured approach reduces stress and improves long-term outcomes.
+""",
+  "quiz": [
+    {
+      "question": "Which practice best supports long-term investing success?",
+      "options": [
+        "Timing the market for daily gains",
+        "Making large, irregular contributions",
+        "Investing regularly and rebalancing annually",
+        "Reacting to daily market news"
+      ],
+      "correct": 2
+    }
+  ]
+},
+            {
+  "id": "realistic_expectations",
+  "title": "Realistic Expectations About Returns",
+  "content":
+"""
+# 📊 Realistic Expectations About Returns
+
+Investing doesn’t follow a straight upward line. Markets can be unpredictable in the short term, but over longer time horizons, risk and return tend to **smooth into more reliable patterns**.
+
+---
+
+## 📉 1. Markets Don’t Go Up Every Year
+
+Calendar-year performance varies — some years are negative.
+
+- Markets experience routine volatility and corrections.  
+- Losses in some years are part of normal market behavior.  
+- Even frequent drops don’t erase long-term growth trends.
+
+↓ -15% (bad year)
+↑ +20% (good year)
+⬆️ Long-term average still positive
+
+
+Short-term ups and downs are expected components of investing.
+
+---
+
+## 📈 2. Average Long-Term Returns
+
+Over decades, broad indexes have tended to rise in value.
+
+- Long-term averages encompass both positive and negative years.  
+- A multi-year holding period increases the odds of positive outcomes. :contentReference[oaicite:0]{index=0}
+
+5‑Year average → varied returns
+10‑Year average → more consistency
+20‑Year average → historically positive
+
+
+The *average* is not the *every year* experience.
+
+---
+
+## 🔄 3. Volatility — The Price of Risk
+
+Volatility measures how widely returns swing from year to year.
+
+- Large drops and rallies happen regularly.  
+- Volatility isn’t a failure — it’s a feature of risk assets.  
+- Calm markets and turbulent markets are both normal.
+
+Low volatility → smoother path
+High volatility → wild swings but higher long-term rewards
+
+
+Volatility exists because markets react to new information constantly.
+
+---
+
+## ⏳ 4. Time Horizon — Your Most Powerful Tool
+
+The longer you stay invested, the more likely your returns are positive.
+
+- Short-term horizons show wide variability.  
+- Longer horizons tend to smooth outcomes and reduce the impact of negative years. :contentReference[oaicite:1]{index=1}
+
+1 Year → high chance of negative return
+10 Years → higher chance of positive return
+20+ Years → consistently positive historically
+
+
+Time in the market beats timing the market.
+
+---
+
+## 🧠 5. Why Patience Wins
+
+Patience reduces the emotional impact of short-term losses.
+
+- Trying to time peaks and troughs often leads to **locking in losses**.  
+- Staying invested allows markets to recover and compound returns. :contentReference[oaicite:2]{index=2}
+
+Sell low out of fear → miss the next rebound
+Stay invested → capture best days and recover
+
+
+Discipline and time together are powerful.
+
+---
+
+## 🌟 Key Takeaways
+
+| Concept | What It Means |
+|---------|----------------|
+| Market volatility | Normal and recurring |
+| Negative years | Expected in short term |
+| Average returns | Long-run oriented |
+| Time horizon | Longer = higher odds of gains |
+| Patience | Rewards long-term investors |
+
+Investing isn’t about avoiding volatility — it’s about **putting volatility to work for you**.
+
+---
+
+## 🎯 Reflection Exercise
+
+Look up the annual returns of a major stock index (like the S&P 500) for the past 30 years:
+- How many individual years were negative?
+- How did the overall trajectory look?
+
+This exercise emphasizes that **short-term losses don’t erase long-term gains**.
+
+""",
+  "quiz": [
+    {
+      "question": "Which statement best reflects market behavior over time?",
+      "options": [
+        "Markets go up every single year without fail",
+        "Short-term returns can be negative, but long-term returns tend to average positive",
+        "Average returns guarantee future results",
+        "Volatility is a market failure"
+      ],
+      "correct": 1
+    }
+  ]
+},
+            {
+  "id": "charts_101",
+  "title": "Charts 101",
+  "content":
+"""
+# 📈 Charts 101 — Reading Stock Charts Basics
+
+Stock charts are visual tools that show how prices move over time. Learning to read them helps you understand **direction, momentum, and investor behavior**.
+
+---
+
+## 📊 1. What a Stock Chart Is
+
+A stock chart plots the price of a security over a chosen timeframe.
+
+### Key elements:
+- **Price axis** (vertical): value of the stock  
+- **Time axis** (horizontal): days, weeks, months, or years  
+- **Volume**: how much was traded
+
+Price ↑
+● ● ●
+● ●
+Time —————————>
+
+
+Charts turn data into stories about market behavior.
+
+---
+
+## 🕯️ 2. Types of Charts
+
+There are three common chart types:
+
+### • Line Chart
+- Plots closing prices  
+- Good for overall direction
+
+### • Bar Chart
+- Shows high, low, open, and close for each period
+
+### • Candlestick Chart
+- Similar to bar charts but easier to read visually  
+- Represents open/close as a body and extremes as wicks
+
+Candlestick Visual:
+▲ bullish (close > open)
+▼ bearish (close < open)
+
+
+Candlesticks help spot patterns at a glance.
+
+---
+
+## 📈 3. Trends — Direction Matters
+
+A **trend** is the overall direction of price movement.
+
+- **Uptrend** → higher highs & higher lows  
+- **Downtrend** → lower lows & lower highs  
+- **Sideways** → no clear direction
+
+Uptrend: / / /
+Downtrend: \ \ \
+
+
+Identifying trends helps decide whether to follow the momentum.
+
+---
+
+## 🔄 4. Volatility — How Wild Are the Moves?
+
+Volatility refers to how much and how quickly prices change.
+
+- Larger swings mean higher volatility  
+- Calm trading suggests lower volatility
+
+Low Volatility: ~~~~
+High Volatility: ///\
+
+
+Volatility helps set expectations for risk and potential price action.
+
+---
+
+## 🛑 5. Support & Resistance — Price Anchors
+
+- **Support**: a price level where buyers historically step in  
+- **Resistance**: a price level where sellers typically appear
+
+Resistance
+———————
+●
+●
+Support
+———————
+
+
+These levels often act like invisible barriers to price movement.
+
+---
+
+## 🔊 6. Volume — Confirming Strength
+
+Volume shows how many shares traded during a period.
+
+- Rising prices with high volume → stronger move  
+- Rising prices with low volume → weaker conviction
+
+Volume bars below the main chart:
+|| ||| ||||| |
+
+
+Volume confirms *how serious* market participants are about a move.
+
+---
+
+## ⏱️ 7. Timeframes & Perspectives
+
+Charts can be viewed over different timeframes:
+
+- **Intraday (minutes/hours)** — short-term trading
+- **Daily/Weekly** — swing & trend analysis
+- **Monthly/Yearly** — long-term investing trends
+
+Short view: noisy swings
+Long view: broader trend
+
+
+Different timeframes give different insights — always consider context.
+
+---
+
+## 📌 Putting It Together
+
+| Element | What It Tells You |
+|---------|------------------|
+| Chart Type | How clearly price data is shown |
+| Trend | Direction of market sentiment |
+| Volatility | Degree of price fluctuation |
+| Support/Resistance | Key price levels |
+| Volume | Strength of moves |
+| Timeframe | Depth of perspective |
+
+---
+
+## 🎯 Reflection Exercise
+
+Open a stock chart right now:
+- Can you identify the current **trend**?
+- Where do you see support or resistance?
+- Is volume increasing with price moves?
+
+This hands-on look helps you translate theory into real-world chart reading.
+""",
+  "quiz": [
+    {
+      "question": "Which chart feature helps confirm the *strength* of a price move?",
+      "options": [
+        "Chart title",
+        "Volume",
+        "Support levels",
+        "Candlestick color"
+      ],
+      "correct": 1
+    }
+  ]
+},
             {"id": "market_pulse", "title": "Market Pulse", "content": """
 ## Market Pulse
 
