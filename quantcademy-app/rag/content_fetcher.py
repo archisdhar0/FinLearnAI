@@ -12,6 +12,7 @@ import time
 
 # Mapping of lesson titles to lesson IDs from learning_modules.py
 LESSON_MAPPING = {
+    # Foundation module
     "What is investing?": "what_is_investing",
     "What you're actually buying": "what_youre_actually_buying",
     "How Markets Function": "how_markets_function",
@@ -19,9 +20,43 @@ LESSON_MAPPING = {
     "The Basics of Risk": "basics_of_risk",
     "Accounts and Setup": "accounts_setup",
     "First Time Investor Mindset": "first_time_mindset",
+    # Investor Insight module
+    "What Moves Markets": "what_moves_markets",
+    "Investor Psychology": "investor_psychology",
+    "Hype vs. Fundamentals": "hype_vs_fundamentals",
+    "Types of Investing": "types_of_investing",
+    "Risk and Portfolio Thinking": "risk_portfolio_thinking",
+    "Reading Base Market Signals": "reading_market_signals",
+    # Applied Investing module
+    "Costs, Fees, and Taxes": "costs_fees_taxes",
+    "What to do in a market crash": "what_do_in_crash",
+    "Setting a Long term structure": "setting_long_term_structure",
+    "Realistic Expectations About Returns": "realistic_expectations",
 }
 
-MODULE_ID = "foundations"
+# Mapping of lesson IDs to module IDs
+LESSON_TO_MODULE = {
+    # Foundation module
+    "what_is_investing": "foundations",
+    "what_youre_actually_buying": "foundations",
+    "how_markets_function": "foundations",
+    "time_compounding": "foundations",
+    "basics_of_risk": "foundations",
+    "accounts_setup": "foundations",
+    "first_time_mindset": "foundations",
+    # Investor Insight module
+    "what_moves_markets": "investor_insight",
+    "investor_psychology": "investor_insight",
+    "hype_vs_fundamentals": "investor_insight",
+    "types_of_investing": "investor_insight",
+    "risk_portfolio_thinking": "investor_insight",
+    "reading_market_signals": "investor_insight",
+    # Applied Investing module
+    "costs_fees_taxes": "applied_investing",
+    "what_do_in_crash": "applied_investing",
+    "setting_long_term_structure": "applied_investing",
+    "realistic_expectations": "applied_investing",
+}
 
 
 def extract_domain_name(url: str) -> str:
@@ -61,6 +96,34 @@ def extract_domain_name(url: str) -> str:
         "sec.gov": "SEC",
         "khanacademy.org": "Khan Academy",
         "riverbridge.com": "Riverbridge",
+        "corporatefinanceinstitute.com": "CFI",
+        "arqwealth.com": "ARQ Wealth",
+        "ls.berkeley.edu": "UC Berkeley",
+        "thedecisionlab.com": "The Decision Lab",
+        "sofi.com": "SoFi",
+        "beutelgoodman.com": "Beutel Goodman",
+        "financialresearch.gov": "OFR",
+        "leelynsmith.com": "Lee Lyn Smith",
+        "kayne.com": "Kayne Anderson",
+        "whittiertrust.com": "Whittier Trust",
+        "cfcapllc.com": "CF Capital",
+        "ishares.com": "iShares",
+        "schwab.com": "Charles Schwab",
+        "nl.vanguard": "Vanguard",
+        "burlingbank.com": "Burling Bank",
+        "bankrate.com": "Bankrate",
+        "experian.com": "Experian",
+        "smartasset.com": "SmartAsset",
+        "cambridgeassociates.com": "Cambridge Associates",
+        "capitalgroup.com": "Capital Group",
+        "fnbo.com": "First National Bank",
+        "morningstar.com": "Morningstar",
+        "mfs.com": "MFS",
+        "heygotrade.com": "HeyGoTrade",
+        "researchaffiliates.com": "Research Affiliates",
+        "nerdwallet.com": "NerdWallet",
+        "ajbell.co.uk": "AJ Bell",
+        "financialsuccess.fsu.edu": "FSU Financial Success",
     }
     
     for key, value in domain_map.items():
@@ -131,6 +194,8 @@ def fetch_url_content(url: str, timeout: int = 10) -> Optional[Dict[str, str]]:
 def parse_links_file(file_path: str) -> Dict[str, List[str]]:
     """
     Parse links.md file and return dict mapping lesson titles to URLs.
+    Handles both main lessons (ending with colon or matching known titles) and subsections.
+    Subsections are grouped under their parent lesson.
     """
     with open(file_path, 'r') as f:
         content = f.read()
@@ -143,14 +208,43 @@ def parse_links_file(file_path: str) -> Dict[str, List[str]]:
         if not line:
             continue
         
+        # Check if it's a URL
+        if line.startswith('http'):
+            if current_lesson and current_lesson in LESSON_MAPPING:
+                lessons[current_lesson].append(line)
+            elif current_lesson:
+                # This is a URL under a subsection - find the parent lesson
+                # Check if current_lesson is a subsection of a known lesson
+                parent_lesson = None
+                for known_lesson in LESSON_MAPPING.keys():
+                    # Simple heuristic: if subsection text appears in known lesson or vice versa
+                    if known_lesson.lower() in current_lesson.lower() or current_lesson.lower() in known_lesson.lower():
+                        parent_lesson = known_lesson
+                        break
+                
+                if parent_lesson:
+                    if parent_lesson not in lessons:
+                        lessons[parent_lesson] = []
+                    lessons[parent_lesson].append(line)
+            continue
+        
         # Check if it's a lesson title (ends with colon)
         if line.endswith(':'):
-            current_lesson = line.rstrip(':')
-            lessons[current_lesson] = []
-        # Check if it's a URL
-        elif line.startswith('http'):
-            if current_lesson:
-                lessons[current_lesson].append(line)
+            potential_lesson = line.rstrip(':')
+            if potential_lesson in LESSON_MAPPING:
+                current_lesson = potential_lesson
+                if current_lesson not in lessons:
+                    lessons[current_lesson] = []
+            else:
+                # Unknown section with colon - might be a subsection, keep current_lesson
+                pass
+        # Check if it matches a known lesson title (without colon)
+        elif line in LESSON_MAPPING:
+            current_lesson = line
+            if current_lesson not in lessons:
+                lessons[current_lesson] = []
+        # Otherwise, it might be a subsection header - keep current_lesson if it exists
+        # (URLs under subsections will be handled above)
     
     return lessons
 
@@ -224,10 +318,13 @@ def fetch_all_content(links_file: str = "rag/links.md", delay: float = 1.0) -> L
     for lesson_title, urls in lessons.items():
         lesson_id = LESSON_MAPPING.get(lesson_title)
         if not lesson_id:
-            print(f"Warning: No lesson_id mapping for '{lesson_title}'")
+            print(f"Warning: No lesson_id mapping for '{lesson_title}' - skipping")
             continue
         
-        print(f"\nFetching content for: {lesson_title} ({lesson_id})")
+        # Get module_id from lesson_id
+        module_id = LESSON_TO_MODULE.get(lesson_id, "foundations")
+        
+        print(f"\nFetching content for: {lesson_title} ({lesson_id}, module: {module_id})")
         
         for url in urls:
             print(f"  Fetching: {url}")
@@ -240,7 +337,7 @@ def fetch_all_content(links_file: str = "rag/links.md", delay: float = 1.0) -> L
                 for idx, chunk_text in enumerate(chunks):
                     all_content.append({
                         'lesson_id': lesson_id,
-                        'module_id': MODULE_ID,
+                        'module_id': module_id,
                         'url': result['url'],
                         'source': result['source'],
                         'title': result['title'],
