@@ -349,7 +349,8 @@ def main():
             "📊 Module 2: Risk Explained",
             "🏗️ Module 3: Build Portfolio",
             "🔮 Module 4: Outcome Simulator",
-            "📈 Chart Analyzer"
+            "📈 Chart Analyzer",
+            "🔍 Stock Screener"
         ])
     
     page = st.sidebar.radio("Navigate", nav_options, label_visibility="collapsed")
@@ -386,6 +387,8 @@ def main():
         render_module_4()
     elif "Chart Analyzer" in page:
         render_chart_analyzer()
+    elif "Stock Screener" in page:
+        render_stock_screener()
 
 
 # ============================================================
@@ -1336,6 +1339,113 @@ def render_chart_analyzer():
     except Exception as e:
         st.error(f"Error loading Chart Analyzer: {e}")
         st.info("Make sure you have trained the models in the chart-vision folder.")
+
+
+# ============================================================
+# STOCK SCREENER
+# ============================================================
+def render_stock_screener():
+    """Render the Stock Screener dashboard."""
+    try:
+        from pages import stock_screener
+        
+        st.markdown("""
+        <div class="main-header">
+            <h1>🔍 AI Stock Screener</h1>
+            <p>Real-time analysis with Computer Vision signals</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Check for Polygon API
+        if not stock_screener.POLYGON_AVAILABLE:
+            st.error("""
+            **Polygon API client not installed.**
+            
+            ```bash
+            pip install polygon-api-client
+            ```
+            """)
+            return
+        
+        # API Key from environment (hidden from users)
+        import os
+        from pathlib import Path
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(Path(__file__).parent / ".env")
+        except ImportError:
+            pass
+        api_key = os.environ.get('POLYGON_API_KEY', '')
+        
+        if not api_key:
+            st.error("Stock Screener is currently unavailable. Please try again later.")
+            return
+        
+        # Load models
+        models = {}
+        if stock_screener.MODELS_AVAILABLE:
+            with st.spinner("Loading AI models..."):
+                models = stock_screener.load_models()
+        
+        st.markdown("---")
+        
+        # Stock selection
+        col1, col2, col3 = st.columns([1, 1, 1])
+        
+        with col1:
+            category = st.selectbox(
+                "Category",
+                options=list(stock_screener.WATCHLIST_STOCKS.keys())
+            )
+        
+        with col2:
+            stocks = st.multiselect(
+                "Select Stocks",
+                options=stock_screener.WATCHLIST_STOCKS[category],
+                default=stock_screener.WATCHLIST_STOCKS[category][:3]
+            )
+        
+        with col3:
+            custom = st.text_input("Add Custom", placeholder="PLTR")
+            if custom and custom.upper() not in stocks:
+                stocks.append(custom.upper())
+        
+        if not stocks:
+            st.info("Select stocks to analyze")
+            return
+        
+        # Market Overview
+        st.markdown("### Market Overview")
+        stock_screener.render_market_overview(api_key)
+        
+        st.markdown("---")
+        st.markdown(f"### Analyzing {len(stocks)} Stocks")
+        
+        # Analyze each stock
+        for ticker in stocks:
+            with st.spinner(f"Analyzing {ticker}..."):
+                quote = stock_screener.fetch_stock_quote(ticker, api_key)
+                df = stock_screener.fetch_stock_data(ticker, api_key, days=30)
+                
+                if quote and df is not None and len(df) > 10:
+                    chart_img = stock_screener.generate_chart_image(df, figsize=(8, 5))
+                    price_range = (df['Low'].min(), df['High'].max())
+                    analysis = stock_screener.analyze_chart(chart_img, models, price_range)
+                    
+                    stock_screener.render_stock_card(ticker, quote, analysis, chart_img)
+                else:
+                    st.warning(f"Could not fetch data for {ticker}")
+            
+            import time
+            time.sleep(0.2)
+        
+        st.markdown("---")
+        st.caption("AI signals are for educational purposes only. Not financial advice.")
+    
+    except Exception as e:
+        st.error(f"Error loading Stock Screener: {e}")
+        import traceback
+        st.code(traceback.format_exc())
 
 
 # ============================================================
