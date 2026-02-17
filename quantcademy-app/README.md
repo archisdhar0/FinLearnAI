@@ -51,7 +51,26 @@ pip install -r requirements.txt
 
 ### 2. Build Knowledge Base (Required for AI Tutor)
 
-The AI tutor uses content fetched from URLs in `rag/links.md`. Build the knowledge base:
+The AI tutor uses content fetched from URLs. You have two options:
+
+#### Option A: Use Web Link Finder (Recommended)
+
+Searches only within trusted financial sites (Investopedia, Vanguard, Fidelity, Schwab, SEC, FINRA, etc.) for each lesson topic. No external dependencies needed beyond `requests` and `beautifulsoup4`.
+
+```bash
+# Make sure you're in quantcademy-app directory
+python3 -m rag.web_link_finder
+```
+
+This will:
+- Search each trusted financial site for content matching every lesson topic
+- Scrape and chunk content from working URLs
+- Save to `rag/web_scraped_content.json`
+- Automatically merge into `rag/fetched_content_cache.json`
+
+#### Option B: Use Manual Links (If Links Work)
+
+If your links in `links.md` are working, use the standard builder:
 
 ```bash
 # Make sure you're in quantcademy-app directory and venv is activated
@@ -64,7 +83,7 @@ This will:
 - Store it in the knowledge base for the RAG system
 - Take a few minutes (fetches from ~50+ URLs)
 
-**Note:** This only needs to be run once (or when you update `links.md`). The content is cached locally.
+**Note:** Knowledge base building only needs to be run once (or when you update links). The content is cached locally in `rag/fetched_content_cache.json`.
 
 ### 3. Configure AI Tutor (Required for Chat Feature)
 

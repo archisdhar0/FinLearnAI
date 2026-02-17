@@ -25,3 +25,5 @@ chroma_db/
 
 # RAG Knowledge Base Cache (generated from links.md)
 quantcademy-app/rag/fetched_content_cache.json
+chart-vision/data/
+chart-vision/checkpoints/
