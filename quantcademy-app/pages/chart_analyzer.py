@@ -16,8 +16,10 @@ sys.path.insert(0, str(CHART_VISION_PATH))
 
 # Try to import models
 MODELS_AVAILABLE = False
+XAI_AVAILABLE = False
 try:
     import torch
+    import torch.nn.functional as F
     import torchvision.transforms as transforms
     import matplotlib.pyplot as plt
     import matplotlib
@@ -28,6 +30,14 @@ try:
     from train_trend_model_v2 import TrendModelV2, CLASSES as TREND_CLASSES
     
     MODELS_AVAILABLE = True
+    
+    # Try to import XAI
+    try:
+        from explainable_ai import GradCAM, get_target_layer
+        XAI_AVAILABLE = True
+    except ImportError:
+        XAI_AVAILABLE = False
+        
 except ImportError as e:
     IMPORT_ERROR = str(e)
 
@@ -354,6 +364,106 @@ def main():
                     st.markdown("- No significant resistance detected")
             else:
                 st.info("S/R model not available")
+        
+        st.markdown("---")
+        
+        # XAI Section - Explainable AI
+        if XAI_AVAILABLE and ('sr' in models or 'trend' in models):
+            with st.expander("🧠 Explainable AI - See What The Model Sees", expanded=False):
+                st.markdown("""
+                **Grad-CAM Visualization** shows which parts of the chart the AI model focused on 
+                to make its prediction. Brighter areas = more important for the decision.
+                """)
+                
+                if st.button("Generate XAI Heatmap"):
+                    with st.spinner("Generating explanation..."):
+                        try:
+                            import cv2
+                            
+                            img_array = np.array(image)
+                            original_size = image.size  # (W, H)
+                            
+                            xai_cols = st.columns(2)
+                            
+                            # Trend XAI
+                            if 'trend' in models:
+                                with xai_cols[0]:
+                                    st.markdown("#### Trend Model Focus")
+                                    
+                                    model = models['trend']['model']
+                                    target_layer = get_target_layer(model, 'trend')
+                                    gradcam = GradCAM(model, target_layer)
+                                    
+                                    # Generate heatmap
+                                    heatmap, pred_class = gradcam.generate(img_tensor)
+                                    
+                                    # Ensure heatmap is numpy array
+                                    if hasattr(heatmap, 'cpu'):
+                                        heatmap = heatmap.cpu().numpy()
+                                    heatmap = np.array(heatmap, dtype=np.float32)
+                                    
+                                    # Resize and colorize
+                                    heatmap_resized = cv2.resize(heatmap, original_size)
+                                    heatmap_colored = cv2.applyColorMap(
+                                        (heatmap_resized * 255).astype(np.uint8), 
+                                        cv2.COLORMAP_JET
+                                    )
+                                    heatmap_colored = cv2.cvtColor(heatmap_colored, cv2.COLOR_BGR2RGB)
+                                    
+                                    # Overlay
+                                    overlay = (0.6 * img_array + 0.4 * heatmap_colored).astype(np.uint8)
+                                    
+                                    st.image(overlay, caption=f"Focus areas for {TREND_CLASSES[pred_class]} prediction",
+                                            use_container_width=True)
+                                    
+                                    st.caption("🔴 Red/Yellow = High importance | 🔵 Blue = Low importance")
+                            
+                            # S/R XAI  
+                            if 'sr' in models:
+                                with xai_cols[1]:
+                                    st.markdown("#### S/R Model Focus")
+                                    
+                                    model = models['sr']['model']
+                                    target_layer = get_target_layer(model, 'sr')
+                                    gradcam = GradCAM(model, target_layer)
+                                    
+                                    # For S/R, we average across all zone predictions
+                                    model.zero_grad()
+                                    output = model(img_tensor)
+                                    
+                                    # Backprop for average of all outputs
+                                    loss = output.mean()
+                                    loss.backward()
+                                    
+                                    gradients = gradcam.gradients
+                                    activations = gradcam.activations
+                                    
+                                    weights = gradients.mean(dim=(2, 3), keepdim=True)
+                                    cam = (weights * activations).sum(dim=1, keepdim=True)
+                                    cam = F.relu(cam).squeeze()
+                                    
+                                    # Ensure cam is numpy array
+                                    if hasattr(cam, 'cpu'):
+                                        cam = cam.cpu().numpy()
+                                    cam = np.array(cam, dtype=np.float32)
+                                    cam = (cam - cam.min()) / (cam.max() - cam.min() + 1e-8)
+                                    
+                                    heatmap_resized = cv2.resize(cam, original_size)
+                                    heatmap_colored = cv2.applyColorMap(
+                                        (heatmap_resized * 255).astype(np.uint8),
+                                        cv2.COLORMAP_JET
+                                    )
+                                    heatmap_colored = cv2.cvtColor(heatmap_colored, cv2.COLOR_BGR2RGB)
+                                    
+                                    overlay = (0.6 * img_array + 0.4 * heatmap_colored).astype(np.uint8)
+                                    
+                                    st.image(overlay, caption="Focus areas for S/R detection",
+                                            use_container_width=True)
+                                    
+                                    st.caption("🔴 Red/Yellow = Potential S/R zones | 🔵 Blue = Less important")
+                                    
+                        except Exception as e:
+                            st.error(f"Error generating XAI visualization: {e}")
         
         st.markdown("---")
         

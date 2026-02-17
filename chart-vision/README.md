@@ -245,6 +245,30 @@ pip install -r requirements.txt
 
 ---
 
+## 🧠 Explainable AI (Grad-CAM)
+
+Visualize **what the model is looking at** when making predictions:
+
+```bash
+# Explain both models
+python explainable_ai.py --image path/to/chart.png --model both
+
+# Explain trend model only
+python explainable_ai.py --image path/to/chart.png --model trend
+
+# Save output
+python explainable_ai.py --image chart.png --model sr --output sr_explanation.png
+```
+
+**What it shows:**
+- **Heatmap overlay**: Red/yellow areas = high importance, blue = low importance
+- **For Trend**: Where the model looks to determine direction (usually recent candles)
+- **For S/R**: Where the model detects potential support/resistance (horizontal levels)
+
+This is also available in the **Chart Analyzer** page of the QuantCademy app!
+
+---
+
 ## 🚀 Next Steps
 
 1. **Real-time analysis**: Integrate with live market data
