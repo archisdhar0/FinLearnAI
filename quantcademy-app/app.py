@@ -348,7 +348,8 @@ def main():
             "🎯 Module 1: Goals & Timeline",
             "📊 Module 2: Risk Explained",
             "🏗️ Module 3: Build Portfolio",
-            "🔮 Module 4: Outcome Simulator"
+            "🔮 Module 4: Outcome Simulator",
+            "📈 Chart Analyzer"
         ])
     
     page = st.sidebar.radio("Navigate", nav_options, label_visibility="collapsed")
@@ -383,6 +384,8 @@ def main():
         render_module_3()
     elif "Module 4" in page:
         render_module_4()
+    elif "Chart Analyzer" in page:
+        render_chart_analyzer()
 
 
 # ============================================================
@@ -1164,6 +1167,175 @@ def render_module_4():
         st.balloons()
         st.success("🎉 Congratulations! You've completed the Foundations track!")
         st.rerun()
+
+
+# ============================================================
+# CHART ANALYZER
+# ============================================================
+def render_chart_analyzer():
+    """Render the Chart Analyzer page."""
+    # Import and run the chart analyzer module
+    try:
+        from pages.chart_analyzer import main as chart_analyzer_main
+        # We need to call the core logic, not main() which sets page config
+        from pages import chart_analyzer
+        
+        # Check if models are available
+        if not chart_analyzer.MODELS_AVAILABLE:
+            st.markdown("""
+            <div class="main-header">
+                <h1>📊 Chart Analyzer</h1>
+                <p>Upload a chart image to detect Support/Resistance and Trend</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.error("""
+            **Models not available.** 
+            
+            Make sure you have:
+            1. Trained the models in `chart-vision/`
+            2. Installed required packages: `pip install torch torchvision`
+            """)
+            return
+        
+        st.markdown("""
+        <div class="main-header">
+            <h1>📊 Chart Analyzer</h1>
+            <p>Upload any candlestick chart to detect Support/Resistance levels and Trend direction using AI</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Load models
+        with st.spinner("Loading AI models..."):
+            models = chart_analyzer.load_models()
+        
+        if not models:
+            st.warning("""
+            **No trained models found.** Train the models first:
+            ```bash
+            cd chart-vision
+            python train_sr_model_v2.py --mode both
+            python train_trend_model_v2.py --mode both
+            ```
+            """)
+            return
+        
+        # Show model status
+        col1, col2 = st.columns(2)
+        with col1:
+            if 'sr' in models:
+                acc = models['sr']['accuracy']
+                st.success(f"✅ S/R Model ({acc:.1%} accuracy)")
+            else:
+                st.warning("⚠️ S/R Model not found")
+        
+        with col2:
+            if 'trend' in models:
+                acc = models['trend']['accuracy']
+                st.success(f"✅ Trend Model ({acc:.1%} accuracy)")
+            else:
+                st.warning("⚠️ Trend Model not found")
+        
+        st.markdown("---")
+        
+        # File uploader
+        uploaded_file = st.file_uploader(
+            "Upload a candlestick chart image",
+            type=['png', 'jpg', 'jpeg', 'webp'],
+            help="Works best with clean candlestick charts"
+        )
+        
+        if uploaded_file:
+            from PIL import Image
+            import io
+            
+            image = Image.open(uploaded_file).convert('RGB')
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("### Original Chart")
+                st.image(image, use_container_width=True)
+            
+            # Run analysis
+            with st.spinner("Analyzing chart with AI..."):
+                img_tensor = chart_analyzer.preprocess_image(image)
+                
+                sr_result = None
+                trend_result = None
+                
+                if 'sr' in models:
+                    sr_result = chart_analyzer.predict_sr_zones(models['sr']['model'], img_tensor)
+                
+                if 'trend' in models:
+                    trend_result = chart_analyzer.predict_trend(models['trend']['model'], img_tensor)
+                
+                # Create annotated image
+                if sr_result or trend_result:
+                    annotated = chart_analyzer.create_analysis_image(
+                        image, 
+                        sr_result or {'support_zones': [], 'resistance_zones': [], 
+                                     'support_probs': [], 'resistance_probs': []},
+                        trend_result
+                    )
+            
+            with col2:
+                st.markdown("### AI Analysis")
+                if sr_result or trend_result:
+                    st.image(annotated, use_container_width=True)
+            
+            st.markdown("---")
+            
+            # Results
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("### 📈 Trend")
+                if trend_result:
+                    trend = trend_result['prediction']
+                    conf = trend_result['confidence']
+                    
+                    if trend == 'uptrend':
+                        st.success(f"**{trend.upper()}** ↗ ({conf:.0%})")
+                    elif trend == 'downtrend':
+                        st.error(f"**{trend.upper()}** ↘ ({conf:.0%})")
+                    else:
+                        st.warning(f"**{trend.upper()}** → ({conf:.0%})")
+            
+            with col2:
+                st.markdown("### 🎯 S/R Levels")
+                if sr_result:
+                    support_count = sum(1 for p in sr_result['support_probs'] if p > 0.4)
+                    resist_count = sum(1 for p in sr_result['resistance_probs'] if p > 0.4)
+                    st.markdown(f"🟢 **{support_count}** support zones detected")
+                    st.markdown(f"🔴 **{resist_count}** resistance zones detected")
+            
+            # Download
+            if sr_result or trend_result:
+                buf = io.BytesIO()
+                annotated.save(buf, format='PNG')
+                buf.seek(0)
+                
+                st.download_button(
+                    label="📥 Download Analyzed Chart",
+                    data=buf,
+                    file_name="chart_analysis.png",
+                    mime="image/png"
+                )
+        
+        else:
+            st.info("👆 Upload a candlestick chart image to get started")
+            
+            st.markdown("""
+            ### Tips for best results:
+            - Use clean candlestick charts (dark background works best)
+            - Charts with 30-90 days of data work well
+            - Avoid charts with too many indicators/overlays
+            """)
+    
+    except Exception as e:
+        st.error(f"Error loading Chart Analyzer: {e}")
+        st.info("Make sure you have trained the models in the chart-vision folder.")
 
 
 # ============================================================
