@@ -24,3 +24,9 @@ sentence-transformers>=2.2.0
 
 # Web Search (for link finder)
 duckduckgo-search>=4.0.0
+
+# Database / Auth
+supabase>=2.0.0
+
+# Stock Data
+polygon-api-client>=1.12.0

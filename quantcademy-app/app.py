@@ -13,6 +13,7 @@ import sys
 sys.path.append('.')
 
 from data.curriculum import CURRICULUM, QUIZ_QUESTIONS, PERSONALIZATION
+from auth import save_progress, load_progress
 from simulations.portfolio_sim import (
     monte_carlo_simulation,
     calculate_portfolio_stats,
@@ -327,16 +328,61 @@ def create_outcome_chart(sim_results, years):
 # MAIN APP
 # ============================================================
 def main():
+    # Check authentication - redirect to landing if not logged in
+    if not st.session_state.get('authenticated', False):
+        # Show landing page inline or redirect
+        from pages.landing import render_landing_page, render_auth_form
+        
+        # Hide sidebar for landing
+        st.markdown("""
+        <style>
+        [data-testid="stSidebar"] { display: none; }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        render_landing_page()
+        st.markdown("---")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            render_auth_form()
+        return
+    
     # Sidebar navigation
     st.sidebar.markdown("""
     <div style="text-align: center; padding: 1rem; margin-bottom: 1rem;">
-        <h2 style="color: white; margin: 0;">📈 QuantCademy</h2>
-        <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Learn Investing Your Way</p>
+        <h2 style="color: white; margin: 0;">📈 FinLearn AI</h2>
+        <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Break Into Investing</p>
     </div>
     """, unsafe_allow_html=True)
     
+    # User info and logout
+    user_name = st.session_state.get('user_name', 'User')
+    st.sidebar.markdown(f"""
+    <div style="background: rgba(99,102,241,0.2); padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem;">
+        <p style="color: white; margin: 0; font-size: 0.9rem;">👋 Welcome, <strong>{user_name}</strong></p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    if st.sidebar.button("🚪 Logout", use_container_width=True):
+        # Save progress before logout
+        if st.session_state.get('user_id'):
+            progress_to_save = {
+                'onboarding_complete': st.session_state.get('onboarding_complete', False),
+                'user_profile': st.session_state.get('user_profile', {}),
+                'module_progress': st.session_state.get('module_progress', {}),
+                'quiz_scores': st.session_state.get('quiz_scores', {})
+            }
+            save_progress(st.session_state.user_id, progress_to_save)
+        
+        # Clear session
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        st.rerun()
+    
+    st.sidebar.markdown("---")
+    
     # Show progress if onboarding complete
-    if st.session_state.onboarding_complete:
+    if st.session_state.get('onboarding_complete', False):
         render_progress()
     
     # Navigation
