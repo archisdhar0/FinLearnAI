@@ -19,8 +19,6 @@ https://theweek.com/personal-finance/investing-short-term-versus-long-term-goals
 
 https://www.rasmussen.edu/degrees/business/blog/financial-concepts-examples/
 
-https://money.stackexchange.com/questions/52360/as-a-total-beginner-how-do-i-begin-to-understand-finance-stocks
-
 What you're actually buying:
 
 https://investor.vanguard.com/investor-resources-education/understanding-investment-types/choosing-between-funds-individual-securities
@@ -57,27 +55,19 @@ https://www.investopedia.com/articles/basics/04/100804.asp
 
 https://www.disnat.com/en/learning/trading-basics/stock-basics/what-causes-stock-prices-to-change
 
-https://www.stlouisfed.org/on-the-economy/2025/sep/what-causes-jumps-stock-prices
-
 https://www.investopedia.com/ask/answers/155.asp
 
 https://www.wealthify.com/blog/how-does-the-news-affect-the-stock-market
 
 Time and Compounding:
 
-https://www.investor.gov/introduction-investing/investing-basics/glossary/time-horizon
-
 https://www.investopedia.com/terms/t/timehorizon.asp
-
-https://wealth.visualcapitalist.com/visualizing-power-compound-interest/
-
-https://www.burrowscap.com/blog/the-power-of-starting-early-why-saving-and-investing-now-pays-off
 
 https://fmtrust.bank/money-moves-article/why-it-s-important-to-invest-financially-early-in-your-career/
 
 https://www.bluemountaininvest.com/blog-01/how-consistency-shapes-long-term-growth
 
-https://www.sbisecurities.in/blog/discipline-consistency-patience-key-to-successful-investing
+https://www.investopedia.com/terms/c/compoundinterest.asp
 
 The Basics of Risk:
 
@@ -99,8 +89,6 @@ https://www.investor.gov/introduction-investing/getting-started/assessing-your-r
 
 Accounts and Setup
 
-https://www.sec.gov/about/reports-publications/investorpubsbegfinstmtguide
-
 https://investor.vanguard.com/accounts-plans/iras/roth-ira
 
 https://investor.vanguard.com/accounts-plans/brokerage-accounts
@@ -111,13 +99,18 @@ https://www.investopedia.com/articles/investing/082614/how-stock-market-works.as
 
 https://www.khanacademy.org/economics-finance-domain/ap-macroeconomics/ap-financial-sector/the-money-market-apmacro/a/the-money-market
 
+https://www.investopedia.com/brokerage-account-vs-roth-ira-5222244?
+
 First Time Investor Mindset:
 
 https://investor.vanguard.com/investor-resources-education/article/how-to-start-investing
 
 https://www.fidelity.com/learning-center/trading-investing/investing-for-beginners
 
-https://riverbridge.com/investment-fundamentals-cultivating/
+https://conwaywealth.com/insights/why-emotions-and-money-dont-mix/?utm_source=chatgpt.com
+
+https://howardcmfunds.com/mind-over-markets-how-behavioral-discipline-drives-investment-returns/?utm_source=chatgpt.com
+
 
 What Moves Markets 
 
@@ -146,8 +139,8 @@ https://www.financialresearch.gov/the-ofr-blog/2023/12/28/economic-narratives-sh
 Hype vs. Fundamentals
 
 https://www.leelynsmith.com/insights/article/market-noise-what-it-is-and-why-you-should-ignore-it/
+
 https://kayne.com/insights/why-investors-should-avoid-the-noise-of-everyday-media/
-https://www.whittiertrust.com/separating-signal-from-noise/
 
 https://www.investopedia.com/terms/s/speculation.asp
 
@@ -174,40 +167,38 @@ https://corporatefinanceinstitute.com/resources/career-map/sell-side/capital-mar
 
 Risk and Portfolio Thinking
 
-https://investor.vanguard.com/investing/diversification
 https://www.fidelity.com/learning-center/investment-products/mutual-funds/diversification
 https://www.investopedia.com/terms/d/diversification.asp 
 
-https://www.schwab.com/learn/story/asset-classes 
-https://www.fidelity.com/learning-center/investment-products/what-are-investments
 https://www.investopedia.com/terms/a/assetclasses.asp
 
-https://investor.vanguard.com/investing/asset-allocation
-https://www.fidelity.com/viewpoints/investing-ideas/asset-allocation
-https://www.schwab.com/learn/story/asset-allocation
-
 https://www.investopedia.com/terms/p/portfolio.asp
-https://www.fidelity.com/learning-center/investment-products/portfolio
-https://www.fidelity.com/learning-center/investment-products/portfolio
+
+https://www.finra.org/investors/investing/investing-basics/asset-allocation-diversification
+
+https://www.investor.gov/introduction-investing/getting-started/asset-allocation
+
 
 Reading Base Market Signals
 
 Uptrend vs downtrend
 https://www.investopedia.com/terms/t/trend.asp
-https://www.schwab.com/learn/story/understanding-market-trends
-​​https://www.fidelity.com/learning-center/trading-investing/bull-vs-bear-markets 
+
 Volatility
 https://www.investopedia.com/terms/v/volatility.asp
-https://www.schwab.com/learn/story/what-is-market-volatility
-https://investor.vanguard.com/investor-resources-education/market-volatility
+
 Momentum
 https://www.investopedia.com/terms/m/momentum.asp
-https://www.fidelity.com/learning-center/trading-investing/technical-analysis/momentum
-https://www.schwab.com/learn/story/understanding-momentum 
+
 Cycles
-https://investor.vanguard.com/investor-resources-education/market-cycles
-https://www.fidelity.com/viewpoints/investing-ideas/market-cycles
-https://www.investopedia.com/terms/m/marketcycle.asp
+https://www.fidelity.com/learning-center/trading-investing/technical-analysis/basic-concepts-trend
+
+https://www.investopedia.com/articles/active-trading/041814four-most-commonlyused-indicators-trend-trading.asp
+
+https://www.investopedia.com/terms/m/market_cycles.asp
+
+https://www.finra.org/investors/insights/momentum-investing
+
 
 Costs, Fees, and Taxes
 
@@ -240,67 +231,64 @@ What to do in a market crash
 Market downturns are normal & what NOT to do (panic sell)
 https://www.schwab.com/learn/story/stay-course-when-markets-turn-turbulent
 https://www.sofi.com/learn/content/investing-when-market-is-down/
-https://www.cambridgeassociates.com/wp-content/uploads/2019/09/Managing-Portfolios-Through-Equity-Market-Downturns.pdf
-https://www.capitalgroup.com/advisor/insights/articles/handle-market-declines.html
+italgroup.com/advisor/insights/articles/handle-market-declines.html
 https://www.morganstanley.com/articles/top-5-investor-mistakes
 https://www.fnbo.com/insights/wealth/2025/why-you-shouldnt-panic-during-market-downturns#:~:text=Volatility%20is%20the%20extent%20to,shortly%20after%20its%20steepest%20drops.
 https://www.capitalgroup.com/intermediaries/no/en/insights/articles/guide-market-recoveries.html#:~:text=The%20worst%20US%20bear%20markets,of%20results%20in%20future%20periods.
 Historical recoveries & When rebalancing happens
-https://www.morganstanley.com/im/publication/insights/articles/article_drawdownsandrecoveries_ltr.pdf
+
 https://www.morningstar.com/economy/what-weve-learned-150-years-stock-market-crashes
-https://www.mfs.com/content/dam/mfs-enterprise/mfscom/sales-tools/sales-ideas/mfse_resdwn_fly.pdf
+
 Emotional discipline
 https://www.heygotrade.com/en/blog/panic-selling-meaning-causes-effects/
 https://investor.vanguard.com/investor-resources-education/article/the-science-behind-money-and-emotion
-https://www.researchaffiliates.com/content/dam/ra/publications/pdf/300-a-disciplined-approach-to-investing-taking-emotion-out-of-the-equation.pdf
+
+https://www.mfgteam.com/blog-01/why-sticking-long-term-investment-strategy-pays-market-downturns
 
 Setting a Long term structure
 
-Recurring investments
-https://investor.vanguard.com/investor-resources-education/dollar-cost-averaging
 https://www.fidelity.com/learning-center/personal-finance/automate-savings
-https://www.nerdwallet.com/article/investing/dollar-cost-averaging 
-Contribution schedules
-https://www.fidelity.com/learning-center/trading-investing/how-often-invest
-https://www.schwab.com/learn/story/investing-regularly
-https://investor.vanguard.com/investing/automatic-investing 
-Rebalancing yearly
-https://investor.vanguard.com/investing/rebalancing
-https://www.fidelity.com/viewpoints/investing-ideas/rebalancing
-https://www.schwab.com/learn/story/rebalancing-your-portfolio 
-Ignoring daily noise
-https://investor.vanguard.com/investor-resources-education/staying-the-course
-https://www.fidelity.com/viewpoints/market-and-economic-insights/avoid-market-timing
-https://www.schwab.com/learn/story/focus-long-term-investing 
-Reviewing goals annually
-https://www.fidelity.com/learning-center/personal-finance/annual-financial-checkup
-https://investor.vanguard.com/investing/investment-plan
-https://www.nerdwallet.com/article/investing/how-often-review-investments 
-Staying consistent
-https://investor.vanguard.com/investor-resources-education/investment-discipline
-https://www.schwab.com/learn/story/power-staying-invested 
+
+https://www.investopedia.com/terms/d/dollarcostaveraging.asp
+https://www.bankrate.com/investing/dollar-cost-averaging-what-it-is-avoids-timing-market/
+https://www.mexem.com/blog/the-basics-of-recurring-investing-a-beginners-guide
+https://www.investopedia.com/terms/r/rebalancing.asp
+https://www.investor.gov/additional-resources/spotlight/formerdirectorlorischock-directors-take/it-time-rebalance-your-investment-portfolio
+https://www.leelynsmith.com/insights/article/market-noise-what-it-is-and-why-you-should-ignore-it/
+https://www.investopedia.com/articles/trading/06/marketnoise.asp
+https://www.investopedia.com/investing/figure-out-your-investment-goals/
+https://www.investing.com/academy/trading/best-investment-strategies/
+
 
 Realistic Expectations About Returns
 
-Markets don’t go up every year (specifically the parts of the sources where negative years are emphasized to be a normal part of investing
-https://investor.vanguard.com/investor-resources-education/market-volatility
-https://www.fidelity.com/viewpoints/market-and-economic-insights/market-corrections
-https://www.schwab.com/learn/story/market-volatility-is-normal 
-Average long-term returns
-https://investor.vanguard.com/investor-resources-education/average-investment-returns
-https://www.fidelity.com/learning-center/trading-investing/average-stock-market-return
-https://www.investopedia.com/average-stock-market-return-4773790 
-Volatility
-https://investor.vanguard.com/investor-resources-education/understanding-volatility
-https://www.schwab.com/learn/story/what-is-market-volatility
+
 https://www.investopedia.com/terms/v/volatility.asp
-Time horizon
-https://www.fidelity.com/learning-center/personal-finance/what-is-time-horizon
-https://investor.vanguard.com/investing/time-horizon
-https://www.nerdwallet.com/article/investing/time-horizon
-Why patience wins
-https://www.fidelity.com/learning-center/trading-investing/markets/time-in-market 
-https://www.schwab.com/learn/story/power-staying-invested 
+
 https://www.investopedia.com/articles/stocks/08/passive-active-investing.asp
 
+https://www.investopedia.com/terms/s/sell-in-may-and-go-away.asp
+https://www.experian.com/blogs/ask-experian/what-is-average-stock-market-return/
+https://www.sofi.com/learn/content/average-stock-market-return/
+https://www.sofi.com/learn/content/time-horizons-for-investing/
+https://www.investopedia.com/articles/pf/07/patient_investor.asp
 
+Charts 101
+
+https://www.investopedia.com/terms/c/candlestick.asp 
+
+https://www.investopedia.com/terms/t/trend.asp
+https://www.investopedia.com/terms/v/volatility.asp
+
+https://www.investopedia.com/terms/s/support.asp
+https://www.fidelity.com/learning-center/trading-investing/technical-analysis/support-and-resistance
+
+https://www.investopedia.com/terms/v/volume.asp
+
+https://www.investopedia.com/terms/m/multiple-timeframe-analysis.asp 
+
+https://www.investopedia.com/articles/technical/112601.asp
+https://www.investing.com/brokers/guides/stocks/how-to-read-stock-charts-a-beginners-guide-to-market-trends/
+https://trendspider.com/learning-center/introduction-to-chart-types/
+https://www.sofi.com/learn/content/how-to-read-stock-charts/
+https://www.investing.com/academy/analysis/top-10-stock-chart-patterns/
