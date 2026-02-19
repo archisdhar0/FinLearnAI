@@ -1,0 +1,26 @@
+# FastAPI Backend
+fastapi>=0.104.0
+uvicorn>=0.24.0
+python-multipart>=0.0.6
+
+# Environment
+python-dotenv>=1.0.0
+
+# Data
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Stock Data
+polygon-api-client>=1.12.0
+
+# ML/AI (shared with other projects)
+torch>=2.0.0
+torchvision>=0.15.0
+Pillow>=10.0.0
+
+# Chart generation
+matplotlib>=3.7.0
+
+# RAG dependencies
+sentence-transformers>=2.2.0
+google-genai>=0.2.0

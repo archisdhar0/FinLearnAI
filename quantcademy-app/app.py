@@ -13,6 +13,7 @@ import sys
 sys.path.append('.')
 
 from data.curriculum import CURRICULUM, QUIZ_QUESTIONS, PERSONALIZATION
+from auth import save_progress, load_progress
 from simulations.portfolio_sim import (
     monte_carlo_simulation,
     calculate_portfolio_stats,
@@ -327,16 +328,61 @@ def create_outcome_chart(sim_results, years):
 # MAIN APP
 # ============================================================
 def main():
+    # Check authentication - redirect to landing if not logged in
+    if not st.session_state.get('authenticated', False):
+        # Show landing page inline or redirect
+        from pages.landing import render_landing_page, render_auth_form
+        
+        # Hide sidebar for landing
+        st.markdown("""
+        <style>
+        [data-testid="stSidebar"] { display: none; }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        render_landing_page()
+        st.markdown("---")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            render_auth_form()
+        return
+    
     # Sidebar navigation
     st.sidebar.markdown("""
     <div style="text-align: center; padding: 1rem; margin-bottom: 1rem;">
-        <h2 style="color: white; margin: 0;">📈 QuantCademy</h2>
-        <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Learn Investing Your Way</p>
+        <h2 style="color: white; margin: 0;">📈 FinLearn AI</h2>
+        <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Break Into Investing</p>
     </div>
     """, unsafe_allow_html=True)
     
+    # User info and logout
+    user_name = st.session_state.get('user_name', 'User')
+    st.sidebar.markdown(f"""
+    <div style="background: rgba(99,102,241,0.2); padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem;">
+        <p style="color: white; margin: 0; font-size: 0.9rem;">👋 Welcome, <strong>{user_name}</strong></p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    if st.sidebar.button("🚪 Logout", use_container_width=True):
+        # Save progress before logout
+        if st.session_state.get('user_id'):
+            progress_to_save = {
+                'onboarding_complete': st.session_state.get('onboarding_complete', False),
+                'user_profile': st.session_state.get('user_profile', {}),
+                'module_progress': st.session_state.get('module_progress', {}),
+                'quiz_scores': st.session_state.get('quiz_scores', {})
+            }
+            save_progress(st.session_state.user_id, progress_to_save)
+        
+        # Clear session
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        st.rerun()
+    
+    st.sidebar.markdown("---")
+    
     # Show progress if onboarding complete
-    if st.session_state.onboarding_complete:
+    if st.session_state.get('onboarding_complete', False):
         render_progress()
     
     # Navigation
@@ -348,7 +394,9 @@ def main():
             "🎯 Module 1: Goals & Timeline",
             "📊 Module 2: Risk Explained",
             "🏗️ Module 3: Build Portfolio",
-            "🔮 Module 4: Outcome Simulator"
+            "🔮 Module 4: Outcome Simulator",
+            "📈 Chart Analyzer",
+            "🔍 Stock Screener"
         ])
     
     page = st.sidebar.radio("Navigate", nav_options, label_visibility="collapsed")
@@ -383,6 +431,10 @@ def main():
         render_module_3()
     elif "Module 4" in page:
         render_module_4()
+    elif "Chart Analyzer" in page:
+        render_chart_analyzer()
+    elif "Stock Screener" in page:
+        render_stock_screener()
 
 
 # ============================================================
@@ -1164,6 +1216,282 @@ def render_module_4():
         st.balloons()
         st.success("🎉 Congratulations! You've completed the Foundations track!")
         st.rerun()
+
+
+# ============================================================
+# CHART ANALYZER
+# ============================================================
+def render_chart_analyzer():
+    """Render the Chart Analyzer page."""
+    # Import and run the chart analyzer module
+    try:
+        from pages.chart_analyzer import main as chart_analyzer_main
+        # We need to call the core logic, not main() which sets page config
+        from pages import chart_analyzer
+        
+        # Check if models are available
+        if not chart_analyzer.MODELS_AVAILABLE:
+            st.markdown("""
+            <div class="main-header">
+                <h1>📊 Chart Analyzer</h1>
+                <p>Upload a chart image to detect Support/Resistance and Trend</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.error("""
+            **Models not available.** 
+            
+            Make sure you have:
+            1. Trained the models in `chart-vision/`
+            2. Installed required packages: `pip install torch torchvision`
+            """)
+            return
+        
+        st.markdown("""
+        <div class="main-header">
+            <h1>📊 Chart Analyzer</h1>
+            <p>Upload any candlestick chart to detect Support/Resistance levels and Trend direction using AI</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Load models
+        with st.spinner("Loading AI models..."):
+            models = chart_analyzer.load_models()
+        
+        if not models:
+            st.warning("""
+            **No trained models found.** Train the models first:
+            ```bash
+            cd chart-vision
+            python train_sr_model_v2.py --mode both
+            python train_trend_model_v2.py --mode both
+            ```
+            """)
+            return
+        
+        # Show model status
+        col1, col2 = st.columns(2)
+        with col1:
+            if 'sr' in models:
+                acc = models['sr']['accuracy']
+                st.success(f"✅ S/R Model ({acc:.1%} accuracy)")
+            else:
+                st.warning("⚠️ S/R Model not found")
+        
+        with col2:
+            if 'trend' in models:
+                acc = models['trend']['accuracy']
+                st.success(f"✅ Trend Model ({acc:.1%} accuracy)")
+            else:
+                st.warning("⚠️ Trend Model not found")
+        
+        st.markdown("---")
+        
+        # File uploader
+        uploaded_file = st.file_uploader(
+            "Upload a candlestick chart image",
+            type=['png', 'jpg', 'jpeg', 'webp'],
+            help="Works best with clean candlestick charts"
+        )
+        
+        if uploaded_file:
+            from PIL import Image
+            import io
+            
+            image = Image.open(uploaded_file).convert('RGB')
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("### Original Chart")
+                st.image(image, use_container_width=True)
+            
+            # Run analysis
+            with st.spinner("Analyzing chart with AI..."):
+                img_tensor = chart_analyzer.preprocess_image(image)
+                
+                sr_result = None
+                trend_result = None
+                
+                if 'sr' in models:
+                    sr_result = chart_analyzer.predict_sr_zones(models['sr']['model'], img_tensor)
+                
+                if 'trend' in models:
+                    trend_result = chart_analyzer.predict_trend(models['trend']['model'], img_tensor)
+                
+                # Create annotated image
+                if sr_result or trend_result:
+                    annotated = chart_analyzer.create_analysis_image(
+                        image, 
+                        sr_result or {'support_zones': [], 'resistance_zones': [], 
+                                     'support_probs': [], 'resistance_probs': []},
+                        trend_result
+                    )
+            
+            with col2:
+                st.markdown("### AI Analysis")
+                if sr_result or trend_result:
+                    st.image(annotated, use_container_width=True)
+            
+            st.markdown("---")
+            
+            # Results
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("### 📈 Trend")
+                if trend_result:
+                    trend = trend_result['prediction']
+                    conf = trend_result['confidence']
+                    
+                    if trend == 'uptrend':
+                        st.success(f"**{trend.upper()}** ↗ ({conf:.0%})")
+                    elif trend == 'downtrend':
+                        st.error(f"**{trend.upper()}** ↘ ({conf:.0%})")
+                    else:
+                        st.warning(f"**{trend.upper()}** → ({conf:.0%})")
+            
+            with col2:
+                st.markdown("### 🎯 S/R Levels")
+                if sr_result:
+                    support_count = sum(1 for p in sr_result['support_probs'] if p > 0.4)
+                    resist_count = sum(1 for p in sr_result['resistance_probs'] if p > 0.4)
+                    st.markdown(f"🟢 **{support_count}** support zones detected")
+                    st.markdown(f"🔴 **{resist_count}** resistance zones detected")
+            
+            # Download
+            if sr_result or trend_result:
+                buf = io.BytesIO()
+                annotated.save(buf, format='PNG')
+                buf.seek(0)
+                
+                st.download_button(
+                    label="📥 Download Analyzed Chart",
+                    data=buf,
+                    file_name="chart_analysis.png",
+                    mime="image/png"
+                )
+        
+        else:
+            st.info("👆 Upload a candlestick chart image to get started")
+            
+            st.markdown("""
+            ### Tips for best results:
+            - Use clean candlestick charts (dark background works best)
+            - Charts with 30-90 days of data work well
+            - Avoid charts with too many indicators/overlays
+            """)
+    
+    except Exception as e:
+        st.error(f"Error loading Chart Analyzer: {e}")
+        st.info("Make sure you have trained the models in the chart-vision folder.")
+
+
+# ============================================================
+# STOCK SCREENER
+# ============================================================
+def render_stock_screener():
+    """Render the Stock Screener dashboard."""
+    try:
+        from pages import stock_screener
+        
+        st.markdown("""
+        <div class="main-header">
+            <h1>🔍 AI Stock Screener</h1>
+            <p>Real-time analysis with Computer Vision signals</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Check for Polygon API
+        if not stock_screener.POLYGON_AVAILABLE:
+            st.error("""
+            **Polygon API client not installed.**
+            
+            ```bash
+            pip install polygon-api-client
+            ```
+            """)
+            return
+        
+        # API Key from environment (hidden from users)
+        import os
+        from pathlib import Path
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(Path(__file__).parent / ".env")
+        except ImportError:
+            pass
+        api_key = os.environ.get('POLYGON_API_KEY', '')
+        
+        if not api_key:
+            st.error("Stock Screener is currently unavailable. Please try again later.")
+            return
+        
+        # Load models
+        models = {}
+        if stock_screener.MODELS_AVAILABLE:
+            with st.spinner("Loading AI models..."):
+                models = stock_screener.load_models()
+        
+        st.markdown("---")
+        
+        # Stock selection
+        col1, col2, col3 = st.columns([1, 1, 1])
+        
+        with col1:
+            category = st.selectbox(
+                "Category",
+                options=list(stock_screener.WATCHLIST_STOCKS.keys())
+            )
+        
+        with col2:
+            stocks = st.multiselect(
+                "Select Stocks",
+                options=stock_screener.WATCHLIST_STOCKS[category],
+                default=stock_screener.WATCHLIST_STOCKS[category][:3]
+            )
+        
+        with col3:
+            custom = st.text_input("Add Custom", placeholder="PLTR")
+            if custom and custom.upper() not in stocks:
+                stocks.append(custom.upper())
+        
+        if not stocks:
+            st.info("Select stocks to analyze")
+            return
+        
+        # Market Overview
+        st.markdown("### Market Overview")
+        stock_screener.render_market_overview(api_key)
+        
+        st.markdown("---")
+        st.markdown(f"### Analyzing {len(stocks)} Stocks")
+        
+        # Analyze each stock
+        for ticker in stocks:
+            with st.spinner(f"Analyzing {ticker}..."):
+                quote = stock_screener.fetch_stock_quote(ticker, api_key)
+                df = stock_screener.fetch_stock_data(ticker, api_key, days=30)
+                
+                if quote and df is not None and len(df) > 10:
+                    chart_img = stock_screener.generate_chart_image(df, figsize=(8, 5))
+                    price_range = (df['Low'].min(), df['High'].max())
+                    analysis = stock_screener.analyze_chart(chart_img, models, price_range)
+                    
+                    stock_screener.render_stock_card(ticker, quote, analysis, chart_img)
+                else:
+                    st.warning(f"Could not fetch data for {ticker}")
+            
+            import time
+            time.sleep(0.2)
+        
+        st.markdown("---")
+        st.caption("AI signals are for educational purposes only. Not financial advice.")
+    
+    except Exception as e:
+        st.error(f"Error loading Stock Screener: {e}")
+        import traceback
+        st.code(traceback.format_exc())
 
 
 # ============================================================
