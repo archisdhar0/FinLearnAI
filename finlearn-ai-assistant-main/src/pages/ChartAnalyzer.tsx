@@ -67,6 +67,7 @@ export default function ChartAnalyzer() {
           trendProbabilities: data.trend_probabilities,
           supportZones: data.support_zones,
           resistanceZones: data.resistance_zones,
+          annotatedImage: data.annotated_image ? `data:image/png;base64,${data.annotated_image}` : null,
         });
       } else {
         throw new Error("Analysis failed");
@@ -231,6 +232,17 @@ export default function ChartAnalyzer() {
               </div>
             ) : (
               <div className="space-y-4">
+                {/* Annotated Chart Image */}
+                {results.annotatedImage && (
+                  <div className="glass-card rounded-xl overflow-hidden">
+                    <img
+                      src={results.annotatedImage}
+                      alt="Analyzed chart with S/R and trend lines"
+                      className="w-full h-auto"
+                    />
+                  </div>
+                )}
+
                 {/* Trend */}
                 <TrendDisplay
                   trend={results.trend}
@@ -270,23 +282,55 @@ export default function ChartAnalyzer() {
                     <h3 className="font-semibold text-sm mb-3 text-success flex items-center gap-2">
                       <Target className="w-4 h-4" /> Support Zones
                     </h3>
-                    {results.supportZones.map((zone: any, i: number) => (
-                      <div key={i} className="flex justify-between text-sm mb-1">
-                        <span>Zone {zone.zone}</span>
-                        <span className="text-muted-foreground">{zone.confidence}%</span>
-                      </div>
-                    ))}
+                    {results.supportZones.length > 0 ? (
+                      results.supportZones.slice(0, 3).map((zone: any, i: number) => {
+                        const conf = typeof zone.confidence === 'number' 
+                          ? (zone.confidence > 1 ? zone.confidence : Math.round(zone.confidence * 100))
+                          : 0;
+                        const strength = conf > 60 ? "Strong" : conf > 45 ? "Moderate" : "Weak";
+                        return (
+                          <div key={i} className="flex justify-between text-sm mb-2">
+                            <span>Zone {zone.zone || i + 1}</span>
+                            <span className={`text-xs px-2 py-0.5 rounded ${
+                              conf > 60 ? 'bg-success/20 text-success' : 
+                              conf > 45 ? 'bg-warning/20 text-warning' : 
+                              'bg-muted text-muted-foreground'
+                            }`}>
+                              {conf}% {strength}
+                            </span>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No support detected</p>
+                    )}
                   </div>
                   <div className="glass-card rounded-xl p-4">
                     <h3 className="font-semibold text-sm mb-3 text-destructive flex items-center gap-2">
                       <Target className="w-4 h-4" /> Resistance Zones
                     </h3>
-                    {results.resistanceZones.map((zone: any, i: number) => (
-                      <div key={i} className="flex justify-between text-sm mb-1">
-                        <span>Zone {zone.zone}</span>
-                        <span className="text-muted-foreground">{zone.confidence}%</span>
-                      </div>
-                    ))}
+                    {results.resistanceZones.length > 0 ? (
+                      results.resistanceZones.slice(0, 3).map((zone: any, i: number) => {
+                        const conf = typeof zone.confidence === 'number' 
+                          ? (zone.confidence > 1 ? zone.confidence : Math.round(zone.confidence * 100))
+                          : 0;
+                        const strength = conf > 60 ? "Strong" : conf > 45 ? "Moderate" : "Weak";
+                        return (
+                          <div key={i} className="flex justify-between text-sm mb-2">
+                            <span>Zone {zone.zone || i + 1}</span>
+                            <span className={`text-xs px-2 py-0.5 rounded ${
+                              conf > 60 ? 'bg-destructive/20 text-destructive' : 
+                              conf > 45 ? 'bg-warning/20 text-warning' : 
+                              'bg-muted text-muted-foreground'
+                            }`}>
+                              {conf}% {strength}
+                            </span>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No resistance detected</p>
+                    )}
                   </div>
                 </div>
 
@@ -318,7 +362,20 @@ export default function ChartAnalyzer() {
                 </button>
 
                 {/* Download */}
-                <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary/10 text-primary rounded-xl text-sm hover:bg-primary/20 transition-colors">
+                <button 
+                  onClick={() => {
+                    if (results.annotatedImage) {
+                      const link = document.createElement('a');
+                      link.href = results.annotatedImage;
+                      link.download = 'analyzed_chart.png';
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }
+                  }}
+                  disabled={!results.annotatedImage}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary/10 text-primary rounded-xl text-sm hover:bg-primary/20 transition-colors disabled:opacity-50"
+                >
                   <Download className="w-4 h-4" />
                   Download Analyzed Chart
                 </button>

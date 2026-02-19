@@ -59,6 +59,7 @@ class ChartAnalysisResponse(BaseModel):
     trend_probabilities: Dict[str, float]
     support_zones: List[Dict[str, Any]]
     resistance_zones: List[Dict[str, Any]]
+    annotated_image: Optional[str] = None  # Base64 encoded PNG with lines drawn
 
 # =============================================================================
 # RAG Chat Endpoint
@@ -100,9 +101,11 @@ async def chat(request: ChatRequest):
         from rag.llm_provider import chat_with_llm
         
         # Retrieve relevant context - returns RetrievalResponse object
+        # Use lower confidence threshold (0.15) to allow basic questions
         retrieval_response = retrieve_with_citations(
             query=request.message,
             top_k=5,
+            min_confidence=0.15,  # Lower threshold for basic questions
             current_lesson_id=request.lesson_id
         )
         
@@ -114,38 +117,54 @@ async def chat(request: ChatRequest):
         for i, result in enumerate(retrieval_response.results[:5]):
             # result is a RetrievalResult object with a .chunk attribute
             chunk = result.chunk
-            context_parts.append(f"[Source {i+1}]: {chunk.content[:1000]}")
+            # Don't include source labels in context - just the content
+            context_parts.append(chunk.content[:1000])
             sources.append({
                 'title': chunk.source,
                 'snippet': chunk.content[:200],
                 'score': result.final_score
             })
         
-        context = "\n\n".join(context_parts)
+        context = "\n\n---\n\n".join(context_parts)
         
-        # Check if we have enough confidence to answer
-        if not retrieval_response.is_confident:
+        # Only refuse if we have NO results at all
+        if not retrieval_response.results or len(retrieval_response.results) == 0:
             return ChatResponse(
-                response=f"I don't have enough information in my knowledge base to answer that question confidently. {retrieval_response.refusal_reason or 'Try asking about investing basics, stocks, bonds, or portfolio management.'}",
-                sources=sources
+                response="I don't have information about that topic in my knowledge base. Try asking about investing basics, stocks, bonds, ETFs, or portfolio management.",
+                sources=[]
             )
         
         # Generate response with LLM
         prompt = f"""You are a helpful investing tutor for beginners. Answer the user's question based on the provided context.
-Be conversational, clear, and educational. If the context doesn't contain relevant information, say so.
+Be conversational, clear, and educational. Use the context to inform your answer.
+
+CRITICAL RULES:
+- Do NOT include any source references like [Source 1], [Source 2], etc.
+- Do NOT write "Sources:" or list any sources at the end
+- Do NOT mention citations or references
+- Just provide a clean, helpful response
 
 Context:
 {context}
 
 User Question: {request.message}
 
-Answer:"""
+Provide a helpful answer:"""
         
         response = chat_with_llm(prompt, stream=False)
         
         # If still a generator, consume it
         if hasattr(response, '__iter__') and not isinstance(response, str):
             response = ''.join(response)
+        
+        # Clean up response - remove any source references the LLM might have added
+        import re
+        # Remove patterns like "Sources:", "Source:", "[Source 1]", etc.
+        response = re.sub(r'\n*Sources?:.*$', '', response, flags=re.IGNORECASE | re.DOTALL)
+        response = re.sub(r'\[Source \d+\]', '', response)
+        response = re.sub(r'\(Source \d+\)', '', response)
+        response = re.sub(r'Source \d+:', '', response)
+        response = response.strip()
         
         return ChatResponse(
             response=response,
@@ -310,21 +329,22 @@ async def analyze_chart(file: UploadFile = File(...)):
         
         # Read and preprocess image
         contents = await file.read()
-        image = Image.open(io.BytesIO(contents)).convert('RGB')
+        original_image = Image.open(io.BytesIO(contents)).convert('RGB')
         
         transform = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
-        img_tensor = transform(image).unsqueeze(0)
+        img_tensor = transform(original_image).unsqueeze(0)
         
         result = {
             'trend': 'sideways',
             'trend_confidence': 0.5,
             'trend_probabilities': {'uptrend': 0.33, 'downtrend': 0.33, 'sideways': 0.34},
             'support_zones': [],
-            'resistance_zones': []
+            'resistance_zones': [],
+            'signal': 'HOLD'
         }
         
         # Trend prediction
@@ -342,7 +362,7 @@ async def analyze_chart(file: UploadFile = File(...)):
                     cls: float(probs[i]) for i, cls in enumerate(classes)
                 }
         
-        # S/R prediction
+        # S/R prediction - use normalized price range (0-100) for uploaded images
         if _sr_model is not None:
             with torch.no_grad():
                 logits = _sr_model(img_tensor)
@@ -352,24 +372,54 @@ async def analyze_chart(file: UploadFile = File(...)):
                 support_probs = probs[:num_zones]
                 resistance_probs = probs[num_zones:]
                 
+                # Use percentage-based zones for uploaded images
                 for i, prob in enumerate(support_probs):
                     if prob > 0.4:
+                        # Convert zone to approximate price level (0-100 scale)
+                        zone_price = (i + 0.5) / num_zones * 100
                         result['support_zones'].append({
                             'zone': i + 1,
-                            'confidence': int(prob * 100)
+                            'price': round(zone_price, 1),
+                            'confidence': int(prob * 100)  # Convert to percentage
                         })
                 
                 for i, prob in enumerate(resistance_probs):
                     if prob > 0.4:
+                        zone_price = (i + 0.5) / num_zones * 100
                         result['resistance_zones'].append({
                             'zone': i + 1,
-                            'confidence': int(prob * 100)
+                            'price': round(zone_price, 1),
+                            'confidence': int(prob * 100)  # Convert to percentage
                         })
+        
+        # Calculate signal
+        if result['trend'] == 'uptrend' and result['trend_confidence'] > 0.6:
+            result['signal'] = 'BUY'
+        elif result['trend'] == 'downtrend' and result['trend_confidence'] > 0.6:
+            result['signal'] = 'SELL'
+        else:
+            result['signal'] = 'HOLD'
+        
+        # Draw analysis on the original image
+        annotated_image = draw_analysis_on_chart(
+            original_image,
+            result,
+            (0, 100),  # Normalized price range for uploaded images
+            num_bars=30
+        )
+        
+        # Convert annotated image to base64
+        buf = io.BytesIO()
+        annotated_image.save(buf, format='PNG')
+        buf.seek(0)
+        result['annotated_image'] = base64.b64encode(buf.read()).decode('utf-8')
         
         return ChartAnalysisResponse(**result)
         
     except Exception as e:
         print(f"[Chart Analysis Error] {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 # =============================================================================
@@ -484,16 +534,18 @@ def analyze_chart_with_models(image, price_range):
                 if prob > 0.4:
                     price = price_min + (i + 0.5) * price_step
                     results['support_zones'].append({
+                        'zone': i + 1,
                         'price': round(price, 2),
-                        'confidence': float(prob)
+                        'confidence': int(prob * 100)  # Convert to percentage
                     })
             
             for i, prob in enumerate(resistance_probs):
                 if prob > 0.4:
                     price = price_min + (i + 0.5) * price_step
                     results['resistance_zones'].append({
+                        'zone': i + 1,
                         'price': round(price, 2),
-                        'confidence': float(prob)
+                        'confidence': int(prob * 100)  # Convert to percentage
                     })
     
     # Calculate signal
@@ -520,6 +572,108 @@ def analyze_chart_with_models(image, price_range):
         results['signal_strength'] = 50
     
     return results
+
+
+def draw_analysis_on_chart(image, analysis, price_range, num_bars=30):
+    """Draw S/R lines and trend line on the chart image."""
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    from PIL import Image as PILImage
+    import numpy as np
+    
+    # Convert PIL image to numpy array
+    img_array = np.array(image)
+    
+    fig, ax = plt.subplots(figsize=(8, 4))
+    ax.imshow(img_array)
+    
+    img_height, img_width = img_array.shape[:2]
+    price_min, price_max = price_range
+    price_range_val = price_max - price_min
+    
+    def price_to_y(price):
+        """Convert price to y-coordinate (inverted because image y=0 is top)"""
+        if price_range_val == 0:
+            return img_height / 2
+        normalized = (price - price_min) / price_range_val
+        # Invert and add padding (chart doesn't go to edges)
+        return img_height * (1 - normalized * 0.85 - 0.075)
+    
+    # Draw Support lines (green)
+    for zone in analysis.get('support_zones', []):
+        y = price_to_y(zone.get('price', 50))
+        # Confidence might be 0-100 (int) or 0-1 (float), normalize to 0-1
+        confidence = zone.get('confidence', 50)
+        if confidence > 1:
+            confidence = confidence / 100.0
+        alpha = min(0.4 + confidence * 0.5, 0.95)  # Clamp to valid range
+        ax.axhline(y=y, color='#22c55e', linestyle='--', linewidth=2, alpha=alpha)
+        price_label = zone.get('price', 0)
+        ax.text(img_width - 5, y - 5, f"S: ${price_label:.2f}" if price_label > 1 else f"S: Zone {zone.get('zone', '?')}", 
+                color='#22c55e', fontsize=8, ha='right', va='bottom',
+                bbox=dict(boxstyle='round,pad=0.2', facecolor='#1a1a2e', alpha=0.8))
+    
+    # Draw Resistance lines (red)
+    for zone in analysis.get('resistance_zones', []):
+        y = price_to_y(zone.get('price', 50))
+        # Confidence might be 0-100 (int) or 0-1 (float), normalize to 0-1
+        confidence = zone.get('confidence', 50)
+        if confidence > 1:
+            confidence = confidence / 100.0
+        alpha = min(0.4 + confidence * 0.5, 0.95)  # Clamp to valid range
+        ax.axhline(y=y, color='#ef4444', linestyle='--', linewidth=2, alpha=alpha)
+        price_label = zone.get('price', 0)
+        ax.text(img_width - 5, y + 12, f"R: ${price_label:.2f}" if price_label > 1 else f"R: Zone {zone.get('zone', '?')}", 
+                color='#ef4444', fontsize=8, ha='right', va='top',
+                bbox=dict(boxstyle='round,pad=0.2', facecolor='#1a1a2e', alpha=0.8))
+    
+    # Draw Trend line
+    trend = analysis.get('trend', 'sideways')
+    trend_conf = analysis.get('trend_confidence', 0.5)
+    
+    if trend == 'uptrend':
+        # Draw diagonal line from bottom-left to top-right
+        ax.plot([0, img_width], [img_height * 0.7, img_height * 0.3], 
+                color='#22c55e', linewidth=3, alpha=0.7, linestyle='-')
+        ax.text(10, 20, f"↗ UPTREND ({trend_conf*100:.0f}%)", 
+                color='#22c55e', fontsize=10, fontweight='bold',
+                bbox=dict(boxstyle='round,pad=0.3', facecolor='#1a1a2e', alpha=0.9))
+    elif trend == 'downtrend':
+        # Draw diagonal line from top-left to bottom-right
+        ax.plot([0, img_width], [img_height * 0.3, img_height * 0.7], 
+                color='#ef4444', linewidth=3, alpha=0.7, linestyle='-')
+        ax.text(10, 20, f"↘ DOWNTREND ({trend_conf*100:.0f}%)", 
+                color='#ef4444', fontsize=10, fontweight='bold',
+                bbox=dict(boxstyle='round,pad=0.3', facecolor='#1a1a2e', alpha=0.9))
+    else:
+        # Draw horizontal line for sideways
+        ax.plot([0, img_width], [img_height * 0.5, img_height * 0.5], 
+                color='#f59e0b', linewidth=3, alpha=0.7, linestyle='-')
+        ax.text(10, 20, f"→ SIDEWAYS ({trend_conf*100:.0f}%)", 
+                color='#f59e0b', fontsize=10, fontweight='bold',
+                bbox=dict(boxstyle='round,pad=0.3', facecolor='#1a1a2e', alpha=0.9))
+    
+    # Add signal badge
+    signal = analysis.get('signal', 'HOLD')
+    signal_colors = {'BUY': '#22c55e', 'SELL': '#ef4444', 'HOLD': '#f59e0b'}
+    signal_color = signal_colors.get(signal, '#f59e0b')
+    ax.text(img_width - 10, 20, signal, 
+            color=signal_color, fontsize=12, fontweight='bold', ha='right',
+            bbox=dict(boxstyle='round,pad=0.4', facecolor='#1a1a2e', 
+                     edgecolor=signal_color, linewidth=2, alpha=0.9))
+    
+    ax.axis('off')
+    plt.tight_layout(pad=0)
+    
+    # Convert back to PIL Image
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png', dpi=100, facecolor='#1a1a2e',
+                bbox_inches='tight', pad_inches=0)
+    buf.seek(0)
+    plt.close(fig)
+    
+    return PILImage.open(buf)
 
 
 class StockAnalysisResponse(BaseModel):
@@ -593,9 +747,17 @@ async def get_stocks(request: StockRequest):
                 # Run CV model analysis
                 analysis = analyze_chart_with_models(chart_image, (price_min, price_max))
                 
-                # Convert image to base64
+                # Draw analysis lines on the chart
+                annotated_chart = draw_analysis_on_chart(
+                    chart_image, 
+                    analysis, 
+                    (price_min, price_max),
+                    num_bars=len(bars)
+                )
+                
+                # Convert annotated image to base64
                 buf = io.BytesIO()
-                chart_image.save(buf, format='PNG')
+                annotated_chart.save(buf, format='PNG')
                 buf.seek(0)
                 chart_base64 = base64.b64encode(buf.read()).decode('utf-8')
                 
