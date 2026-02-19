@@ -25,3 +25,6 @@ chroma_db/
 
 # RAG Knowledge Base Cache (generated from links.md)
 quantcademy-app/rag/fetched_content_cache.json
+
+# RAG validation folder
+rag_validation/
