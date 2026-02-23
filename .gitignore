@@ -26,9 +26,6 @@ chroma_db/
 # RAG Knowledge Base Cache (generated from links.md)
 quantcademy-app/rag/fetched_content_cache.json
 
-# RAG validation folder
-rag_validation/
-
 # Chart vision - ignore training images, keep models
 chart-vision/data/
 chart-vision/checkpoints/*.png

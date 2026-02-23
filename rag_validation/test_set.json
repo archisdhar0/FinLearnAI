@@ -1,0 +1,252 @@
+[
+  {
+    "id": 1,
+    "question": "What is investing?",
+    "answer": "Investing is the act of putting money into assets such as stocks, bonds, or funds with the expectation that those assets will grow in value over time. Rather than keeping money in cash, which typically earns little and loses purchasing power due to inflation, investing allows individuals to participate in economic growth. When companies grow and generate profits, investors can benefit through rising asset prices and income such as dividends or interest.\n\nThe purpose of investing is usually long-term wealth building, not short-term speculation. Because markets fluctuate, investing involves risk and uncertainty in the short run. However, over long periods, diversified investments have historically increased in value. By consistently investing and allowing time for compounding to work, individuals can build wealth to support goals such as retirement, education, or major purchases."
+  },
+  {
+    "id": 2,
+    "question": "Why do people invest instead of just saving?",
+    "answer": "People invest because saving alone often cannot keep up with inflation. Inflation gradually increases the cost of goods and services, which means money sitting in a low-interest account loses purchasing power over time. Investing offers the potential for higher returns by allowing money to grow through market performance, dividends, and interest from various assets.\n\nAlthough investing carries more risk than saving, it provides a better opportunity for long-term financial growth. Over decades, the returns from diversified investments have historically outpaced inflation and traditional savings rates. By investing consistently and taking a long-term approach, individuals can grow their wealth more effectively than relying solely on savings accounts."
+  },
+  {
+    "id": 3,
+    "question": "What is a stock?",
+    "answer": "A stock represents ownership in a company. When an investor buys shares of a company's stock, they are purchasing a small portion of that company and its future earnings. If the company grows, becomes more profitable, or gains investor confidence, the value of its stock may rise. Investors may also receive dividends, which are payments distributed from company profits.\n\nHowever, stocks can also decrease in value due to company performance, economic changes, or investor expectations. Because stock prices fluctuate daily, owning stocks involves risk and volatility. Despite this, stocks have historically provided strong long-term growth, making them a common component of investment portfolios."
+  },
+  {
+    "id": 4,
+    "question": "What is an ETF?",
+    "answer": "An exchange-traded fund, or ETF, is a collection of many investments packaged together and traded on a stock exchange. ETFs often track an index, such as the S&P 500, allowing investors to gain exposure to hundreds of companies in a single purchase. This makes them a convenient way to achieve diversification without buying individual stocks.\n\nETFs trade throughout the day like stocks, but they function like mutual funds by holding a basket of assets. Because they are diversified and often low cost, ETFs are commonly used by beginner investors building portfolios. They help reduce risk compared to owning a single stock while still allowing participation in market growth."
+  },
+  {
+    "id": 5,
+    "question": "What is compounding?",
+    "answer": "Compounding occurs when investment earnings generate additional earnings over time. When returns such as dividends or interest are reinvested, they begin to earn returns themselves. This creates a snowball effect where growth accelerates the longer money remains invested. Even small contributions can grow significantly through compounding.\n\nThe power of compounding depends heavily on time and consistency. Starting early and staying invested allows returns to build on one another for many years. Interrupting the process by withdrawing money or frequently changing investments can reduce the benefits. For long-term investors, compounding is one of the most powerful tools for building wealth."
+  },
+  {
+    "id": 6,
+    "question": "Why does time matter in investing?",
+    "answer": "Time allows investments to grow and recover from short-term declines. Markets can be volatile over days or months, but over longer periods they have historically trended upward. Investors with longer time horizons can tolerate temporary downturns because they have more time for their investments to recover and continue growing.\n\nAdditionally, time enables compounding to work more effectively. The longer money stays invested, the more opportunity there is for returns to generate additional returns. This is why starting early and staying invested consistently can have a significant impact on long-term outcomes."
+  },
+  {
+    "id": 7,
+    "question": "What is risk in investing?",
+    "answer": "Risk in investing refers to the possibility that an investment's value may decrease or fluctuate unexpectedly. This can result from company performance, economic conditions, interest rates, or investor sentiment. All investments carry some level of risk, but higher potential returns often come with higher uncertainty.\n\nUnderstanding risk helps investors make informed decisions about asset allocation and diversification. By spreading investments across different assets and maintaining a long-term perspective, investors can manage risk while still pursuing growth. Risk cannot be eliminated, but it can be reduced through thoughtful planning and diversification."
+  },
+  {
+    "id": 8,
+    "question": "What is diversification?",
+    "answer": "Diversification is the practice of spreading investments across different assets, industries, and regions to reduce overall risk. Instead of relying on one investment, a diversified portfolio includes multiple holdings that may perform differently under various conditions. This helps reduce the impact of any single investment's poor performance.\n\nWhile diversification does not eliminate risk entirely, it can make returns more stable over time. For example, when one sector declines, another may perform well. By combining assets that do not move in the same direction, investors can create portfolios that are more resilient to market fluctuations."
+  },
+  {
+    "id": 9,
+    "question": "What is volatility?",
+    "answer": "Volatility refers to how much an investment's price moves up and down over time. Highly volatile assets experience large and frequent price swings, while less volatile assets change more gradually. Volatility is a normal part of investing and does not necessarily indicate long-term loss.\n\nUnderstanding volatility helps investors set realistic expectations and avoid emotional decisions. Short-term price changes can be dramatic, but long-term trends often matter more for investors with extended time horizons. Recognizing that volatility is normal helps investors stay disciplined."
+  },
+  {
+    "id": 10,
+    "question": "Do markets go up every year?",
+    "answer": "Markets do not go up every year. Periods of decline and negative returns are a normal part of investing. Economic downturns, geopolitical events, and changes in interest rates can cause markets to fall temporarily. These fluctuations are expected and have occurred throughout history.\n\nDespite these short-term declines, markets have historically shown long-term growth. Investors who remain patient and stay invested often recover from downturns and benefit from long-term trends. Understanding that markets fluctuate helps investors avoid panic selling during temporary declines."
+  },
+  {
+    "id": 11,
+    "question": "What is an asset class?",
+    "answer": "An asset class is a category of investments that share similar characteristics and behave in comparable ways in financial markets. Common asset classes include stocks, bonds, and cash, though others like real estate or commodities also exist. Each asset class carries its own level of risk, return potential, and sensitivity to economic conditions.\n\nUnderstanding asset classes helps investors build portfolios that balance growth and stability. Because different asset classes respond differently to market events, combining them allows investors to manage risk more effectively and pursue long-term goals with greater consistency."
+  },
+  {
+    "id": 12,
+    "question": "Why combine different asset classes?",
+    "answer": "Different asset classes often react differently to the same economic conditions. For example, stocks may perform well during periods of economic growth, while bonds may provide stability during downturns. By combining asset classes, investors can create portfolios that are more resilient to market changes.\n\nThis approach reduces reliance on any single investment type. When one asset class declines, another may perform better, helping smooth overall returns. Over time, this balance can lead to a more stable investing experience and reduce the likelihood of large losses."
+  },
+  {
+    "id": 13,
+    "question": "What is asset allocation?",
+    "answer": "Asset allocation is the process of dividing a portfolio among different asset classes, such as stocks, bonds, and cash. It determines how much of a portfolio is invested in each category and plays a major role in overall performance and risk. A portfolio with more stocks may grow faster but fluctuate more, while one with more bonds may be steadier but grow more slowly.\n\nChoosing an allocation depends on factors like time horizon, goals, and risk tolerance. Investors with long time horizons may choose higher stock allocations for growth, while those nearing a goal may prioritize stability. Asset allocation helps ensure investments align with personal objectives."
+  },
+  {
+    "id": 14,
+    "question": "Why is asset allocation important?",
+    "answer": "Asset allocation is important because it largely determines a portfolio's risk level and long-term performance. Research shows that how investments are divided among asset classes often has a bigger impact on outcomes than individual investment choices. Proper allocation helps balance growth potential with stability.\n\nWithout a thoughtful allocation, a portfolio may be too risky or too conservative for an investor's goals. Adjusting allocation over time allows investors to maintain alignment with changing circumstances and risk tolerance, supporting long-term financial success."
+  },
+  {
+    "id": 15,
+    "question": "What is a portfolio?",
+    "answer": "A portfolio is the collection of all investments owned by an individual or institution. It may include stocks, bonds, funds, and other assets. Rather than evaluating each investment separately, investors consider how the entire portfolio works together to meet financial goals.\n\nA well-constructed portfolio is designed to balance risk and return. By combining different assets and maintaining a clear allocation strategy, portfolios help investors pursue long-term growth while managing volatility."
+  },
+  {
+    "id": 16,
+    "question": "Why do portfolios exist?",
+    "answer": "Portfolios exist to combine multiple investments in a way that balances risk and return. Instead of relying on one asset, investors hold a mix of investments to reduce the impact of any single loss. This helps create more stable outcomes over time.\n\nBy structuring investments within a portfolio, investors can align their strategy with their goals and risk tolerance. Portfolios allow for diversification, rebalancing, and long-term planning, making them essential tools for managing wealth."
+  },
+  {
+    "id": 17,
+    "question": "What happens if you only own one stock?",
+    "answer": "Owning only one stock concentrates risk because the outcome depends entirely on that single company. If the company performs poorly or faces unexpected challenges, the investor could experience significant losses. This lack of diversification increases volatility and uncertainty.\n\nBy contrast, owning multiple investments spreads risk across different companies and industries. Even if one investment declines, others may perform better, reducing overall impact. Diversification helps create a more stable investment experience."
+  },
+  {
+    "id": 18,
+    "question": "What is a balanced portfolio?",
+    "answer": "A balanced portfolio includes a mix of assets designed to provide both growth and stability. It often contains stocks for long-term growth and bonds or cash for stability. The goal is to create a smoother return pattern over time.\n\nThe exact balance depends on an investor's goals and risk tolerance. Younger investors may hold more stocks, while those nearing a goal may increase bonds. Balanced portfolios aim to manage risk while still pursuing growth."
+  },
+  {
+    "id": 19,
+    "question": "What affects risk tolerance?",
+    "answer": "Risk tolerance is influenced by factors such as time horizon, financial goals, income stability, and personal comfort with market fluctuations. Investors with longer time horizons may tolerate more volatility because they have time to recover from downturns.\n\nUnderstanding risk tolerance helps investors choose appropriate allocations and avoid emotional decisions. When portfolios match comfort levels, investors are more likely to stay disciplined during market fluctuations and stick to long-term plans."
+  },
+  {
+    "id": 20,
+    "question": "How does diversification reduce risk?",
+    "answer": "Diversification reduces risk by spreading investments across assets that do not all move in the same direction. When one investment declines, another may perform better, offsetting losses. This helps smooth overall returns.\n\nWhile diversification cannot eliminate risk entirely, it reduces the likelihood of large losses from any single investment. Over time, diversified portfolios tend to be more stable and better aligned with long-term goals."
+  },
+  {
+    "id": 21,
+    "question": "What does a stock chart show?",
+    "answer": "A stock chart shows how the price of an asset changes over time. It visually represents price movements across different timeframes, helping investors see patterns and trends. Charts allow investors to understand whether prices are rising, falling, or moving sideways.\n\nCharts are tools for understanding past behavior, not predicting the future. They provide context about how prices have moved and help investors interpret market activity. By reading charts, investors can better understand trends and volatility."
+  },
+  {
+    "id": 22,
+    "question": "What is a line chart?",
+    "answer": "A line chart connects closing prices over time using a single line. It provides a simple view of how an asset's price has changed and is often used for long-term analysis. Line charts remove extra details to highlight overall trends.\n\nBecause they are simple and easy to read, line charts are often recommended for beginners. They help investors focus on general direction rather than short-term fluctuations. This makes them useful for understanding long-term trends."
+  },
+  {
+    "id": 23,
+    "question": "What is a candlestick chart?",
+    "answer": "A candlestick chart shows the open, high, low, and close prices for each time period. Each \"candle\" represents a specific timeframe and provides more detail than a line chart. The shape and color of candles show whether prices rose or fell during that period.\n\nCandlestick charts help investors see price behavior more clearly. While they provide more information, beginners can still use them to understand basic trends and volatility. They are commonly used in market analysis."
+  },
+  {
+    "id": 24,
+    "question": "What is an uptrend?",
+    "answer": "An uptrend occurs when prices generally move higher over time, forming higher highs and higher lows. This indicates that demand is stronger than supply and that investors are optimistic about future growth.\n\nUptrends can occur over short or long periods. Recognizing an uptrend helps investors understand market direction and context. However, trends can change, so they should be interpreted carefully."
+  },
+  {
+    "id": 25,
+    "question": "What is a downtrend?",
+    "answer": "A downtrend occurs when prices generally move lower over time, forming lower highs and lower lows. This indicates weaker demand and declining investor confidence.\n\nDowntrends are normal parts of market cycles and do not necessarily signal long-term decline. Understanding them helps investors maintain perspective and avoid emotional reactions to temporary downturns."
+  },
+  {
+    "id": 26,
+    "question": "What is a sideways trend?",
+    "answer": "A sideways trend occurs when prices move within a range without clear upward or downward direction. This often happens during periods of uncertainty or consolidation.\n\nSideways markets can still provide useful information about support and resistance levels. Recognizing them helps investors avoid assuming trends where none exist and maintain realistic expectations."
+  },
+  {
+    "id": 27,
+    "question": "What is support?",
+    "answer": "Support is a price level where an asset tends to stop falling and may bounce upward. It reflects a point where buyers often step in, increasing demand.\n\nSupport levels are not exact numbers but zones where prices frequently react. Understanding support helps investors interpret price behavior and potential turning points."
+  },
+  {
+    "id": 28,
+    "question": "What is resistance?",
+    "answer": "Resistance is a price level where an asset tends to stop rising and may decline. It represents a point where selling pressure increases.\n\nLike support, resistance is a zone rather than a precise number. Recognizing resistance helps investors understand price ranges and potential reversals."
+  },
+  {
+    "id": 29,
+    "question": "What does volume show?",
+    "answer": "Volume shows how many shares or units are traded during a specific period. It reflects the level of activity and participation in the market.\n\nHigh volume can indicate strong interest in a price move, while low volume may signal weaker conviction. Understanding volume adds context to price changes."
+  },
+  {
+    "id": 30,
+    "question": "Why does volume matter?",
+    "answer": "Volume helps confirm the strength of price movements. Large price changes accompanied by high volume suggest strong participation, while moves with low volume may be less reliable.\n\nBy considering volume alongside price trends, investors gain a clearer understanding of market behavior. It provides additional context for interpreting charts."
+  },
+  {
+    "id": 31,
+    "question": "What is momentum?",
+    "answer": "Momentum refers to the strength or speed of a price movement in a particular direction. When a stock or market is gaining momentum, it means prices are moving consistently upward or downward with force. Momentum does not guarantee that a trend will continue, but it can signal that investor interest and activity are reinforcing the current direction.\n\nUnderstanding momentum helps investors interpret how strong a trend may be. Strong momentum can indicate widespread agreement among investors, while weak momentum may suggest uncertainty or a potential shift. Even for long-term investors, recognizing momentum can provide context for market behavior and expectations."
+  },
+  {
+    "id": 32,
+    "question": "What does volatility look like on a chart?",
+    "answer": "Volatility appears on charts as large and frequent price swings. When prices move sharply up and down over short periods, the chart shows jagged patterns and wide ranges between highs and lows. Low-volatility charts appear smoother and more gradual in movement.\n\nRecognizing volatility helps investors understand risk and market conditions. High volatility may signal uncertainty or strong reactions to news, while lower volatility may reflect stability. Understanding how volatility appears visually helps investors avoid overreacting to short-term movements."
+  },
+  {
+    "id": 33,
+    "question": "Why zoom out on charts?",
+    "answer": "Zooming out on a chart allows investors to see long-term trends instead of focusing only on short-term fluctuations. Daily price changes can appear dramatic, but when viewed over months or years, they often become part of a broader trend. This broader perspective helps investors avoid reacting emotionally to temporary moves.\n\nLooking at longer timeframes helps investors understand context and maintain discipline. It reinforces the importance of long-term thinking and prevents overinterpretation of short-term volatility. Zooming out provides clarity and perspective."
+  },
+  {
+    "id": 34,
+    "question": "Do charts predict the future?",
+    "answer": "Charts do not predict the future; they show past price behavior and patterns. While investors sometimes use charts to identify trends or signals, these patterns do not guarantee future outcomes. Markets are influenced by many factors, including economic data, news, and investor sentiment.\n\nCharts are tools for understanding context rather than making certain predictions. They help investors interpret what has happened and how prices have behaved, but they should be used alongside broader analysis and long-term planning. Relying solely on charts can lead to overconfidence."
+  },
+  {
+    "id": 35,
+    "question": "Why use multiple timeframes?",
+    "answer": "Using multiple timeframes helps investors understand both short-term movements and long-term trends. A stock may fluctuate daily but still follow a steady long-term trend. Viewing charts across different timeframes provides a more complete picture.\n\nThis approach helps investors avoid focusing too narrowly on short-term noise. By comparing daily, monthly, and yearly views, investors can better interpret trends and maintain perspective. Multiple timeframes provide context and clarity."
+  },
+  {
+    "id": 36,
+    "question": "What moves stock prices?",
+    "answer": "Stock prices move based on supply and demand, which are influenced by factors such as company earnings, economic data, interest rates, and investor expectations. Positive news or strong earnings can increase demand and push prices higher, while negative news can reduce demand and cause prices to fall.\n\nInvestor sentiment also plays a major role. Expectations about future growth often matter more than current conditions. Because markets reflect collective expectations, prices can change quickly as new information becomes available."
+  },
+  {
+    "id": 37,
+    "question": "What is investor sentiment?",
+    "answer": "Investor sentiment refers to the overall mood or outlook of investors toward markets or specific assets. When sentiment is optimistic, investors may buy more, pushing prices higher. When sentiment is pessimistic, selling pressure may increase.\n\nSentiment can sometimes drive prices beyond what fundamentals alone would suggest. Understanding sentiment helps investors recognize when markets may be driven by emotion rather than long-term value. It provides context for price movements."
+  },
+  {
+    "id": 38,
+    "question": "What is a market cycle?",
+    "answer": "A market cycle is a recurring pattern of growth, peak, decline, and recovery in financial markets. Markets tend to move through these phases over time, reflecting changes in economic conditions and investor expectations.\n\nRecognizing market cycles helps investors maintain perspective. Declines are often temporary and part of the broader cycle. Understanding this pattern helps investors remain patient and avoid reacting emotionally to short-term changes."
+  },
+  {
+    "id": 39,
+    "question": "What is hype in markets?",
+    "answer": "Hype occurs when excitement and attention drive prices higher than what fundamentals alone would support. Social media, news coverage, and speculation can create strong interest in certain assets, leading to rapid price increases.\n\nWhile hype can create short-term opportunities, it can also increase risk. Prices driven primarily by excitement may fall quickly if sentiment changes. Understanding hype helps investors remain cautious and focused on long-term value."
+  },
+  {
+    "id": 40,
+    "question": "Why can news cause volatility?",
+    "answer": "News introduces new information that can change investor expectations about future performance. Positive news may increase optimism and demand, while negative news can lead to selling. Because markets react quickly to information, news can cause sudden price swings.\n\nVolatility following news is normal and reflects how investors process new data. Understanding this helps investors avoid overreacting and maintain a long-term perspective. Not all news has lasting impact."
+  },
+  {
+    "id": 41,
+    "question": "What is long-term investing?",
+    "answer": "Long-term investing involves holding investments for many years to benefit from growth and compounding. Instead of focusing on short-term price movements, long-term investors prioritize consistent contributions and patience.\n\nThis approach helps investors ride out market fluctuations and benefit from historical growth trends. Long-term investing reduces the need for frequent trading and allows compounding to work more effectively."
+  },
+  {
+    "id": 42,
+    "question": "Why shouldn't beginners trade frequently?",
+    "answer": "Frequent trading increases costs, taxes, and the likelihood of making emotional decisions. Trying to time the market is difficult and often leads to lower returns. Beginners may react to short-term movements without understanding broader trends.\n\nA long-term, disciplined approach is generally more effective. By focusing on consistent investing and diversification, beginners can build wealth without relying on frequent trades or predictions."
+  },
+  {
+    "id": 43,
+    "question": "What is dollar-cost averaging?",
+    "answer": "Dollar-cost averaging is the practice of investing a fixed amount of money at regular intervals, regardless of market conditions. This approach spreads purchases over time, reducing the impact of market timing.\n\nBy investing consistently, investors buy more shares when prices are low and fewer when prices are high. This helps reduce emotional decision-making and supports long-term discipline."
+  },
+  {
+    "id": 44,
+    "question": "Why invest regularly?",
+    "answer": "Regular investing builds discipline and helps ensure that contributions continue regardless of market conditions. This consistency allows compounding to work and reduces the pressure to predict market movements.\n\nOver time, regular contributions can have a significant impact on portfolio growth. Investing on a schedule helps maintain focus on long-term goals rather than short-term fluctuations."
+  },
+  {
+    "id": 45,
+    "question": "What is rebalancing?",
+    "answer": "Rebalancing is the process of adjusting a portfolio to maintain its target asset allocation. Over time, some investments may grow faster than others, causing the allocation to drift. Rebalancing restores the intended balance.\n\nThis helps manage risk and keep the portfolio aligned with goals. Rebalancing is typically done periodically, such as once a year, rather than frequently."
+  },
+  {
+    "id": 46,
+    "question": "How often should portfolios be reviewed?",
+    "answer": "Portfolios are typically reviewed once or twice per year. Frequent checking can lead to unnecessary adjustments based on short-term changes. Periodic reviews allow investors to assess progress and make thoughtful adjustments.\n\nRegular reviews help ensure that investments still align with goals and risk tolerance. They also provide an opportunity to rebalance and adjust contributions if needed."
+  },
+  {
+    "id": 47,
+    "question": "Why ignore daily market noise?",
+    "answer": "Daily market movements are often driven by short-term factors and do not usually affect long-term outcomes. Constantly checking prices can lead to emotional reactions and unnecessary trades.\n\nFocusing on long-term goals helps investors stay disciplined. Ignoring daily noise allows investors to maintain perspective and avoid making decisions based on temporary fluctuations."
+  },
+  {
+    "id": 48,
+    "question": "What is a time horizon?",
+    "answer": "A time horizon is the length of time an investor expects to keep money invested before needing it. Short time horizons may require more conservative investments, while longer horizons allow for more growth-oriented strategies.\n\nUnderstanding time horizon helps investors choose appropriate allocations and manage risk. Longer horizons provide more time to recover from downturns and benefit from compounding."
+  },
+  {
+    "id": 49,
+    "question": "Why does patience matter in investing?",
+    "answer": "Patience allows compounding and long-term growth to work effectively. Markets fluctuate, but staying invested through ups and downs helps investors benefit from overall growth trends.\n\nImpatience can lead to frequent trading and missed opportunities. By maintaining discipline and staying focused on long-term goals, investors improve their chances of success."
+  },
+  {
+    "id": 50,
+    "question": "What leads to long-term investing success?",
+    "answer": "Long-term investing success typically comes from consistent contributions, diversification, and staying invested through market cycles. Rather than trying to predict short-term movements, successful investors focus on discipline and planning.\n\nA clear strategy, regular reviews, and patience help investors build wealth over time. By following a structured approach and avoiding emotional decisions, investors can achieve their long-term goals."
+  }
+]
