@@ -39,11 +39,12 @@ except ImportError:
 
 # Configuration
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-RERANK_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+# Faster reranker model - BAAI's BGE reranker is optimized and faster than ms-marco
+RERANK_MODEL = "BAAI/bge-reranker-base"
 BM25_K1 = 1.5
 BM25_B = 0.75
-CONFIDENCE_THRESHOLD = 0.35  # Minimum confidence for a valid answer
-TOP_K_INITIAL = 20  # Initial retrieval count
+CONFIDENCE_THRESHOLD = 0.25  # Minimum confidence for a valid answer
+TOP_K_INITIAL = 10  # Reduced from 20 for faster reranking
 TOP_K_FINAL = 5     # After reranking
 
 

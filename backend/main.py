@@ -38,6 +38,69 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
+# Forward declarations for prewarming (actual functions defined below)
+_cv_loaded = False
+_sr_model = None
+_trend_model = None
+
+def _prewarm_cv():
+    """Helper to prewarm CV models - actual load_cv_models defined below."""
+    global _cv_loaded, _sr_model, _trend_model
+    # This will be replaced by the actual function below
+    pass
+
+# =============================================================================
+# Startup Prewarming - Load all models on startup for faster first requests
+# =============================================================================
+
+@app.on_event("startup")
+async def prewarm_models():
+    """Prewarm all models on startup so first requests are fast."""
+    global _cv_loaded, _sr_model, _trend_model
+    
+    print("\n" + "="*60)
+    print("PREWARMING MODELS ON STARTUP...")
+    print("="*60)
+    
+    # 1. Prewarm RAG (embedding model + reranker + knowledge base)
+    print("\n[Prewarm] Loading RAG components...")
+    try:
+        from rag.retrieval import get_retriever
+        retriever = get_retriever()
+        # Do a dummy query to fully initialize
+        retriever.retrieve("what is investing", top_k=1)
+        print("[Prewarm] RAG ready")
+    except Exception as e:
+        print(f"[Prewarm] RAG failed: {e}")
+    
+    # 2. Prewarm CV models (call the actual function defined below)
+    print("\n[Prewarm] Loading CV models...")
+    try:
+        # Import and call the actual load function
+        load_cv_models()
+        if _sr_model and _trend_model:
+            print("[Prewarm] CV models ready")
+        else:
+            print("[Prewarm] CV models partially loaded")
+    except Exception as e:
+        print(f"[Prewarm] CV models failed: {e}")
+    
+    # 3. Check LLM connection
+    print("\n[Prewarm] Checking LLM connection...")
+    try:
+        from rag.llm_provider import check_llm_status
+        status = check_llm_status()
+        if status.get('status') == 'online':
+            print(f"[Prewarm] LLM ready ({status.get('provider')})")
+        else:
+            print(f"[Prewarm] LLM not available: {status}")
+    except Exception as e:
+        print(f"[Prewarm] LLM check failed: {e}")
+    
+    print("\n" + "="*60)
+    print("SERVER READY - All models prewarmed!")
+    print("="*60 + "\n")
+
 # =============================================================================
 # Request/Response Models
 # =============================================================================
@@ -185,10 +248,7 @@ Provide a helpful answer:"""
 # Chart Analysis Endpoint
 # =============================================================================
 
-# Lazy load CV models
-_cv_loaded = False
-_sr_model = None
-_trend_model = None
+# CV model variables are declared at the top of the file (forward declarations)
 
 def load_cv_models():
     global _cv_loaded, _sr_model, _trend_model
