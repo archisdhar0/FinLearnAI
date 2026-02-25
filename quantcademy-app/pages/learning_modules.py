@@ -209,6 +209,26 @@ You're not trying to beat the market. You're just trying to participate in it. A
         "Spending money quickly to achieve immediate gains"
       ],
       "correct": 1
+    },
+    {
+      "question": "Why is keeping all your money in cash risky over the long run?",
+      "options": [
+        "Cash is illegal for long-term holding",
+        "Inflation erodes purchasing power; your money buys less over time",
+        "Banks charge huge fees for cash",
+        "Cash always loses value immediately"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "What is the main benefit of starting to invest early?",
+      "options": [
+        "You can take more risks with no consequences",
+        "Compound growth has more time to work, so the same amount can grow much more",
+        "Young people always pick better stocks",
+        "It has no special benefit"
+      ],
+      "correct": 1
     }
   ]
 }
@@ -287,8 +307,38 @@ These things have value because they represent real economic activity. Companies
 
 That's really what investing is. You're participating in the economy's growth. You're not trying to outsmart anyone or time the market perfectly. You're just putting your money where the economy is going, and letting it grow over time.
 
-""", 
-"quiz": [{"question": "Which investment gives you direct ownership in a company?", "options": ["Bond", "Stock", "ETF", "Cash"], "correct": 1}]},
+""",
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "What is the main advantage of an ETF over buying a single stock?",
+      "options": [
+        "ETFs never lose value",
+        "ETFs give you instant diversification across many companies",
+        "ETFs are only for experts",
+        "ETFs avoid all taxes"
+      ],
+      "correct_index": 1,
+      "explanation": "ETFs bundle many securities in one trade, so you get diversification without picking each stock yourself."
+    },
+    {
+      "type": "concept_check",
+      "question": "When you buy a bond, what are you doing?",
+      "options": [
+        "Buying a piece of a company",
+        "Lending money in exchange for interest and eventual repayment",
+        "Betting on short-term price movement only",
+        "Avoiding all risk"
+      ],
+      "correct_index": 1,
+      "explanation": "Bonds are loans: you lend money to an issuer who pays you interest and repays principal at maturity."
+    }
+  ],
+  "quiz": [
+    {"question": "Which investment gives you direct ownership in a company?", "options": ["Bond", "Stock", "ETF", "Cash"], "correct": 1},
+    {"question": "Which type of fund typically has the lowest ongoing fees?", "options": ["Actively managed mutual fund", "S&P 500 index fund or ETF", "Hedge fund", "Fund that trades daily"], "correct": 1},
+    {"question": "Why might an investor hold both stocks and bonds?", "options": ["Bonds always outperform stocks", "To balance growth potential with some stability", "To avoid paying any taxes", "Stocks are illegal in retirement accounts"], "correct": 1}
+  ]},
             {"id": "how_markets_function", "title": "How Markets Function", "content": 
 """
 The stock market can seem like this mysterious force that moves up and down for no reason. One day everything's up, the next day everything's down. It feels random, chaotic, like there's no logic to it.
@@ -619,8 +669,38 @@ Here's what you need to know: you'll probably want both types of accounts eventu
 
 The accounts themselves aren't complicated. They're just containers. The important part is what you put in them and how consistently you contribute. Get that right, and the accounts will take care of themselves.
 
-""", 
-"quiz": [{"question": "Which account lets your investments grow tax‑free for retirement?", "options": ["Brokerage account", "Roth IRA", "Savings account", "Checking account"], "correct": 1}]},
+""",
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "What is a key advantage of a Roth IRA for many young investors?",
+      "options": [
+        "You can withdraw unlimited amounts anytime with no penalty",
+        "You pay taxes now; growth and qualified withdrawals can be tax-free later",
+        "It replaces the need for an emergency fund",
+        "It has no contribution limits"
+      ],
+      "correct_index": 1,
+      "explanation": "Roth contributions are after-tax; in return, growth and qualified withdrawals in retirement can be tax-free."
+    },
+    {
+      "type": "concept_check",
+      "question": "When might you use a regular brokerage account instead of only a retirement account?",
+      "options": [
+        "You never should; retirement accounts are always better",
+        "When you want to invest beyond IRA limits or for goals before retirement",
+        "Only when you have already maxed a 401(k)",
+        "Brokerage accounts are only for professional traders"
+      ],
+      "correct_index": 1,
+      "explanation": "Brokerage accounts are flexible: no contribution caps and no early-withdrawal rules, so they suit non-retirement goals too."
+    }
+  ],
+  "quiz": [
+    {"question": "Which account lets your investments grow tax‑free for retirement?", "options": ["Brokerage account", "Roth IRA", "Savings account", "Checking account"], "correct": 1},
+    {"question": "Why is it important to have an emergency fund before investing heavily?", "options": ["So you can invest the emergency fund in stocks", "To avoid selling investments at a loss when life happens", "Emergency funds are not recommended", "To get the highest possible return"], "correct": 1},
+    {"question": "What typically happens when you withdraw from a Roth IRA before age 59½?", "options": ["You always pay a penalty on any amount", "Contributions can often be withdrawn without penalty; earnings may be taxed/penalized", "The account is closed permanently", "You get a tax refund"], "correct": 1}
+  ]},
             {"id": "first_time_mindset", "title": "First Time Investor Mindset", "content": 
 """
 Investing isn't just about numbers and strategies. It's also about how you think. Your mindset matters more than you might realize.
@@ -695,8 +775,38 @@ You're going to feel fear. You're going to feel FOMO. You're going to want to ch
 
 Investing is a marathon, not a sprint. The people who finish aren't the fastest. They're the ones who keep going, even when it's hard.
 
-""", 
-"quiz": [{"question": "Which mindset habit can help you avoid impulsive investment decisions?", "options": ["Reacting to every market headline", "Focusing on your long‑term plan", "Following every social media trend", "Trying to time the market"], "correct": 1}]}
+""",
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "What is the best response when you feel FOMO about a hot stock?",
+      "options": [
+        "Buy immediately so you don't miss out",
+        "Stick to your plan and only invest in what you understand and have researched",
+        "Sell your current investments to free up cash",
+        "Check social media for more tips"
+      ],
+      "correct_index": 1,
+      "explanation": "FOMO leads to buying high. A plan and discipline help you avoid chasing trends and making emotional decisions."
+    },
+    {
+      "type": "concept_check",
+      "question": "Why is patience called a 'superpower' in investing?",
+      "options": [
+        "It guarantees higher returns every year",
+        "Time and consistency do most of the work; impatience leads to costly mistakes",
+        "Only patient people are allowed to invest",
+        "Patience replaces the need for diversification"
+      ],
+      "correct_index": 1,
+      "explanation": "Compounding and recovery from downturns need time. Impatient investors often sell low and buy high."
+    }
+  ],
+  "quiz": [
+    {"question": "Which mindset habit can help you avoid impulsive investment decisions?", "options": ["Reacting to every market headline", "Focusing on your long‑term plan", "Following every social media trend", "Trying to time the market"], "correct": 1},
+    {"question": "What is a realistic long-term return expectation for a diversified stock portfolio?", "options": ["20% or more every year", "7–10% per year over decades", "Zero; stocks don't grow", "Exactly the inflation rate"], "correct": 1},
+    {"question": "When you feel fear during a market crash, what is usually the best course of action?", "options": ["Sell everything immediately", "Stick to your plan and avoid locking in losses", "Wait until the news is positive to invest again", "Move everything to the hottest sector"], "correct": 1}
+  ]}
         ]
     },
     "investor_insight": {
@@ -828,6 +938,32 @@ Think about a recent market event:
 
 This habit builds true market intuition.
 """,
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "When interest rates rise, what typically happens to stock valuations?",
+      "options": [
+        "They always rise because the economy is strong",
+        "They often fall because borrowing costs increase and future earnings are discounted more",
+        "Rates have no effect on stocks",
+        "Only bond prices are affected"
+      ],
+      "correct_index": 1,
+      "explanation": "Higher rates make borrowing costlier and reduce the present value of future earnings, which can pressure stock valuations."
+    },
+    {
+      "type": "concept_check",
+      "question": "Why do markets often move on news before the full data is known?",
+      "options": [
+        "Because all news is fake",
+        "Because prices reflect expectations and reactions, not just the news itself",
+        "Only central banks move markets",
+        "Earnings are the only driver"
+      ],
+      "correct_index": 1,
+      "explanation": "Markets discount expectations; when news hits, investors reassess and trade, so prices move on reaction as much as on the event."
+    }
+  ],
   "quiz": [
     {
       "question": "Which factor most directly influences investor behavior before an economic event actually occurs?",
@@ -838,6 +974,26 @@ This habit builds true market intuition.
         "Interest rates"
       ],
       "correct": 2
+    },
+    {
+      "question": "What is usually the effect of high and rising inflation on many growth-oriented stocks?",
+      "options": [
+        "They always outperform",
+        "They often face pressure as rates rise and discount rates increase",
+        "Inflation has no effect",
+        "Only bonds are affected"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "Why is it hard to profit from trading on news alone?",
+      "options": [
+        "News is always wrong",
+        "Prices adjust quickly and you're competing with many others; timing is very difficult",
+        "Only professionals can trade on news",
+        "News doesn't move markets"
+      ],
+      "correct": 1
     }
   ]
 },
@@ -946,6 +1102,32 @@ Next time you feel the urge to trade, ask:
 
 Building this habit protects you from your own brain.
 """,
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "What is a common result of panic selling during a sharp market drop?",
+      "options": [
+        "Investors usually lock in losses and miss the eventual recovery",
+        "Panic selling always improves long-term returns",
+        "Only inexperienced investors panic",
+        "Markets never recover after panic"
+      ],
+      "correct_index": 0,
+      "explanation": "Selling in a panic crystallizes losses and often means missing the rebound. Staying the course or adding per plan is usually better for long-term outcomes."
+    },
+    {
+      "type": "concept_check",
+      "question": "How do market narratives often affect prices?",
+      "options": [
+        "Narratives have no effect",
+        "Stories can drive behavior and prices before data confirms them",
+        "Only earnings matter",
+        "Narratives are always correct"
+      ],
+      "correct_index": 1,
+      "explanation": "Narratives shape beliefs and trading; prices can move on stories first and data later, which is why discipline and a plan matter."
+    }
+  ],
   "quiz": [
     {
       "question": "Which psychological factor most often causes investors to buy at market peaks?",
@@ -954,6 +1136,26 @@ Building this habit protects you from your own brain.
         "Herd behavior",
         "Panic selling",
         "Risk management"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "What is the main risk of overconfidence in investing?",
+      "options": [
+        "It has no real effect",
+        "It leads to taking excessive risk and trading too much",
+        "It only affects beginners",
+        "It guarantees losses"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "Why is 'following the crowd' dangerous in markets?",
+      "options": [
+        "The crowd is always wrong",
+        "Herds can push prices to extremes in both directions, leading to buying high and selling low",
+        "Only professionals should follow the crowd",
+        "Crowds never move markets"
       ],
       "correct": 1
     }
@@ -1057,6 +1259,32 @@ Before acting on any market tip, ask:
 
 That single question filters 90% of bad decisions.
 """,
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "What is the main risk of making investment decisions based on social media hype?",
+      "options": [
+        "Social media has no effect on markets",
+        "You may buy high when everyone is excited and sell low when fear spreads",
+        "Only young investors use social media",
+        "It is the best source of stock picks"
+      ],
+      "correct_index": 1,
+      "explanation": "Hype and FOMO on social media often coincide with peaks; by the time something is viral, a lot of the move may already have happened."
+    },
+    {
+      "type": "concept_check",
+      "question": "How can you tell if information is 'signal' vs 'noise'?",
+      "options": [
+        "All news is signal",
+        "Ask whether it will matter for your strategy in 5 years, not just 5 days",
+        "Only earnings reports are signal",
+        "Noise is always from social media"
+      ],
+      "correct_index": 1,
+      "explanation": "Signal supports long-term decisions; noise creates short-term emotion. A long-term lens helps filter."
+    }
+  ],
   "quiz": [
     {
       "question": "Which behavior best represents long-term value investing?",
@@ -1067,6 +1295,26 @@ That single question filters 90% of bad decisions.
         "Timing short-term price movements"
       ],
       "correct": 2
+    },
+    {
+      "question": "What does 'speculation' typically emphasize?",
+      "options": [
+        "Long-term business value",
+        "Short-term price movement and timing",
+        "Only dividends",
+        "Diversification"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "Why might long-term value investing look 'boring'?",
+      "options": [
+        "It is always unprofitable",
+        "It relies on patience and compounding rather than excitement; results show over years",
+        "Only bonds are boring",
+        "It requires no discipline"
+      ],
+      "correct": 1
     }
   ]
 },
@@ -1168,6 +1416,32 @@ Ask yourself:
 
 Your strategy should fit **your lifestyle**, not just your goals.
 """,
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "What is a key advantage of passive investing for most people?",
+      "options": [
+        "It guarantees beating the market",
+        "Low effort, broad diversification, and typically lower costs",
+        "It is only for experts",
+        "It avoids all risk"
+      ],
+      "correct_index": 1,
+      "explanation": "Passive strategies aim to match the market at low cost with minimal ongoing decisions, which suits many long-term investors."
+    },
+    {
+      "type": "concept_check",
+      "question": "Why does short-term investing usually require more emotional control?",
+      "options": [
+        "Short-term gains are guaranteed",
+        "Volatility and quick decisions can trigger fear and greed",
+        "Only long-term investing is emotional",
+        "There are no emotions in investing"
+      ],
+      "correct_index": 1,
+      "explanation": "Short-term moves are noisy and stressful; staying disciplined is harder when you're focused on daily or weekly swings."
+    }
+  ],
   "quiz": [
     {
       "question": "Which investing style relies most on patience and compounding over time?",
@@ -1176,6 +1450,26 @@ Your strategy should fit **your lifestyle**, not just your goals.
         "Passive long-term investing",
         "Speculative investing",
         "Momentum trading"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "What typically characterizes active investing?",
+      "options": [
+        "No decisions required",
+        "More decisions, higher costs, and uncertain ability to beat the market",
+        "Zero risk",
+        "Only index funds"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "Who is long-term investing best suited for?",
+      "options": [
+        "Only retirees",
+        "Investors who can leave money invested for years and tolerate volatility",
+        "Only day traders",
+        "People who need the money next month"
       ],
       "correct": 1
     }
@@ -1278,6 +1572,35 @@ Ask yourself:
 
 These questions help you think like a strategist, not a short-term trader.
 """,
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "What does asset allocation primarily determine?",
+      "options": [
+        "Which individual stocks to pick",
+        "Your mix of stocks, bonds, and cash — and thus your risk and return profile",
+        "Only your tax rate",
+        "The exact date you will retire"
+      ],
+      "correct_index": 1,
+      "explanation": "Allocation is how you divide money across asset classes; it drives most of your portfolio's risk and return behavior."
+    },
+    {
+      "type": "concept_check",
+      "question": "Why do different asset classes (stocks, bonds, cash) behave differently?",
+      "options": [
+        "They don't; they always move together",
+        "They have different roles: growth vs stability vs liquidity; they react differently to economic conditions",
+        "Only stocks matter",
+        "Bonds are the same as stocks"
+      ],
+      "correct_index": 1,
+      "explanation": "Stocks, bonds, and cash have different return and risk characteristics, which is why combining them can smooth results."
+    },
+    {
+      "type": "diversification_chart"
+    }
+  ],
   "quiz": [
     {
       "question": "What is the main purpose of diversification in investing?",
@@ -1286,6 +1609,26 @@ These questions help you think like a strategist, not a short-term trader.
         "To reduce the impact of a single investment losing value",
         "To guarantee the highest possible returns",
         "To predict exact market movements"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "What is a portfolio in this context?",
+      "options": [
+        "A single stock",
+        "Your collection of investments, structured to match your plan and goals",
+        "Only retirement accounts",
+        "A type of bond"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "Why might you rebalance your portfolio periodically?",
+      "options": [
+        "To maximize short-term gains every month",
+        "To bring your mix back in line with your target allocation and manage risk",
+        "Rebalancing is never recommended",
+        "To avoid all taxes"
       ],
       "correct": 1
     }
@@ -1400,6 +1743,32 @@ Look at a recent market chart and ask:
 
 This turns charts into **decision tools**, not just pictures.
 """,
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "What does an uptrend typically show on a chart?",
+      "options": [
+        "Lower highs and lower lows",
+        "Higher highs and higher lows",
+        "No clear pattern",
+        "Only volume matters"
+      ],
+      "correct_index": 1,
+      "explanation": "An uptrend is defined by a series of higher highs and higher lows, showing buyers are in control."
+    },
+    {
+      "type": "concept_check",
+      "question": "Why do investors watch volatility?",
+      "options": [
+        "Volatility guarantees returns",
+        "It reflects how much prices swing and thus risk and potential for large moves",
+        "Only professionals care about volatility",
+        "Low volatility is always bad"
+      ],
+      "correct_index": 1,
+      "explanation": "Volatility measures the size and speed of price changes, which helps set expectations for risk and behavior."
+    }
+  ],
   "quiz": [
     {
       "question": "Which signal best describes the strength behind a price movement?",
@@ -1410,6 +1779,26 @@ This turns charts into **decision tools**, not just pictures.
         "Cycle"
       ],
       "correct": 2
+    },
+    {
+      "question": "What do market cycles typically include?",
+      "options": [
+        "Only growth with no declines",
+        "Phases such as expansion, peak, contraction, and trough that tend to repeat",
+        "Cycles are random and unpredictable",
+        "Only one cycle per decade"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "How can momentum help an investor?",
+      "options": [
+        "It guarantees future returns",
+        "It shows how strongly prices are moving in one direction, which can confirm or question a trend",
+        "Momentum is irrelevant",
+        "Only day traders use momentum"
+      ],
+      "correct": 1
     }
   ]
 },
@@ -1450,6 +1839,9 @@ Fund B 1% → $100/year
 
 
 Even small differences compound over decades.
+
+### Example: The real cost of a 1% fee
+Suppose you invest $10,000 and earn 7% per year for 30 years. With **no fee**, you'd end up with about $76,000. With a **1% annual expense ratio**, the same investment grows at only 6% net, so you'd have about $57,000 — a difference of **$19,000** lost to fees. That's roughly 25% of your potential wealth. Choosing a low-cost fund (e.g., 0.05%) keeps almost all of that growth in your pocket.
 
 ---
 
@@ -1540,6 +1932,32 @@ Before investing, ask yourself:
 
 Being mindful of costs and taxes can **add years of growth** to your portfolio.
 """,
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "Why does a 1% expense ratio matter over 30 years?",
+      "options": [
+        "It doesn't; only trading fees matter",
+        "It compounds and can cost a large portion of your growth over decades",
+        "Expense ratios are tax-deductible",
+        "Only bonds have expense ratios"
+      ],
+      "correct_index": 1,
+      "explanation": "Fees are deducted every year from your balance, so they compound against you. A 1% fee can significantly reduce ending wealth over 30 years."
+    },
+    {
+      "type": "concept_check",
+      "question": "What is a key advantage of long-term capital gains over short-term?",
+      "options": [
+        "There is no difference",
+        "Long-term gains are typically taxed at lower rates",
+        "Short-term gains are always better",
+        "Only dividends are taxed"
+      ],
+      "correct_index": 1,
+      "explanation": "Holding investments for more than one year usually qualifies for lower long-term capital gains rates, which preserves more of your return."
+    }
+  ],
   "quiz": [
     {
       "question": "Which strategy helps maximize long-term investment growth?",
@@ -1548,6 +1966,26 @@ Being mindful of costs and taxes can **add years of growth** to your portfolio.
         "Minimizing fees and using tax-advantaged accounts",
         "Trading frequently to capture short-term gains",
         "Ignoring tax implications on dividends and gains"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "What is an expense ratio?",
+      "options": [
+        "A one-time fee when you open an account",
+        "An annual fee charged by a fund, expressed as a percentage of assets",
+        "The tax rate on your gains",
+        "A fee only for selling stocks"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "How do tax-advantaged accounts like IRAs help investors?",
+      "options": [
+        "They eliminate all fees",
+        "They allow growth to compound with reduced or deferred taxes",
+        "They guarantee higher returns",
+        "They are only for the wealthy"
       ],
       "correct": 1
     }
@@ -1578,6 +2016,9 @@ Peak → Decline → Trough → Recovery → New Peak
 
 
 Knowing that downturns are expected reduces panic.
+
+### A brief historical perspective
+Major indices have experienced sharp drops many times (e.g., 2008–2009, March 2020, and others). In each case, investors who **stayed invested** and continued contributing saw their portfolios eventually recover and often reach new highs. Those who sold near the bottom locked in losses and missed the rebound. The pattern doesn't guarantee the future, but it illustrates why discipline and a long-term plan matter more than reacting to short-term fear.
 
 ---
 
@@ -1653,6 +2094,32 @@ Ask yourself:
 
 Taking a calm, disciplined approach turns market drops into opportunities.
 """,
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "Why does panic selling often hurt long-term results?",
+      "options": [
+        "It doesn't; selling always protects you",
+        "It locks in losses and can cause you to miss the eventual recovery",
+        "Only beginners panic",
+        "Markets never recover"
+      ],
+      "correct_index": 1,
+      "explanation": "Selling after a drop turns paper losses into real ones and often means missing the rebound. Staying invested has historically rewarded disciplined investors."
+    },
+    {
+      "type": "concept_check",
+      "question": "What can rebalancing during a crash help you do?",
+      "options": [
+        "Time the exact bottom",
+        "Restore your target allocation by buying assets that have fallen (e.g., stocks) with proceeds from those that held up (e.g., bonds)",
+        "Avoid all losses",
+        "Only sell bonds"
+      ],
+      "correct_index": 1,
+      "explanation": "Rebalancing forces a disciplined process: trim what's gone up and add to what's down, which can improve long-term outcomes."
+    }
+  ],
   "quiz": [
     {
       "question": "During a market downturn, what is generally considered the best course of action?",
@@ -1663,6 +2130,26 @@ Taking a calm, disciplined approach turns market drops into opportunities.
         "Ignore portfolio allocation completely"
       ],
       "correct": 2
+    },
+    {
+      "question": "Why are market downturns called 'normal'?",
+      "options": [
+        "They only happen once a decade",
+        "History shows they occur regularly and have typically been followed by recoveries",
+        "They don't affect long-term investors",
+        "They are always mild"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "What is a key benefit of having a written investment plan before a crash?",
+      "options": [
+        "It guarantees no losses",
+        "It gives you clear rules to follow so emotion doesn't drive decisions",
+        "Plans are only for professionals",
+        "You should change your plan during a crash"
+      ],
+      "correct": 1
     }
   ]
 },
@@ -1780,6 +2267,39 @@ Ask yourself:
 
 Building a structured approach reduces stress and improves long-term outcomes.
 """,
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "What is dollar-cost averaging?",
+      "options": [
+        "Investing only when the market is down",
+        "Investing a fixed amount on a regular schedule regardless of price",
+        "Selling the same amount every month",
+        "Only for bonds"
+      ],
+      "correct_index": 1,
+      "explanation": "Dollar-cost averaging means investing the same amount on a schedule (e.g., monthly), which can smooth out the average purchase price over time."
+    },
+    {
+      "type": "concept_check",
+      "question": "Why is rebalancing annually useful?",
+      "options": [
+        "It guarantees higher returns",
+        "It restores your target allocation so risk doesn't drift over time",
+        "It is only for day traders",
+        "It eliminates all volatility"
+      ],
+      "correct_index": 1,
+      "explanation": "Over time, some assets grow more than others. Rebalancing brings your mix back to your target and helps control risk."
+    },
+    {
+      "type": "compound_interest",
+      "principal": 5000,
+      "monthly": 200,
+      "rate": 7.0,
+      "years": 20
+    }
+  ],
   "quiz": [
     {
       "question": "Which practice best supports long-term investing success?",
@@ -1790,6 +2310,26 @@ Building a structured approach reduces stress and improves long-term outcomes.
         "Reacting to daily market news"
       ],
       "correct": 2
+    },
+    {
+      "question": "What is a benefit of automating your contributions?",
+      "options": [
+        "It guarantees the best price every time",
+        "It builds habit and reduces the chance of skipping investments when you feel nervous",
+        "Automation is only for experts",
+        "It avoids all fees"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "Why might you limit how often you check your portfolio?",
+      "options": [
+        "Checking frequently always improves returns",
+        "Less frequent checking can reduce emotional reactions to short-term noise",
+        "You should check every day",
+        "Portfolios don't change"
+      ],
+      "correct": 1
     }
   ]
 },
@@ -1907,6 +2447,32 @@ Look up the annual returns of a major stock index (like the S&P 500) for the p
 This exercise emphasizes that **short-term losses don’t erase long-term gains**.
 
 """,
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "Why might a negative year in the market still be consistent with long-term investing?",
+      "options": [
+        "Negative years never happen",
+        "Short-term volatility is normal; long-term outcomes have historically included both up and down years",
+        "Only bonds have negative years",
+        "You should sell after any negative year"
+      ],
+      "correct_index": 1,
+      "explanation": "Single years can be down; over many years, the average has tended positive. Staying invested through down years has historically been part of earning long-term returns."
+    },
+    {
+      "type": "concept_check",
+      "question": "What does 'time in the market' mean in practice?",
+      "options": [
+        "Checking the market every day",
+        "Staying invested over long periods rather than trying to time entries and exits",
+        "Only investing when the market is up",
+        "Selling as soon as you have a gain"
+      ],
+      "correct_index": 1,
+      "explanation": "Time in the market means holding through cycles so you capture compounding and recoveries; timing the market is notoriously difficult."
+    }
+  ],
   "quiz": [
     {
       "question": "Which statement best reflects market behavior over time?",
@@ -1915,6 +2481,26 @@ This exercise emphasizes that **short-term losses don’t erase long-term gains*
         "Short-term returns can be negative, but long-term returns tend to average positive",
         "Average returns guarantee future results",
         "Volatility is a market failure"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "How does a longer time horizon generally affect the likelihood of positive returns?",
+      "options": [
+        "It has no effect",
+        "Longer horizons tend to increase the chance of positive outcomes and smooth volatility",
+        "Short horizons are always better",
+        "Only 1-year horizons matter"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "Why is volatility sometimes called 'the price of risk'?",
+      "options": [
+        "Volatility is always bad",
+        "Higher-return assets tend to have more short-term volatility; you accept swings for growth potential",
+        "Only stocks have volatility",
+        "Volatility guarantees losses"
       ],
       "correct": 1
     }
@@ -2075,6 +2661,35 @@ Open a stock chart right now:
 
 This hands-on look helps you translate theory into real-world chart reading.
 """,
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "What does 'support' mean on a chart?",
+      "options": [
+        "The highest price ever reached",
+        "A price level where buying has historically stepped in and limited further decline",
+        "Only volume",
+        "The chart type"
+      ],
+      "correct_index": 1,
+      "explanation": "Support is a level where demand has historically been strong enough to slow or halt declines."
+    },
+    {
+      "type": "concept_check",
+      "question": "Why is volume often shown below the price chart?",
+      "options": [
+        "It has no relationship to price",
+        "Volume helps confirm whether a price move is backed by strong participation",
+        "Only for decoration",
+        "Volume is the same as price"
+      ],
+      "correct_index": 1,
+      "explanation": "High volume on a price move suggests conviction; low volume can suggest a weaker or less reliable move."
+    },
+    {
+      "type": "stock_market_demo"
+    }
+  ],
   "quiz": [
     {
       "question": "Which chart feature helps confirm the *strength* of a price move?",
@@ -2085,21 +2700,280 @@ This hands-on look helps you translate theory into real-world chart reading.
         "Candlestick color"
       ],
       "correct": 1
+    },
+    {
+      "question": "What does a candlestick's body represent?",
+      "options": [
+        "Only volume",
+        "The range between the open and close price for that period",
+        "The high and low only",
+        "Future prices"
+      ],
+      "correct": 1
+    },
+    {
+      "question": "What is an uptrend typically characterized by?",
+      "options": [
+        "Lower highs and lower lows",
+        "Higher highs and higher lows",
+        "Flat volume only",
+        "Only green candlesticks"
+      ],
+      "correct": 1
     }
   ]
 },
             {"id": "market_pulse", "title": "Market Pulse", "content": """
-## Market Pulse
+# 📡 Market Pulse — Tracking Sentiment, News, and Key Indicators
 
-Brief placeholder: tracking sentiment, news flow, and key indicators.
+Understanding the market's "pulse" means paying attention to **sentiment**, **news flow**, and **key indicators** — without letting short-term noise drive your long-term decisions. This lesson gives you a practical framework for reading the environment while staying focused on your plan.
 
-""", "quiz": [{"question": "When market sentiment is very negative, what does this typically signal for long-term investors?", "options": ["Don't invest until sentiment improves", "Fear may create buying opportunities", "The market is permanently broken", "Sell everything"], "correct": 1, "misconception_if_wrong": {0: "Extreme fear is often associated with market bottoms.", 2: "Markets recover historically; sentiment swings are normal.", 3: "Panicked selling often marks the worst time to sell."}}]},
+---
+
+## 1. 🧠 What Is Market Sentiment?
+
+**Market sentiment** is the overall mood of investors: how optimistic or pessimistic they feel about the economy and asset prices.
+
+### Why it matters
+- **Extreme optimism** often coincides with high valuations and potential for pullbacks.
+- **Extreme pessimism** often coincides with fear, selling, and potential opportunities for long-term buyers.
+- Sentiment is a **contrarian indicator** when it reaches extremes: when everyone is fearful, opportunities can appear; when everyone is greedy, risk is often elevated.
+
+### Common sentiment gauges
+- **Surveys** (e.g., investor bullish/bearish percentages)
+- **Put/call ratios** (options activity showing hedging vs speculation)
+- **Volatility indices** (e.g., VIX — "fear gauge")
+- **Headlines and social buzz** (qualitative; easy to overstate)
+
+Sentiment does **not** tell you exactly when to buy or sell. It helps you understand **context** and avoid getting swept up in the crowd.
+
+---
+
+## 2. 📰 News Flow — Signal vs Noise
+
+Markets react to news constantly. Not all news is equal.
+
+### Types of news that move markets
+- **Central bank decisions** (interest rates, forward guidance)
+- **Economic data** (jobs, inflation, GDP)
+- **Corporate earnings** and guidance
+- **Geopolitical events** (trade, conflict, elections)
+- **Regulatory or tax changes**
+
+### How to use news without being ruled by it
+- **Prioritize** information that affects long-term earnings and rates over one-day headlines.
+- **Avoid** making big portfolio changes based on a single report or tweet.
+- **Ask**: "Will this matter in 5 years, or only for 5 days?"
+
+Short-term news creates **volatility**; your job is to keep your strategy intact and use dislocations only if they align with your plan.
+
+---
+
+## 3. 📊 Key Indicators Worth Watching
+
+Some indicators help you gauge economic health and market context. You don't need to trade on them — they help you **stay oriented**.
+
+### Economic indicators
+- **Employment** (e.g., monthly jobs report) — strength or weakness in the labor market
+- **Inflation** (CPI, PCE) — influences interest rates and Fed policy
+- **GDP growth** — broad picture of economic expansion or contraction
+
+### Market-based indicators
+- **Yield curve** (short- vs long-term rates) — often watched for recession signals
+- **Credit spreads** — how much extra yield investors demand for risk; widening can signal stress
+- **Breadth** — how many stocks are participating in a rally or selloff (narrow rallies can be fragile)
+
+### A word of caution
+Indicators are **lagging** or **coincident** much of the time. They rarely give you a clear "buy now" or "sell now" signal. Use them to understand the **backdrop**, not to time the market.
+
+---
+
+## 4. 🎯 Putting It Into Practice
+
+### For long-term investors
+- **Do** check in on sentiment and news periodically so you're not surprised by big moves.
+- **Do** use extreme fear as a reminder that selling into panic is usually costly.
+- **Don't** change your allocation every time sentiment shifts or a new headline hits.
+- **Don't** assume you can consistently time entries and exits using sentiment or news.
+
+### Simple habit
+When sentiment is very negative: ask yourself whether your **goals** and **time horizon** have changed. If not, stick to your plan. History shows that **fear often creates opportunities** for those who can stay disciplined — not because you can time the bottom, but because you avoid selling at the worst time.
+
+---
+
+## 5. 📌 Summary
+
+| Concept | Takeaway |
+|--------|----------|
+| Sentiment | Gauges crowd mood; extremes can be contrarian signals. |
+| News | Creates short-term volatility; focus on long-term impact. |
+| Indicators | Provide context, not perfect timing. |
+| Your role | Stay disciplined; use pulse to inform, not dictate, decisions. |
+
+When market sentiment is very negative, long-term investors often find that **fear has created better entry points** — not because the bottom is predictable, but because panic selling has already happened. Your edge is discipline and a plan, not predicting the next headline.
+""",
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "When sentiment is extremely fearful, what is a common mistake long-term investors make?",
+      "options": [
+        "Staying invested and rebalancing according to their plan",
+        "Selling everything to avoid further losses",
+        "Adding a small amount to their regular contributions",
+        "Reviewing their goals and time horizon"
+      ],
+      "correct_index": 1,
+      "explanation": "Selling in a panic locks in losses and often misses the recovery. Staying invested or adding according to a plan is usually better for long-term outcomes."
+    },
+    {
+      "type": "concept_check",
+      "question": "What is the main benefit of following news and sentiment for a long-term investor?",
+      "options": [
+        "To time exactly when to buy and sell",
+        "To stay informed and avoid being surprised by big moves",
+        "To trade on every headline",
+        "To predict recessions precisely"
+      ],
+      "correct_index": 1,
+      "explanation": "The goal is context and discipline — not timing every move. Knowing the backdrop helps you stick to your plan when others panic."
+    }
+  ],
+  "quiz": [
+    {"question": "When market sentiment is very negative, what does this typically signal for long-term investors?", "options": ["Don't invest until sentiment improves", "Fear may create buying opportunities", "The market is permanently broken", "Sell everything"], "correct": 1, "misconception_if_wrong": {0: "Extreme fear is often associated with market bottoms.", 2: "Markets recover historically; sentiment swings are normal.", 3: "Panicked selling often marks the worst time to sell."}},
+    {"question": "Which of these is best used as context rather than a precise timing signal?", "options": ["A single jobs report", "Investor sentiment surveys", "Your own asset allocation plan", "Put/call ratios"], "correct": 1, "misconception_if_wrong": {0: "One report can move markets short-term but doesn't define your plan.", 2: "Sentiment gives context; it doesn't tell you exactly when to act.", 3: "Your plan should drive decisions; sentiment informs context."}},
+    {"question": "What should you prioritize when big news hits the market?", "options": ["Selling immediately to avoid losses", "Whether the news changes your long-term goals or time horizon", "Copying what other investors are doing", "Checking sentiment surveys first"], "correct": 1}
+  ]},
             {"id": "asset_allocation", "title": "Asset Allocation", "content": """
-## Asset Allocation
+# ⚖️ Asset Allocation — Building Diversified Portfolios Across Asset Classes
 
-Brief placeholder: constructing diversified portfolios across asset classes.
+**Asset allocation** is how you divide your investable money among **stocks**, **bonds**, **cash**, and sometimes other assets. It is one of the most important decisions you make as an investor — often more impactful than picking individual securities.
 
-""", "quiz": [{"question": "What is the goal of asset allocation?", "options": ["Eliminate all risk", "Maximize short-term gains", "Match your risk tolerance and time horizon", "Own only growth stocks"], "correct": 2, "misconception_if_wrong": {0: "No allocation eliminates risk; allocation manages it.", 1: "Asset allocation focuses on long-term goals, not short-term gains.", 3: "Growth stocks alone create concentration risk."}}]}
+---
+
+## 1. 🧱 Why Asset Classes Matter
+
+Different **asset classes** behave differently over time.
+
+### Stocks (equities)
+- **Role**: Long-term growth; ownership in companies.
+- **Typical behavior**: Higher return potential, higher volatility.
+- **Best for**: Long time horizons (e.g., 10+ years), growth of purchasing power.
+
+### Bonds (fixed income)
+- **Role**: Income and relative stability.
+- **Typical behavior**: Lower volatility than stocks; interest payments; can fall when rates rise.
+- **Best for**: Shorter time horizons, dampening portfolio swings, income.
+
+### Cash and cash equivalents
+- **Role**: Liquidity and safety.
+- **Typical behavior**: Minimal return; loses purchasing power to inflation over time.
+- **Best for**: Emergency fund, short-term goals, and "dry powder" you might deploy.
+
+No single asset class is "best" — the right **mix** depends on your goals, time horizon, and risk tolerance.
+
+---
+
+## 2. 🎯 What Is Asset Allocation?
+
+**Asset allocation** is the decision of what **percentage** of your portfolio to hold in each asset class.
+
+### Examples (conceptual)
+- **Aggressive**: 90% stocks, 10% bonds — for long horizons and high risk tolerance.
+- **Moderate/Balanced**: 60% stocks, 40% bonds — middle ground.
+- **Conservative**: 30% stocks, 70% bonds/cash — for shorter horizons or lower risk tolerance.
+
+Your allocation should **match your ability and willingness** to ride out market downturns. A portfolio that keeps you up at night will tempt you to sell at the wrong time.
+
+---
+
+## 3. 📐 How to Choose Your Allocation
+
+### Step 1: Define your goals and time horizon
+- **Retirement in 30 years** → more room for stocks.
+- **House down payment in 3 years** → more bonds and cash.
+- **Already retired, drawing income** → often more bonds/cash for stability.
+
+### Step 2: Assess your risk tolerance
+- How much can your portfolio fall in a bad year without you abandoning your plan?
+- Be honest: if a 30% drop would make you sell, don't allocate like you can handle 50% stocks.
+
+### Step 3: Choose a starting mix
+- Use simple rules of thumb only as a **starting point** (e.g., "100 minus age" in stocks).
+- Prefer **broad, low-cost funds** (e.g., total stock, total bond) to implement your mix.
+
+### Step 4: Write it down and revisit periodically
+- Put your target allocation in writing.
+- Rebalance when your actual mix drifts too far from the target (e.g., once a year or when bands are exceeded).
+
+---
+
+## 4. 🔄 Rebalancing — Keeping Your Mix on Track
+
+Over time, gains and losses will **shift** your percentages (e.g., stocks outperform and you end up with 70% stocks instead of 60%).
+
+**Rebalancing** means bringing your portfolio back toward your target (e.g., selling some stocks and buying bonds, or directing new money to the underweight asset).
+
+### Benefits
+- Controls risk (stops you from becoming too concentrated in the winner).
+- Encourages "buy low, sell high" in a disciplined way (you sell what went up and buy what went down relative to target).
+
+You don't need to rebalance daily — **periodic** rebalancing (e.g., annually or when bands are hit) is usually enough.
+
+---
+
+## 5. 📌 What Asset Allocation Does *Not* Do
+
+- It does **not** eliminate risk — it **manages** it.
+- It does **not** guarantee maximum returns — it balances return potential with your comfort level.
+- It does **not** replace the need for an emergency fund or a clear plan — those come first.
+
+---
+
+## 6. Summary Table
+
+| Idea | Takeaway |
+|------|----------|
+| Asset classes | Stocks (growth), bonds (stability/income), cash (liquidity). |
+| Allocation | Your chosen mix of those classes. |
+| Goal | Match your risk tolerance and time horizon. |
+| Rebalancing | Periodically restore your target mix. |
+
+The goal of asset allocation is to **match your portfolio to your risk tolerance and time horizon** — not to eliminate risk or chase the highest possible short-term return.
+""",
+  "interactive_elements": [
+    {
+      "type": "concept_check",
+      "question": "What is the main purpose of rebalancing a portfolio?",
+      "options": [
+        "To maximize short-term returns every year",
+        "To bring the portfolio back toward your target allocation and control risk",
+        "To sell all bonds and buy only stocks",
+        "To avoid paying any taxes"
+      ],
+      "correct_index": 1,
+      "explanation": "Rebalancing restores your intended mix and helps you avoid becoming too concentrated in one asset class."
+    },
+    {
+      "type": "concept_check",
+      "question": "Who typically benefits from a higher allocation to stocks?",
+      "options": [
+        "Someone who needs the money in 2 years",
+        "Someone with a long time horizon and higher risk tolerance",
+        "Someone who cannot tolerate any loss",
+        "Someone who only holds cash"
+      ],
+      "correct_index": 1,
+      "explanation": "Stocks are volatile; they suit long horizons and investors who can stay the course during downturns."
+    },
+    {
+      "type": "diversification_chart"
+    }
+  ],
+  "quiz": [
+    {"question": "What is the goal of asset allocation?", "options": ["Eliminate all risk", "Maximize short-term gains", "Match your risk tolerance and time horizon", "Own only growth stocks"], "correct": 2, "misconception_if_wrong": {0: "No allocation eliminates risk; allocation manages it.", 1: "Asset allocation focuses on long-term goals, not short-term gains.", 3: "Growth stocks alone create concentration risk."}},
+    {"question": "Which action best describes rebalancing?", "options": ["Selling everything and moving to cash", "Adjusting your holdings back toward your target mix", "Buying only the best-performing fund", "Avoiding bonds entirely"], "correct": 1},
+    {"question": "Why might a conservative investor hold more bonds than stocks?", "options": ["Bonds always outperform stocks", "To reduce volatility and preserve capital", "To maximize growth over 30 years", "Because stocks are illegal in some accounts"], "correct": 1}
+  ]}
         ]
     }
 }
@@ -2263,10 +3137,32 @@ def render_lesson_view():
     st.markdown(f"""
     <div style="background: linear-gradient(135deg, #1e3a5f 0%, #16213e 100%);
                 border-radius: 12px; padding: 2rem; margin: 1rem 0;">
-        <p style="color: #6366f1; margin: 0;">{mod['icon']} {mod['title']} / Lesson {lesson_idx + 1}</p>
+        <p style="color: #6366f1; margin: 0;">{mod['icon']} {mod['title']} / Lesson {lesson_idx + 1} of {len(mod['lessons'])}</p>
         <h2 style="color: white; margin: 0.5rem 0;">{lesson['title']}</h2>
     </div>
     """, unsafe_allow_html=True)
+    
+    # Per-lesson progress + self-assessment (generic interactive layer)
+    lesson_key = f"{mod_id}_{lesson_id}"
+    progress_key = f"confidence_{lesson_key}"
+    reflection_key = f"reflection_{lesson_key}"
+    
+    st.markdown("#### 🧭 How confident do you feel about this lesson?")
+    confidence = st.slider(
+        "Confidence (1 = still confused, 5 = very confident)",
+        min_value=1,
+        max_value=5,
+        value=st.session_state.get(progress_key, 3),
+        key=progress_key
+    )
+    st.caption("This is just for you – it helps you track how your understanding grows over time.")
+    
+    with st.expander("🧠 Jot down a quick takeaway or question"):
+        st.text_area(
+            "Write a brief note, key insight, or question to revisit later.",
+            key=reflection_key,
+            height=120,
+        )
     
     # Render lesson content (markdown)
     render_lesson_content(mod_id, lesson_id)
@@ -2327,15 +3223,6 @@ def render_lesson_content(mod_id, lesson_id):
 
 def render_lesson_interactive_elements(mod_id, lesson_id):
     """Render interactive elements after lesson content but before quiz."""
-    mod = MODULES.get(mod_id)
-    if not mod:
-        return
-    
-    lesson = next((l for l in mod['lessons'] if l['id'] == lesson_id), None)
-    if not lesson or not lesson.get('interactive_elements'):
-        return
-    
-    # Render AI tutor sidebar (always available)
     try:
         from pages.components.interactive_elements import (
             inflation_calculator,
@@ -2348,15 +3235,30 @@ def render_lesson_interactive_elements(mod_id, lesson_id):
             portfolio_diversification_chart
         )
         
-        # Render AI tutor sidebar
-        ai_tutor_sidebar(lesson_id, lesson.get('title', ''))
+        # Look up lesson metadata if available
+        mod = MODULES.get(mod_id)
+        lesson = None
+        interactive_elements = []
+        lesson_title = ""
+        if mod:
+            lesson = next((l for l in mod['lessons'] if l['id'] == lesson_id), None)
+            if lesson:
+                lesson_title = lesson.get('title', '')
+                interactive_elements = lesson.get('interactive_elements', [])
+        
+        # Render AI tutor sidebar for every lesson, even if no extra tools are defined
+        ai_tutor_sidebar(lesson_id, lesson_title)
+        
+        # If this lesson doesn't define additional interactive tools, we're done
+        if not interactive_elements:
+            return
         
         # Add separator before interactive elements
         st.markdown("---")
         st.markdown("### Interactive Learning Tools")
         
         # Render other interactive elements
-        for element in lesson.get('interactive_elements', []):
+        for element in interactive_elements:
             element_type = element.get('type')
             if element_type == 'inflation_calculator':
                 inflation_calculator(
