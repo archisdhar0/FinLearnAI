@@ -43,6 +43,10 @@ _cv_loaded = False
 _sr_model = None
 _trend_model = None
 
+# Sentiment model (lazy loaded)
+_sentiment_analyzer = None
+_news_fetcher = None
+
 def _prewarm_cv():
     """Helper to prewarm CV models - actual load_cv_models defined below."""
     global _cv_loaded, _sr_model, _trend_model
@@ -96,6 +100,17 @@ async def prewarm_models():
             print(f"[Prewarm] LLM not available: {status}")
     except Exception as e:
         print(f"[Prewarm] LLM check failed: {e}")
+    
+    # 4. Prewarm Sentiment Model (FinBERT)
+    print("\n[Prewarm] Loading Sentiment model (FinBERT)...")
+    try:
+        load_sentiment_models()
+        if _sentiment_analyzer is not None:
+            print("[Prewarm] Sentiment model ready")
+        else:
+            print("[Prewarm] Sentiment model not loaded")
+    except Exception as e:
+        print(f"[Prewarm] Sentiment model failed: {e}")
     
     print("\n" + "="*60)
     print("SERVER READY - All models prewarmed!")
@@ -243,6 +258,92 @@ Provide a helpful answer:"""
             response=f"I'm having trouble connecting to my knowledge base right now. Your question was about: {request.message}. Please try again in a moment.",
             sources=[]
         )
+
+# =============================================================================
+# Sentiment Analysis - FinBERT
+# =============================================================================
+
+def load_sentiment_models():
+    """Load FinBERT sentiment model and news fetcher."""
+    global _sentiment_analyzer, _news_fetcher
+    
+    if _sentiment_analyzer is not None:
+        return
+    
+    try:
+        # Import from chart-vision
+        from models.sentiment_analyzer import SentimentAnalyzer
+        from utils.news_fetcher import NewsFetcher
+        
+        _sentiment_analyzer = SentimentAnalyzer()
+        _sentiment_analyzer.load_model()  # Preload the model
+        
+        polygon_key = os.environ.get('POLYGON_API_KEY')
+        if polygon_key:
+            _news_fetcher = NewsFetcher(polygon_key)
+            print("[Sentiment] News fetcher initialized")
+        else:
+            print("[Sentiment] No Polygon API key - news fetching disabled")
+        
+    except Exception as e:
+        print(f"[Sentiment] Failed to load: {e}")
+        import traceback
+        traceback.print_exc()
+
+
+def get_stock_sentiment(ticker: str) -> Dict[str, Any]:
+    """Get sentiment analysis for a stock from recent news."""
+    global _sentiment_analyzer, _news_fetcher
+    
+    if _sentiment_analyzer is None or _news_fetcher is None:
+        load_sentiment_models()
+    
+    if _sentiment_analyzer is None or _news_fetcher is None:
+        return {
+            'sentiment': None,
+            'sentiment_score': None,
+            'sentiment_signal': None,
+            'news_count': 0
+        }
+    
+    try:
+        # Fetch recent news (last 7 days, up to 10 articles)
+        articles = _news_fetcher.get_news(ticker, limit=10, days_back=7)
+        
+        if not articles:
+            return {
+                'sentiment': 'neutral',
+                'sentiment_score': 0.0,
+                'sentiment_signal': 'NEUTRAL',
+                'news_count': 0
+            }
+        
+        # Convert to dict format for analyzer
+        article_dicts = [
+            {'title': a.title, 'description': a.description}
+            for a in articles
+        ]
+        
+        # Analyze sentiment
+        result = _sentiment_analyzer.analyze_stock(ticker, article_dicts)
+        signal, strength = _sentiment_analyzer.get_sentiment_signal(result)
+        
+        return {
+            'sentiment': result.overall_sentiment,
+            'sentiment_score': result.overall_score,
+            'sentiment_signal': signal,
+            'news_count': result.num_articles
+        }
+        
+    except Exception as e:
+        print(f"[Sentiment] Error analyzing {ticker}: {e}")
+        return {
+            'sentiment': None,
+            'sentiment_score': None,
+            'sentiment_signal': None,
+            'news_count': 0
+        }
+
 
 # =============================================================================
 # Chart Analysis Endpoint
@@ -970,6 +1071,11 @@ class StockAnalysisResponse(BaseModel):
     support_zones: List[Dict[str, Any]] = []
     resistance_zones: List[Dict[str, Any]] = []
     chart_image: str  # Base64 encoded PNG
+    # Sentiment fields
+    sentiment: Optional[str] = None  # 'positive', 'negative', 'neutral'
+    sentiment_score: Optional[float] = None  # -1 to +1
+    sentiment_signal: Optional[str] = None  # 'BULLISH', 'BEARISH', 'NEUTRAL'
+    news_count: Optional[int] = None
 
 
 @app.post("/api/stocks", response_model=List[StockAnalysisResponse])
@@ -1045,6 +1151,9 @@ async def get_stocks(request: StockRequest):
                 support_price = analysis['support_zones'][0]['price'] if analysis['support_zones'] else round(price_min, 2)
                 resistance_price = analysis['resistance_zones'][0]['price'] if analysis['resistance_zones'] else round(price_max, 2)
                 
+                # Get sentiment analysis
+                sentiment_data = get_stock_sentiment(ticker)
+                
                 results.append(StockAnalysisResponse(
                     ticker=ticker,
                     price=round(latest.close, 2),
@@ -1058,7 +1167,12 @@ async def get_stocks(request: StockRequest):
                     resistance=resistance_price,
                     support_zones=analysis['support_zones'],
                     resistance_zones=analysis['resistance_zones'],
-                    chart_image=chart_base64
+                    chart_image=chart_base64,
+                    # Sentiment fields
+                    sentiment=sentiment_data.get('sentiment'),
+                    sentiment_score=sentiment_data.get('sentiment_score'),
+                    sentiment_signal=sentiment_data.get('sentiment_signal'),
+                    news_count=sentiment_data.get('news_count', 0)
                 ))
                 
             except Exception as e:
@@ -1076,6 +1190,104 @@ async def get_stocks(request: StockRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 # =============================================================================
+# Sentiment Analysis Endpoint (Standalone AI Tool)
+# =============================================================================
+
+class SentimentRequest(BaseModel):
+    ticker: str
+    
+class ArticleSentiment(BaseModel):
+    title: str
+    sentiment: str
+    confidence: float
+    scores: Dict[str, float]
+    
+class SentimentResponse(BaseModel):
+    ticker: str
+    overall_sentiment: str
+    overall_score: float  # -1 to +1
+    signal: str  # BULLISH, BEARISH, NEUTRAL
+    confidence: float
+    num_articles: int
+    positive_count: int
+    negative_count: int
+    neutral_count: int
+    articles: List[ArticleSentiment]
+
+
+@app.post("/api/sentiment", response_model=SentimentResponse)
+async def analyze_sentiment(request: SentimentRequest):
+    """Analyze sentiment for a stock based on recent news."""
+    global _sentiment_analyzer, _news_fetcher
+    
+    load_sentiment_models()
+    
+    if _sentiment_analyzer is None:
+        raise HTTPException(status_code=500, detail="Sentiment model not loaded")
+    
+    if _news_fetcher is None:
+        raise HTTPException(status_code=500, detail="News fetcher not configured - check POLYGON_API_KEY")
+    
+    try:
+        # Fetch news
+        articles = _news_fetcher.get_news(request.ticker, limit=15, days_back=7)
+        
+        if not articles:
+            return SentimentResponse(
+                ticker=request.ticker,
+                overall_sentiment='neutral',
+                overall_score=0.0,
+                signal='NEUTRAL',
+                confidence=0.0,
+                num_articles=0,
+                positive_count=0,
+                negative_count=0,
+                neutral_count=0,
+                articles=[]
+            )
+        
+        # Convert to dict format
+        article_dicts = [
+            {'title': a.title, 'description': a.description}
+            for a in articles
+        ]
+        
+        # Analyze
+        result = _sentiment_analyzer.analyze_stock(request.ticker, article_dicts)
+        signal, strength = _sentiment_analyzer.get_sentiment_signal(result)
+        
+        # Format article results
+        article_results = [
+            ArticleSentiment(
+                title=ar.text,
+                sentiment=ar.sentiment,
+                confidence=round(ar.confidence, 3),
+                scores={k: round(v, 3) for k, v in ar.scores.items()}
+            )
+            for ar in result.articles
+        ]
+        
+        return SentimentResponse(
+            ticker=request.ticker,
+            overall_sentiment=result.overall_sentiment,
+            overall_score=result.overall_score,
+            signal=signal,
+            confidence=result.confidence,
+            num_articles=result.num_articles,
+            positive_count=result.positive_count,
+            negative_count=result.negative_count,
+            neutral_count=result.neutral_count,
+            articles=article_results
+        )
+        
+    except Exception as e:
+        print(f"[Sentiment Error] {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# =============================================================================
 # Health Check
 # =============================================================================
 
@@ -1089,7 +1301,8 @@ async def health_check():
         "components": {
             "rag": False,
             "cv_models": False,
-            "polygon": False
+            "polygon": False,
+            "sentiment": False
         }
     }
     
@@ -1106,6 +1319,9 @@ async def health_check():
     
     # Check Polygon
     status["components"]["polygon"] = bool(os.environ.get('POLYGON_API_KEY'))
+    
+    # Check Sentiment
+    status["components"]["sentiment"] = _sentiment_analyzer is not None
     
     return status
 
