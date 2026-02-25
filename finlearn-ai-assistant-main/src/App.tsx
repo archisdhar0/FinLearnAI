@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import StockScreener from "./pages/StockScreener";
 import ChartAnalyzer from "./pages/ChartAnalyzer";
+import SentimentAnalyzer from "./pages/SentimentAnalyzer";
 import LearningModule from "./pages/LearningModule";
 import Simulator from "./pages/Simulator";
 import NotFound from "./pages/NotFound";
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/screener" element={<StockScreener />} />
           <Route path="/analyzer" element={<ChartAnalyzer />} />
+          <Route path="/sentiment" element={<SentimentAnalyzer />} />
           <Route path="/learn/:moduleId" element={<LearningModule />} />
           <Route path="/simulator" element={<Simulator />} />
           <Route path="*" element={<NotFound />} />

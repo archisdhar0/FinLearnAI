@@ -38,6 +38,84 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
+# Forward declarations for prewarming (actual functions defined below)
+_cv_loaded = False
+_sr_model = None
+_trend_model = None
+
+# Sentiment model (lazy loaded)
+_sentiment_analyzer = None
+_news_fetcher = None
+
+def _prewarm_cv():
+    """Helper to prewarm CV models - actual load_cv_models defined below."""
+    global _cv_loaded, _sr_model, _trend_model
+    # This will be replaced by the actual function below
+    pass
+
+# =============================================================================
+# Startup Prewarming - Load all models on startup for faster first requests
+# =============================================================================
+
+@app.on_event("startup")
+async def prewarm_models():
+    """Prewarm all models on startup so first requests are fast."""
+    global _cv_loaded, _sr_model, _trend_model
+    
+    print("\n" + "="*60)
+    print("PREWARMING MODELS ON STARTUP...")
+    print("="*60)
+    
+    # 1. Prewarm RAG (embedding model + reranker + knowledge base)
+    print("\n[Prewarm] Loading RAG components...")
+    try:
+        from rag.retrieval import get_retriever
+        retriever = get_retriever()
+        # Do a dummy query to fully initialize
+        retriever.retrieve("what is investing", top_k=1)
+        print("[Prewarm] RAG ready")
+    except Exception as e:
+        print(f"[Prewarm] RAG failed: {e}")
+    
+    # 2. Prewarm CV models (call the actual function defined below)
+    print("\n[Prewarm] Loading CV models...")
+    try:
+        # Import and call the actual load function
+        load_cv_models()
+        if _sr_model and _trend_model:
+            print("[Prewarm] CV models ready")
+        else:
+            print("[Prewarm] CV models partially loaded")
+    except Exception as e:
+        print(f"[Prewarm] CV models failed: {e}")
+    
+    # 3. Check LLM connection
+    print("\n[Prewarm] Checking LLM connection...")
+    try:
+        from rag.llm_provider import check_llm_status
+        status = check_llm_status()
+        if status.get('status') == 'online':
+            print(f"[Prewarm] LLM ready ({status.get('provider')})")
+        else:
+            print(f"[Prewarm] LLM not available: {status}")
+    except Exception as e:
+        print(f"[Prewarm] LLM check failed: {e}")
+    
+    # 4. Prewarm Sentiment Model (FinBERT)
+    print("\n[Prewarm] Loading Sentiment model (FinBERT)...")
+    try:
+        load_sentiment_models()
+        if _sentiment_analyzer is not None:
+            print("[Prewarm] Sentiment model ready")
+        else:
+            print("[Prewarm] Sentiment model not loaded")
+    except Exception as e:
+        print(f"[Prewarm] Sentiment model failed: {e}")
+    
+    print("\n" + "="*60)
+    print("SERVER READY - All models prewarmed!")
+    print("="*60 + "\n")
+
 # =============================================================================
 # Request/Response Models
 # =============================================================================
@@ -182,13 +260,96 @@ Provide a helpful answer:"""
         )
 
 # =============================================================================
+# Sentiment Analysis - FinBERT
+# =============================================================================
+
+def load_sentiment_models():
+    """Load FinBERT sentiment model and news fetcher."""
+    global _sentiment_analyzer, _news_fetcher
+    
+    if _sentiment_analyzer is not None:
+        return
+    
+    try:
+        # Import from chart-vision
+        from models.sentiment_analyzer import SentimentAnalyzer
+        from utils.news_fetcher import NewsFetcher
+        
+        _sentiment_analyzer = SentimentAnalyzer()
+        _sentiment_analyzer.load_model()  # Preload the model
+        
+        polygon_key = os.environ.get('POLYGON_API_KEY')
+        if polygon_key:
+            _news_fetcher = NewsFetcher(polygon_key)
+            print("[Sentiment] News fetcher initialized")
+        else:
+            print("[Sentiment] No Polygon API key - news fetching disabled")
+        
+    except Exception as e:
+        print(f"[Sentiment] Failed to load: {e}")
+        import traceback
+        traceback.print_exc()
+
+
+def get_stock_sentiment(ticker: str) -> Dict[str, Any]:
+    """Get sentiment analysis for a stock from recent news."""
+    global _sentiment_analyzer, _news_fetcher
+    
+    if _sentiment_analyzer is None or _news_fetcher is None:
+        load_sentiment_models()
+    
+    if _sentiment_analyzer is None or _news_fetcher is None:
+        return {
+            'sentiment': None,
+            'sentiment_score': None,
+            'sentiment_signal': None,
+            'news_count': 0
+        }
+    
+    try:
+        # Fetch recent news (last 7 days, up to 10 articles)
+        articles = _news_fetcher.get_news(ticker, limit=10, days_back=7)
+        
+        if not articles:
+            return {
+                'sentiment': 'neutral',
+                'sentiment_score': 0.0,
+                'sentiment_signal': 'NEUTRAL',
+                'news_count': 0
+            }
+        
+        # Convert to dict format for analyzer
+        article_dicts = [
+            {'title': a.title, 'description': a.description}
+            for a in articles
+        ]
+        
+        # Analyze sentiment
+        result = _sentiment_analyzer.analyze_stock(ticker, article_dicts)
+        signal, strength = _sentiment_analyzer.get_sentiment_signal(result)
+        
+        return {
+            'sentiment': result.overall_sentiment,
+            'sentiment_score': result.overall_score,
+            'sentiment_signal': signal,
+            'news_count': result.num_articles
+        }
+        
+    except Exception as e:
+        print(f"[Sentiment] Error analyzing {ticker}: {e}")
+        return {
+            'sentiment': None,
+            'sentiment_score': None,
+            'sentiment_signal': None,
+            'news_count': 0
+        }
+
+
+# =============================================================================
 # Chart Analysis Endpoint
 # =============================================================================
 
-# Lazy load CV models
-_cv_loaded = False
-_sr_model = None
-_trend_model = None
+# CV model variables are declared at the top of the file (forward declarations)
 
 def load_cv_models():
     global _cv_loaded, _sr_model, _trend_model
@@ -400,12 +561,13 @@ async def analyze_chart(file: UploadFile = File(...)):
         else:
             result['signal'] = 'HOLD'
         
-        # Draw analysis on the original image
+        # Draw analysis on the original image (no price labels for uploaded images)
         annotated_image = draw_analysis_on_chart(
             original_image,
             result,
             (0, 100),  # Normalized price range for uploaded images
-            num_bars=30
+            num_bars=30,
+            show_prices=False  # Don't show price numbers for uploaded images
         )
         
         # Convert annotated image to base64
@@ -422,57 +584,252 @@ async def analyze_chart(file: UploadFile = File(...)):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# =============================================================================
+# XAI (Explainable AI) Endpoint - Grad-CAM Visualization
+# =============================================================================
+
+class XAIResponse(BaseModel):
+    sr_heatmap: Optional[str] = None  # Base64 encoded heatmap image
+    trend_heatmap: Optional[str] = None
+    explanation: str = ""
+
+@app.post("/api/xai", response_model=XAIResponse)
+async def generate_xai(file: UploadFile = File(...)):
+    """Generate Grad-CAM heatmap showing what the model focuses on."""
+    load_cv_models()
+    
+    try:
+        import torch
+        import torch.nn.functional as F
+        import torchvision.transforms as transforms
+        from PIL import Image as PILImage
+        import numpy as np
+        import cv2
+        
+        # Read and preprocess image
+        contents = await file.read()
+        image = PILImage.open(io.BytesIO(contents)).convert('RGB')
+        original_array = np.array(image)
+        
+        transform = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+        input_tensor = transform(image).unsqueeze(0)
+        
+        result = XAIResponse(explanation="")
+        explanations = []
+        
+        # Generate Grad-CAM for Trend model
+        if _trend_model is not None:
+            try:
+                _trend_model.eval()
+                
+                # Get the target layer (last conv layer of backbone)
+                if hasattr(_trend_model, 'backbone') and hasattr(_trend_model.backbone, 'features'):
+                    target_layer = _trend_model.backbone.features[-1]
+                else:
+                    target_layer = None
+                
+                if target_layer:
+                    activations = None
+                    gradients = None
+                    
+                    def forward_hook(module, input, output):
+                        nonlocal activations
+                        activations = output.detach()
+                    
+                    def backward_hook(module, grad_input, grad_output):
+                        nonlocal gradients
+                        gradients = grad_output[0].detach()
+                    
+                    fh = target_layer.register_forward_hook(forward_hook)
+                    bh = target_layer.register_full_backward_hook(backward_hook)
+                    
+                    # Forward pass
+                    output, _ = _trend_model(input_tensor)
+                    pred_class = output.argmax(dim=1).item()
+                    class_names = ['downtrend', 'sideways', 'uptrend']
+                    
+                    # Backward pass
+                    _trend_model.zero_grad()
+                    one_hot = torch.zeros_like(output)
+                    one_hot[0, pred_class] = 1
+                    output.backward(gradient=one_hot)
+                    
+                    # Generate heatmap
+                    weights = gradients.mean(dim=(2, 3), keepdim=True)
+                    cam = (weights * activations).sum(dim=1, keepdim=True)
+                    cam = F.relu(cam).squeeze().cpu().numpy()
+                    cam = (cam - cam.min()) / (cam.max() - cam.min() + 1e-8)
+                    
+                    # Resize and colorize
+                    heatmap = cv2.resize(cam, (original_array.shape[1], original_array.shape[0]))
+                    heatmap_colored = cv2.applyColorMap((heatmap * 255).astype(np.uint8), cv2.COLORMAP_JET)
+                    heatmap_colored = cv2.cvtColor(heatmap_colored, cv2.COLOR_BGR2RGB)
+                    
+                    # Overlay
+                    overlay = (0.6 * original_array + 0.4 * heatmap_colored).astype(np.uint8)
+                    
+                    # Convert to base64
+                    overlay_img = PILImage.fromarray(overlay)
+                    buf = io.BytesIO()
+                    overlay_img.save(buf, format='PNG')
+                    buf.seek(0)
+                    result.trend_heatmap = base64.b64encode(buf.read()).decode('utf-8')
+                    
+                    explanations.append(f"Trend: Model predicted {class_names[pred_class].upper()}")
+                    
+                    fh.remove()
+                    bh.remove()
+                    
+            except Exception as e:
+                print(f"[XAI Trend Error] {e}")
+        
+        # Generate Grad-CAM for S/R model
+        if _sr_model is not None:
+            try:
+                _sr_model.eval()
+                
+                if hasattr(_sr_model, 'backbone') and hasattr(_sr_model.backbone, 'features'):
+                    target_layer = _sr_model.backbone.features[-1]
+                else:
+                    target_layer = None
+                
+                if target_layer:
+                    activations = None
+                    gradients = None
+                    
+                    def forward_hook(module, input, output):
+                        nonlocal activations
+                        activations = output.detach()
+                    
+                    def backward_hook(module, grad_input, grad_output):
+                        nonlocal gradients
+                        gradients = grad_output[0].detach()
+                    
+                    fh = target_layer.register_forward_hook(forward_hook)
+                    bh = target_layer.register_full_backward_hook(backward_hook)
+                    
+                    # Forward pass
+                    output = _sr_model(input_tensor)
+                    probs = torch.sigmoid(output)[0]
+                    
+                    # Find strongest zone
+                    max_idx = probs.argmax().item()
+                    
+                    # Backward pass for that zone
+                    _sr_model.zero_grad()
+                    output[0, max_idx].backward()
+                    
+                    # Generate heatmap
+                    weights = gradients.mean(dim=(2, 3), keepdim=True)
+                    cam = (weights * activations).sum(dim=1, keepdim=True)
+                    cam = F.relu(cam).squeeze().cpu().numpy()
+                    cam = (cam - cam.min()) / (cam.max() - cam.min() + 1e-8)
+                    
+                    # Resize and colorize
+                    heatmap = cv2.resize(cam, (original_array.shape[1], original_array.shape[0]))
+                    heatmap_colored = cv2.applyColorMap((heatmap * 255).astype(np.uint8), cv2.COLORMAP_JET)
+                    heatmap_colored = cv2.cvtColor(heatmap_colored, cv2.COLOR_BGR2RGB)
+                    
+                    # Overlay
+                    overlay = (0.6 * original_array + 0.4 * heatmap_colored).astype(np.uint8)
+                    
+                    # Convert to base64
+                    overlay_img = PILImage.fromarray(overlay)
+                    buf = io.BytesIO()
+                    overlay_img.save(buf, format='PNG')
+                    buf.seek(0)
+                    result.sr_heatmap = base64.b64encode(buf.read()).decode('utf-8')
+                    
+                    num_zones = len(probs) // 2
+                    zone_type = "Support" if max_idx < num_zones else "Resistance"
+                    explanations.append(f"S/R: Model focused on {zone_type} detection")
+                    
+                    fh.remove()
+                    bh.remove()
+                    
+            except Exception as e:
+                print(f"[XAI S/R Error] {e}")
+        
+        result.explanation = " | ".join(explanations) if explanations else "XAI visualization generated"
+        return result
+        
+    except Exception as e:
+        print(f"[XAI Error] {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # =============================================================================
 # Stock Screener Endpoint - Real CV Model Analysis
 # =============================================================================
 
-def generate_chart_image_from_data(bars, figsize=(6, 4), dpi=100):
-    """Generate a candlestick chart image from Polygon bars."""
+def generate_chart_image_from_data(bars, figsize=(8, 4), dpi=120):
+    """Generate a clean, minimal candlestick chart image from Polygon bars."""
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     from matplotlib.patches import Rectangle
     from PIL import Image
     
-    dates = range(len(bars))
-    
     fig, ax = plt.subplots(figsize=figsize)
     
-    # Dark background
-    fig.patch.set_facecolor('#1a1a2e')
-    ax.set_facecolor('#1a1a2e')
+    # Clean dark background
+    fig.patch.set_facecolor('#0f0f1a')
+    ax.set_facecolor('#0f0f1a')
     
-    # Draw candlesticks
-    width = 0.6
-    up_color = '#22c55e'
-    down_color = '#ef4444'
+    # Draw candlesticks - cleaner style
+    width = 0.7
+    up_color = '#10b981'    # Softer green
+    down_color = '#f43f5e'  # Softer red
     
+    prices = []
     for i, bar in enumerate(bars):
         o, h, l, c = bar.open, bar.high, bar.low, bar.close
+        prices.extend([h, l])
         is_up = c >= o
         color = up_color if is_up else down_color
         
-        # Body
+        # Body - slightly rounded look with edge
         body_bottom = min(o, c)
-        body_height = abs(c - o) if abs(c - o) > 0 else 0.01
+        body_height = abs(c - o) if abs(c - o) > 0.001 else 0.01
         ax.add_patch(Rectangle((i - width/2, body_bottom), width, body_height,
-                               facecolor=color, edgecolor=color))
-        # Wicks
-        ax.plot([i, i], [l, body_bottom], color=color, linewidth=1)
-        ax.plot([i, i], [body_bottom + body_height, h], color=color, linewidth=1)
+                               facecolor=color, edgecolor=color, linewidth=0.5))
+        # Wicks - thinner
+        ax.plot([i, i], [l, body_bottom], color=color, linewidth=0.8)
+        ax.plot([i, i], [body_bottom + body_height, h], color=color, linewidth=0.8)
     
-    ax.set_xlim(-1, len(bars))
+    # Add subtle grid
+    ax.grid(True, axis='y', color='#2a2a4a', linewidth=0.3, alpha=0.5)
+    
+    # Set axis limits with padding
+    price_min, price_max = min(prices), max(prices)
+    price_padding = (price_max - price_min) * 0.1
+    ax.set_ylim(price_min - price_padding, price_max + price_padding)
+    ax.set_xlim(-0.5, len(bars) - 0.5)
+    
+    # Clean axis styling
     ax.set_xticks([])
-    ax.set_yticks([])
-    for spine in ax.spines.values():
-        spine.set_visible(False)
+    ax.tick_params(axis='y', colors='#6b7280', labelsize=8)
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'${x:.0f}'))
+    
+    # Remove spines except left
+    for spine in ['top', 'right', 'bottom']:
+        ax.spines[spine].set_visible(False)
+    ax.spines['left'].set_color('#2a2a4a')
+    ax.spines['left'].set_linewidth(0.5)
     
     plt.tight_layout()
     
     # Convert to PIL Image
     buf = io.BytesIO()
-    plt.savefig(buf, format='png', dpi=dpi, facecolor='#1a1a2e',
-                bbox_inches='tight', pad_inches=0.05)
+    plt.savefig(buf, format='png', dpi=dpi, facecolor='#0f0f1a',
+                bbox_inches='tight', pad_inches=0.1)
     buf.seek(0)
     plt.close(fig)
     
@@ -530,23 +887,39 @@ def analyze_chart_with_models(image, price_range):
             price_min, price_max = price_range
             price_step = (price_max - price_min) / num_zones
             
+            # Collect all zones above threshold, then sort by confidence
+            support_candidates = []
+            resistance_candidates = []
+            
             for i, prob in enumerate(support_probs):
                 if prob > 0.4:
                     price = price_min + (i + 0.5) * price_step
-                    results['support_zones'].append({
+                    support_candidates.append({
                         'zone': i + 1,
                         'price': round(price, 2),
-                        'confidence': int(prob * 100)  # Convert to percentage
+                        'confidence': int(prob * 100)
                     })
             
             for i, prob in enumerate(resistance_probs):
                 if prob > 0.4:
                     price = price_min + (i + 0.5) * price_step
-                    results['resistance_zones'].append({
+                    resistance_candidates.append({
                         'zone': i + 1,
                         'price': round(price, 2),
-                        'confidence': int(prob * 100)  # Convert to percentage
+                        'confidence': int(prob * 100)
                     })
+            
+            # Sort by confidence (highest first) and take top zones
+            support_candidates.sort(key=lambda x: x['confidence'], reverse=True)
+            resistance_candidates.sort(key=lambda x: x['confidence'], reverse=True)
+            
+            results['support_zones'] = support_candidates
+            results['resistance_zones'] = resistance_candidates
+            
+            # Debug: print all zone probabilities
+            print(f"[S/R Debug] Price range: ${price_min:.2f} - ${price_max:.2f}")
+            print(f"[S/R Debug] Support probs: {[f'{p:.2f}' for p in support_probs]}")
+            print(f"[S/R Debug] Resistance probs: {[f'{p:.2f}' for p in resistance_probs]}")
     
     # Calculate signal
     signal_score = 0
@@ -574,8 +947,16 @@ def analyze_chart_with_models(image, price_range):
     return results
 
 
-def draw_analysis_on_chart(image, analysis, price_range, num_bars=30):
-    """Draw S/R lines and trend line on the chart image."""
+def draw_analysis_on_chart(image, analysis, price_range, num_bars=30, show_prices=True):
+    """Draw clean, minimal S/R lines and trend indicator on the chart image.
+    
+    Args:
+        image: PIL Image
+        analysis: dict with trend, support_zones, resistance_zones
+        price_range: (min, max) price tuple
+        num_bars: number of bars in chart
+        show_prices: whether to show price labels (False for uploaded images without real prices)
+    """
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -592,83 +973,83 @@ def draw_analysis_on_chart(image, analysis, price_range, num_bars=30):
     price_min, price_max = price_range
     price_range_val = price_max - price_min
     
+    # Check if we have real prices (not normalized 0-100 range)
+    has_real_prices = show_prices and price_max > 100
+    
     def price_to_y(price):
         """Convert price to y-coordinate (inverted because image y=0 is top)"""
         if price_range_val == 0:
             return img_height / 2
         normalized = (price - price_min) / price_range_val
-        # Invert and add padding (chart doesn't go to edges)
-        return img_height * (1 - normalized * 0.85 - 0.075)
+        return img_height * (1 - normalized * 0.8 - 0.1)
     
-    # Draw Support lines (green)
-    for zone in analysis.get('support_zones', []):
+    # Draw Support lines (green) - pick the LOWEST price zones (bottom of chart)
+    support_zones = analysis.get('support_zones', [])
+    # Sort by price ascending (lowest first) for support, take top 2
+    support_to_draw = sorted(support_zones, key=lambda x: x.get('price', 0))[:2]
+    for i, zone in enumerate(support_to_draw):
         y = price_to_y(zone.get('price', 50))
-        # Confidence might be 0-100 (int) or 0-1 (float), normalize to 0-1
-        confidence = zone.get('confidence', 50)
-        if confidence > 1:
-            confidence = confidence / 100.0
-        alpha = min(0.4 + confidence * 0.5, 0.95)  # Clamp to valid range
-        ax.axhline(y=y, color='#22c55e', linestyle='--', linewidth=2, alpha=alpha)
-        price_label = zone.get('price', 0)
-        ax.text(img_width - 5, y - 5, f"S: ${price_label:.2f}" if price_label > 1 else f"S: Zone {zone.get('zone', '?')}", 
-                color='#22c55e', fontsize=8, ha='right', va='bottom',
-                bbox=dict(boxstyle='round,pad=0.2', facecolor='#1a1a2e', alpha=0.8))
+        ax.axhline(y=y, color='#10b981', linestyle='-', linewidth=1.5, alpha=0.8)
+        if has_real_prices:
+            price_label = zone.get('price', 0)
+            ax.text(img_width - 8, y - 3, f'${price_label:.0f}', 
+                    color='#10b981', fontsize=7, ha='right', va='bottom', fontweight='bold')
+        else:
+            ax.text(img_width - 8, y - 3, 'S', 
+                    color='#10b981', fontsize=8, ha='right', va='bottom', fontweight='bold')
     
-    # Draw Resistance lines (red)
-    for zone in analysis.get('resistance_zones', []):
+    # Draw Resistance lines (red) - pick the HIGHEST price zones (top of chart)
+    resistance_zones = analysis.get('resistance_zones', [])
+    # Sort by price descending (highest first) for resistance, take top 2
+    resistance_to_draw = sorted(resistance_zones, key=lambda x: x.get('price', 0), reverse=True)[:2]
+    for i, zone in enumerate(resistance_to_draw):
         y = price_to_y(zone.get('price', 50))
-        # Confidence might be 0-100 (int) or 0-1 (float), normalize to 0-1
-        confidence = zone.get('confidence', 50)
-        if confidence > 1:
-            confidence = confidence / 100.0
-        alpha = min(0.4 + confidence * 0.5, 0.95)  # Clamp to valid range
-        ax.axhline(y=y, color='#ef4444', linestyle='--', linewidth=2, alpha=alpha)
-        price_label = zone.get('price', 0)
-        ax.text(img_width - 5, y + 12, f"R: ${price_label:.2f}" if price_label > 1 else f"R: Zone {zone.get('zone', '?')}", 
-                color='#ef4444', fontsize=8, ha='right', va='top',
-                bbox=dict(boxstyle='round,pad=0.2', facecolor='#1a1a2e', alpha=0.8))
+        ax.axhline(y=y, color='#f43f5e', linestyle='-', linewidth=1.5, alpha=0.8)
+        if has_real_prices:
+            price_label = zone.get('price', 0)
+            ax.text(img_width - 8, y + 10, f'${price_label:.0f}', 
+                    color='#f43f5e', fontsize=7, ha='right', va='top', fontweight='bold')
+        else:
+            ax.text(img_width - 8, y + 10, 'R', 
+                    color='#f43f5e', fontsize=8, ha='right', va='top', fontweight='bold')
     
-    # Draw Trend line
+    # Draw subtle trend line
     trend = analysis.get('trend', 'sideways')
     trend_conf = analysis.get('trend_confidence', 0.5)
     
-    if trend == 'uptrend':
-        # Draw diagonal line from bottom-left to top-right
-        ax.plot([0, img_width], [img_height * 0.7, img_height * 0.3], 
-                color='#22c55e', linewidth=3, alpha=0.7, linestyle='-')
-        ax.text(10, 20, f"↗ UPTREND ({trend_conf*100:.0f}%)", 
-                color='#22c55e', fontsize=10, fontweight='bold',
-                bbox=dict(boxstyle='round,pad=0.3', facecolor='#1a1a2e', alpha=0.9))
-    elif trend == 'downtrend':
-        # Draw diagonal line from top-left to bottom-right
-        ax.plot([0, img_width], [img_height * 0.3, img_height * 0.7], 
-                color='#ef4444', linewidth=3, alpha=0.7, linestyle='-')
-        ax.text(10, 20, f"↘ DOWNTREND ({trend_conf*100:.0f}%)", 
-                color='#ef4444', fontsize=10, fontweight='bold',
-                bbox=dict(boxstyle='round,pad=0.3', facecolor='#1a1a2e', alpha=0.9))
-    else:
-        # Draw horizontal line for sideways
-        ax.plot([0, img_width], [img_height * 0.5, img_height * 0.5], 
-                color='#f59e0b', linewidth=3, alpha=0.7, linestyle='-')
-        ax.text(10, 20, f"→ SIDEWAYS ({trend_conf*100:.0f}%)", 
-                color='#f59e0b', fontsize=10, fontweight='bold',
-                bbox=dict(boxstyle='round,pad=0.3', facecolor='#1a1a2e', alpha=0.9))
+    trend_colors = {'uptrend': '#10b981', 'downtrend': '#f43f5e', 'sideways': '#f59e0b'}
+    trend_color = trend_colors.get(trend, '#f59e0b')
     
-    # Add signal badge
+    if trend == 'uptrend':
+        ax.plot([img_width * 0.1, img_width * 0.9], [img_height * 0.65, img_height * 0.35], 
+                color=trend_color, linewidth=2, alpha=0.6, linestyle='--')
+    elif trend == 'downtrend':
+        ax.plot([img_width * 0.1, img_width * 0.9], [img_height * 0.35, img_height * 0.65], 
+                color=trend_color, linewidth=2, alpha=0.6, linestyle='--')
+    
+    # Minimal signal badge - top right corner
     signal = analysis.get('signal', 'HOLD')
-    signal_colors = {'BUY': '#22c55e', 'SELL': '#ef4444', 'HOLD': '#f59e0b'}
+    signal_colors = {'BUY': '#10b981', 'SELL': '#f43f5e', 'HOLD': '#f59e0b'}
     signal_color = signal_colors.get(signal, '#f59e0b')
-    ax.text(img_width - 10, 20, signal, 
-            color=signal_color, fontsize=12, fontweight='bold', ha='right',
-            bbox=dict(boxstyle='round,pad=0.4', facecolor='#1a1a2e', 
-                     edgecolor=signal_color, linewidth=2, alpha=0.9))
+    
+    # Simple badge
+    ax.text(img_width - 10, 15, signal, 
+            color='white', fontsize=9, fontweight='bold', ha='right',
+            bbox=dict(boxstyle='round,pad=0.3', facecolor=signal_color, 
+                     edgecolor='none', alpha=0.9))
+    
+    # Trend indicator - small text below signal
+    trend_label = trend.upper()
+    conf_pct = int(trend_conf * 100) if trend_conf <= 1 else int(trend_conf)
+    ax.text(img_width - 10, 35, f'{trend_label} {conf_pct}%', 
+            color='#9ca3af', fontsize=7, ha='right', va='top')
     
     ax.axis('off')
     plt.tight_layout(pad=0)
     
     # Convert back to PIL Image
     buf = io.BytesIO()
-    plt.savefig(buf, format='png', dpi=100, facecolor='#1a1a2e',
+    plt.savefig(buf, format='png', dpi=120, facecolor='#0f0f1a',
                 bbox_inches='tight', pad_inches=0)
     buf.seek(0)
     plt.close(fig)
@@ -690,6 +1071,11 @@ class StockAnalysisResponse(BaseModel):
     support_zones: List[Dict[str, Any]] = []
     resistance_zones: List[Dict[str, Any]] = []
     chart_image: str  # Base64 encoded PNG
+    # Sentiment fields
+    sentiment: Optional[str] = None  # 'positive', 'negative', 'neutral'
+    sentiment_score: Optional[float] = None  # -1 to +1
+    sentiment_signal: Optional[str] = None  # 'BULLISH', 'BEARISH', 'NEUTRAL'
+    news_count: Optional[int] = None
 
 
 @app.post("/api/stocks", response_model=List[StockAnalysisResponse])
@@ -765,6 +1151,9 @@ async def get_stocks(request: StockRequest):
                 support_price = analysis['support_zones'][0]['price'] if analysis['support_zones'] else round(price_min, 2)
                 resistance_price = analysis['resistance_zones'][0]['price'] if analysis['resistance_zones'] else round(price_max, 2)
                 
+                # Get sentiment analysis
+                sentiment_data = get_stock_sentiment(ticker)
+                
                 results.append(StockAnalysisResponse(
                     ticker=ticker,
                     price=round(latest.close, 2),
@@ -778,7 +1167,12 @@ async def get_stocks(request: StockRequest):
                     resistance=resistance_price,
                     support_zones=analysis['support_zones'],
                     resistance_zones=analysis['resistance_zones'],
-                    chart_image=chart_base64
+                    chart_image=chart_base64,
+                    # Sentiment fields
+                    sentiment=sentiment_data.get('sentiment'),
+                    sentiment_score=sentiment_data.get('sentiment_score'),
+                    sentiment_signal=sentiment_data.get('sentiment_signal'),
+                    news_count=sentiment_data.get('news_count', 0)
                 ))
                 
             except Exception as e:
@@ -796,6 +1190,104 @@ async def get_stocks(request: StockRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 # =============================================================================
+# Sentiment Analysis Endpoint (Standalone AI Tool)
+# =============================================================================
+
+class SentimentRequest(BaseModel):
+    ticker: str
+    
+class ArticleSentiment(BaseModel):
+    title: str
+    sentiment: str
+    confidence: float
+    scores: Dict[str, float]
+    
+class SentimentResponse(BaseModel):
+    ticker: str
+    overall_sentiment: str
+    overall_score: float  # -1 to +1
+    signal: str  # BULLISH, BEARISH, NEUTRAL
+    confidence: float
+    num_articles: int
+    positive_count: int
+    negative_count: int
+    neutral_count: int
+    articles: List[ArticleSentiment]
+
+
+@app.post("/api/sentiment", response_model=SentimentResponse)
+async def analyze_sentiment(request: SentimentRequest):
+    """Analyze sentiment for a stock based on recent news."""
+    global _sentiment_analyzer, _news_fetcher
+    
+    load_sentiment_models()
+    
+    if _sentiment_analyzer is None:
+        raise HTTPException(status_code=500, detail="Sentiment model not loaded")
+    
+    if _news_fetcher is None:
+        raise HTTPException(status_code=500, detail="News fetcher not configured - check POLYGON_API_KEY")
+    
+    try:
+        # Fetch news
+        articles = _news_fetcher.get_news(request.ticker, limit=15, days_back=7)
+        
+        if not articles:
+            return SentimentResponse(
+                ticker=request.ticker,
+                overall_sentiment='neutral',
+                overall_score=0.0,
+                signal='NEUTRAL',
+                confidence=0.0,
+                num_articles=0,
+                positive_count=0,
+                negative_count=0,
+                neutral_count=0,
+                articles=[]
+            )
+        
+        # Convert to dict format
+        article_dicts = [
+            {'title': a.title, 'description': a.description}
+            for a in articles
+        ]
+        
+        # Analyze
+        result = _sentiment_analyzer.analyze_stock(request.ticker, article_dicts)
+        signal, strength = _sentiment_analyzer.get_sentiment_signal(result)
+        
+        # Format article results
+        article_results = [
+            ArticleSentiment(
+                title=ar.text,
+                sentiment=ar.sentiment,
+                confidence=round(ar.confidence, 3),
+                scores={k: round(v, 3) for k, v in ar.scores.items()}
+            )
+            for ar in result.articles
+        ]
+        
+        return SentimentResponse(
+            ticker=request.ticker,
+            overall_sentiment=result.overall_sentiment,
+            overall_score=result.overall_score,
+            signal=signal,
+            confidence=result.confidence,
+            num_articles=result.num_articles,
+            positive_count=result.positive_count,
+            negative_count=result.negative_count,
+            neutral_count=result.neutral_count,
+            articles=article_results
+        )
+        
+    except Exception as e:
+        print(f"[Sentiment Error] {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# =============================================================================
 # Health Check
 # =============================================================================
 
@@ -809,7 +1301,8 @@ async def health_check():
         "components": {
             "rag": False,
             "cv_models": False,
-            "polygon": False
+            "polygon": False,
+            "sentiment": False
         }
     }
     
@@ -826,6 +1319,9 @@ async def health_check():
     
     # Check Polygon
     status["components"]["polygon"] = bool(os.environ.get('POLYGON_API_KEY'))
+    
+    # Check Sentiment
+    status["components"]["sentiment"] = _sentiment_analyzer is not None
     
     return status
 

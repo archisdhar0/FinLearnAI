@@ -38,6 +38,11 @@ interface StockData {
   support_zones: Array<{ price: number; confidence: number }>;
   resistance_zones: Array<{ price: number; confidence: number }>;
   chart_image: string; // Base64 encoded PNG
+  // Sentiment fields
+  sentiment: string | null;
+  sentiment_score: number | null;
+  sentiment_signal: string | null;
+  news_count: number | null;
 }
 
 // Fetch real stock data from backend with CV analysis
@@ -311,10 +316,50 @@ export default function StockScreener() {
                       )}
                     </div>
 
-                    <div className="text-xs text-muted-foreground text-center pt-2 border-t border-border/30">
-                      <Zap className="w-3 h-3 inline mr-1" />
-                      Sentiment: Coming Soon
-                    </div>
+                    {/* Sentiment Section */}
+                    {stock.sentiment && (
+                      <div className="pt-2 border-t border-border/30">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground flex items-center gap-1">
+                            <Zap className="w-3 h-3" /> Sentiment
+                          </span>
+                          <span className={`font-medium ${
+                            stock.sentiment === 'positive' ? 'text-success' :
+                            stock.sentiment === 'negative' ? 'text-destructive' :
+                            'text-warning'
+                          }`}>
+                            {stock.sentiment_signal || stock.sentiment.toUpperCase()}
+                          </span>
+                        </div>
+                        {stock.sentiment_score !== null && (
+                          <div className="mt-1">
+                            <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full transition-all ${
+                                  stock.sentiment_score > 0 ? 'bg-success' :
+                                  stock.sentiment_score < 0 ? 'bg-destructive' :
+                                  'bg-warning'
+                                }`}
+                                style={{ 
+                                  width: `${Math.abs(stock.sentiment_score) * 100}%`,
+                                  marginLeft: stock.sentiment_score < 0 ? 'auto' : 0
+                                }}
+                              />
+                            </div>
+                            <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5">
+                              <span>{stock.news_count} articles</span>
+                              <span>{(stock.sentiment_score * 100).toFixed(0)}%</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {!stock.sentiment && (
+                      <div className="text-xs text-muted-foreground text-center pt-2 border-t border-border/30">
+                        <Zap className="w-3 h-3 inline mr-1" />
+                        Sentiment: Loading...
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

@@ -24,3 +24,6 @@ matplotlib>=3.7.0
 # RAG dependencies
 sentence-transformers>=2.2.0
 google-genai>=0.2.0
+
+# NLP - Sentiment Analysis
+transformers>=4.35.0  # FinBERT for financial sentiment

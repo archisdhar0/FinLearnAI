@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { HeroSection } from "@/components/HeroSection";
 import { LessonGrid } from "@/components/LessonGrid";
 import { ChatPanel } from "@/components/ChatPanel";
-import { LogOut, TrendingUp, BarChart3, Eye, LineChart } from "lucide-react";
+import { LogOut, TrendingUp, BarChart3, Eye, LineChart, Brain } from "lucide-react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -64,12 +64,15 @@ const Dashboard = () => {
         <div className="max-w-4xl mx-auto px-6 lg:px-10 pb-16">
           <HeroSection />
           
-          {/* AI Tools Section */}
+          {/* Learning Modules Section - Now on top */}
+          <LessonGrid />
+          
+          {/* AI Tools Section - Now below */}
           <section className="py-8">
             <h2 className="font-display text-2xl font-bold mb-2">AI Tools</h2>
             <p className="text-muted-foreground mb-6">Powerful analysis tools powered by machine learning</p>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
                 onClick={() => navigate("/screener")}
                 className="glass-card rounded-xl p-6 text-left hover:border-primary/40 transition-all group"
@@ -101,6 +104,21 @@ const Dashboard = () => {
               </button>
 
               <button
+                onClick={() => navigate("/sentiment")}
+                className="glass-card rounded-xl p-6 text-left hover:border-purple-400/40 transition-all group"
+              >
+                <div className="p-2.5 rounded-lg bg-purple-500/10 text-purple-400 w-fit mb-4 group-hover:shadow-lg group-hover:shadow-purple-500/20 transition-all">
+                  <Brain className="w-5 h-5" />
+                </div>
+                <h3 className="font-display text-lg font-semibold mb-2 group-hover:text-purple-400 transition-colors">
+                  Sentiment Analyzer
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  AI-powered news sentiment analysis with FinBERT
+                </p>
+              </button>
+
+              <button
                 onClick={() => navigate("/simulator")}
                 className="glass-card rounded-xl p-6 text-left hover:border-primary/40 transition-all group"
               >
@@ -116,8 +134,6 @@ const Dashboard = () => {
               </button>
             </div>
           </section>
-
-          <LessonGrid />
         </div>
       </div>
 

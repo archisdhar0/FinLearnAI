@@ -22,6 +22,9 @@ ultralytics>=8.0.0  # YOLOv8
 
 # Chart data
 polygon-api-client>=1.12.0  # Polygon.io for stock data
+
+# NLP - Sentiment Analysis
+transformers>=4.35.0  # FinBERT for financial sentiment
 # mplfinance>=0.12.0  # Optional - we use matplotlib directly
 
 # Labeling tool
