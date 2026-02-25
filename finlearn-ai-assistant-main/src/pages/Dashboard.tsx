@@ -64,7 +64,10 @@ const Dashboard = () => {
         <div className="max-w-4xl mx-auto px-6 lg:px-10 pb-16">
           <HeroSection />
           
-          {/* AI Tools Section */}
+          {/* Learning Modules Section - Now on top */}
+          <LessonGrid />
+          
+          {/* AI Tools Section - Now below */}
           <section className="py-8">
             <h2 className="font-display text-2xl font-bold mb-2">AI Tools</h2>
             <p className="text-muted-foreground mb-6">Powerful analysis tools powered by machine learning</p>
@@ -116,8 +119,6 @@ const Dashboard = () => {
               </button>
             </div>
           </section>
-
-          <LessonGrid />
         </div>
       </div>
 

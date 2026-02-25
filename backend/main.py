@@ -460,12 +460,13 @@ async def analyze_chart(file: UploadFile = File(...)):
         else:
             result['signal'] = 'HOLD'
         
-        # Draw analysis on the original image
+        # Draw analysis on the original image (no price labels for uploaded images)
         annotated_image = draw_analysis_on_chart(
             original_image,
             result,
             (0, 100),  # Normalized price range for uploaded images
-            num_bars=30
+            num_bars=30,
+            show_prices=False  # Don't show price numbers for uploaded images
         )
         
         # Convert annotated image to base64
@@ -482,57 +483,252 @@ async def analyze_chart(file: UploadFile = File(...)):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# =============================================================================
+# XAI (Explainable AI) Endpoint - Grad-CAM Visualization
+# =============================================================================
+
+class XAIResponse(BaseModel):
+    sr_heatmap: Optional[str] = None  # Base64 encoded heatmap image
+    trend_heatmap: Optional[str] = None
+    explanation: str = ""
+
+@app.post("/api/xai", response_model=XAIResponse)
+async def generate_xai(file: UploadFile = File(...)):
+    """Generate Grad-CAM heatmap showing what the model focuses on."""
+    load_cv_models()
+    
+    try:
+        import torch
+        import torch.nn.functional as F
+        import torchvision.transforms as transforms
+        from PIL import Image as PILImage
+        import numpy as np
+        import cv2
+        
+        # Read and preprocess image
+        contents = await file.read()
+        image = PILImage.open(io.BytesIO(contents)).convert('RGB')
+        original_array = np.array(image)
+        
+        transform = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+        input_tensor = transform(image).unsqueeze(0)
+        
+        result = XAIResponse(explanation="")
+        explanations = []
+        
+        # Generate Grad-CAM for Trend model
+        if _trend_model is not None:
+            try:
+                _trend_model.eval()
+                
+                # Get the target layer (last conv layer of backbone)
+                if hasattr(_trend_model, 'backbone') and hasattr(_trend_model.backbone, 'features'):
+                    target_layer = _trend_model.backbone.features[-1]
+                else:
+                    target_layer = None
+                
+                if target_layer:
+                    activations = None
+                    gradients = None
+                    
+                    def forward_hook(module, input, output):
+                        nonlocal activations
+                        activations = output.detach()
+                    
+                    def backward_hook(module, grad_input, grad_output):
+                        nonlocal gradients
+                        gradients = grad_output[0].detach()
+                    
+                    fh = target_layer.register_forward_hook(forward_hook)
+                    bh = target_layer.register_full_backward_hook(backward_hook)
+                    
+                    # Forward pass
+                    output, _ = _trend_model(input_tensor)
+                    pred_class = output.argmax(dim=1).item()
+                    class_names = ['downtrend', 'sideways', 'uptrend']
+                    
+                    # Backward pass
+                    _trend_model.zero_grad()
+                    one_hot = torch.zeros_like(output)
+                    one_hot[0, pred_class] = 1
+                    output.backward(gradient=one_hot)
+                    
+                    # Generate heatmap
+                    weights = gradients.mean(dim=(2, 3), keepdim=True)
+                    cam = (weights * activations).sum(dim=1, keepdim=True)
+                    cam = F.relu(cam).squeeze().cpu().numpy()
+                    cam = (cam - cam.min()) / (cam.max() - cam.min() + 1e-8)
+                    
+                    # Resize and colorize
+                    heatmap = cv2.resize(cam, (original_array.shape[1], original_array.shape[0]))
+                    heatmap_colored = cv2.applyColorMap((heatmap * 255).astype(np.uint8), cv2.COLORMAP_JET)
+                    heatmap_colored = cv2.cvtColor(heatmap_colored, cv2.COLOR_BGR2RGB)
+                    
+                    # Overlay
+                    overlay = (0.6 * original_array + 0.4 * heatmap_colored).astype(np.uint8)
+                    
+                    # Convert to base64
+                    overlay_img = PILImage.fromarray(overlay)
+                    buf = io.BytesIO()
+                    overlay_img.save(buf, format='PNG')
+                    buf.seek(0)
+                    result.trend_heatmap = base64.b64encode(buf.read()).decode('utf-8')
+                    
+                    explanations.append(f"Trend: Model predicted {class_names[pred_class].upper()}")
+                    
+                    fh.remove()
+                    bh.remove()
+                    
+            except Exception as e:
+                print(f"[XAI Trend Error] {e}")
+        
+        # Generate Grad-CAM for S/R model
+        if _sr_model is not None:
+            try:
+                _sr_model.eval()
+                
+                if hasattr(_sr_model, 'backbone') and hasattr(_sr_model.backbone, 'features'):
+                    target_layer = _sr_model.backbone.features[-1]
+                else:
+                    target_layer = None
+                
+                if target_layer:
+                    activations = None
+                    gradients = None
+                    
+                    def forward_hook(module, input, output):
+                        nonlocal activations
+                        activations = output.detach()
+                    
+                    def backward_hook(module, grad_input, grad_output):
+                        nonlocal gradients
+                        gradients = grad_output[0].detach()
+                    
+                    fh = target_layer.register_forward_hook(forward_hook)
+                    bh = target_layer.register_full_backward_hook(backward_hook)
+                    
+                    # Forward pass
+                    output = _sr_model(input_tensor)
+                    probs = torch.sigmoid(output)[0]
+                    
+                    # Find strongest zone
+                    max_idx = probs.argmax().item()
+                    
+                    # Backward pass for that zone
+                    _sr_model.zero_grad()
+                    output[0, max_idx].backward()
+                    
+                    # Generate heatmap
+                    weights = gradients.mean(dim=(2, 3), keepdim=True)
+                    cam = (weights * activations).sum(dim=1, keepdim=True)
+                    cam = F.relu(cam).squeeze().cpu().numpy()
+                    cam = (cam - cam.min()) / (cam.max() - cam.min() + 1e-8)
+                    
+                    # Resize and colorize
+                    heatmap = cv2.resize(cam, (original_array.shape[1], original_array.shape[0]))
+                    heatmap_colored = cv2.applyColorMap((heatmap * 255).astype(np.uint8), cv2.COLORMAP_JET)
+                    heatmap_colored = cv2.cvtColor(heatmap_colored, cv2.COLOR_BGR2RGB)
+                    
+                    # Overlay
+                    overlay = (0.6 * original_array + 0.4 * heatmap_colored).astype(np.uint8)
+                    
+                    # Convert to base64
+                    overlay_img = PILImage.fromarray(overlay)
+                    buf = io.BytesIO()
+                    overlay_img.save(buf, format='PNG')
+                    buf.seek(0)
+                    result.sr_heatmap = base64.b64encode(buf.read()).decode('utf-8')
+                    
+                    num_zones = len(probs) // 2
+                    zone_type = "Support" if max_idx < num_zones else "Resistance"
+                    explanations.append(f"S/R: Model focused on {zone_type} detection")
+                    
+                    fh.remove()
+                    bh.remove()
+                    
+            except Exception as e:
+                print(f"[XAI S/R Error] {e}")
+        
+        result.explanation = " | ".join(explanations) if explanations else "XAI visualization generated"
+        return result
+        
+    except Exception as e:
+        print(f"[XAI Error] {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # =============================================================================
 # Stock Screener Endpoint - Real CV Model Analysis
 # =============================================================================
 
-def generate_chart_image_from_data(bars, figsize=(6, 4), dpi=100):
-    """Generate a candlestick chart image from Polygon bars."""
+def generate_chart_image_from_data(bars, figsize=(8, 4), dpi=120):
+    """Generate a clean, minimal candlestick chart image from Polygon bars."""
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     from matplotlib.patches import Rectangle
     from PIL import Image
     
-    dates = range(len(bars))
-    
     fig, ax = plt.subplots(figsize=figsize)
     
-    # Dark background
-    fig.patch.set_facecolor('#1a1a2e')
-    ax.set_facecolor('#1a1a2e')
+    # Clean dark background
+    fig.patch.set_facecolor('#0f0f1a')
+    ax.set_facecolor('#0f0f1a')
     
-    # Draw candlesticks
-    width = 0.6
-    up_color = '#22c55e'
-    down_color = '#ef4444'
+    # Draw candlesticks - cleaner style
+    width = 0.7
+    up_color = '#10b981'    # Softer green
+    down_color = '#f43f5e'  # Softer red
     
+    prices = []
     for i, bar in enumerate(bars):
         o, h, l, c = bar.open, bar.high, bar.low, bar.close
+        prices.extend([h, l])
         is_up = c >= o
         color = up_color if is_up else down_color
         
-        # Body
+        # Body - slightly rounded look with edge
         body_bottom = min(o, c)
-        body_height = abs(c - o) if abs(c - o) > 0 else 0.01
+        body_height = abs(c - o) if abs(c - o) > 0.001 else 0.01
         ax.add_patch(Rectangle((i - width/2, body_bottom), width, body_height,
-                               facecolor=color, edgecolor=color))
-        # Wicks
-        ax.plot([i, i], [l, body_bottom], color=color, linewidth=1)
-        ax.plot([i, i], [body_bottom + body_height, h], color=color, linewidth=1)
+                               facecolor=color, edgecolor=color, linewidth=0.5))
+        # Wicks - thinner
+        ax.plot([i, i], [l, body_bottom], color=color, linewidth=0.8)
+        ax.plot([i, i], [body_bottom + body_height, h], color=color, linewidth=0.8)
     
-    ax.set_xlim(-1, len(bars))
+    # Add subtle grid
+    ax.grid(True, axis='y', color='#2a2a4a', linewidth=0.3, alpha=0.5)
+    
+    # Set axis limits with padding
+    price_min, price_max = min(prices), max(prices)
+    price_padding = (price_max - price_min) * 0.1
+    ax.set_ylim(price_min - price_padding, price_max + price_padding)
+    ax.set_xlim(-0.5, len(bars) - 0.5)
+    
+    # Clean axis styling
     ax.set_xticks([])
-    ax.set_yticks([])
-    for spine in ax.spines.values():
-        spine.set_visible(False)
+    ax.tick_params(axis='y', colors='#6b7280', labelsize=8)
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'${x:.0f}'))
+    
+    # Remove spines except left
+    for spine in ['top', 'right', 'bottom']:
+        ax.spines[spine].set_visible(False)
+    ax.spines['left'].set_color('#2a2a4a')
+    ax.spines['left'].set_linewidth(0.5)
     
     plt.tight_layout()
     
     # Convert to PIL Image
     buf = io.BytesIO()
-    plt.savefig(buf, format='png', dpi=dpi, facecolor='#1a1a2e',
-                bbox_inches='tight', pad_inches=0.05)
+    plt.savefig(buf, format='png', dpi=dpi, facecolor='#0f0f1a',
+                bbox_inches='tight', pad_inches=0.1)
     buf.seek(0)
     plt.close(fig)
     
@@ -590,23 +786,39 @@ def analyze_chart_with_models(image, price_range):
             price_min, price_max = price_range
             price_step = (price_max - price_min) / num_zones
             
+            # Collect all zones above threshold, then sort by confidence
+            support_candidates = []
+            resistance_candidates = []
+            
             for i, prob in enumerate(support_probs):
                 if prob > 0.4:
                     price = price_min + (i + 0.5) * price_step
-                    results['support_zones'].append({
+                    support_candidates.append({
                         'zone': i + 1,
                         'price': round(price, 2),
-                        'confidence': int(prob * 100)  # Convert to percentage
+                        'confidence': int(prob * 100)
                     })
             
             for i, prob in enumerate(resistance_probs):
                 if prob > 0.4:
                     price = price_min + (i + 0.5) * price_step
-                    results['resistance_zones'].append({
+                    resistance_candidates.append({
                         'zone': i + 1,
                         'price': round(price, 2),
-                        'confidence': int(prob * 100)  # Convert to percentage
+                        'confidence': int(prob * 100)
                     })
+            
+            # Sort by confidence (highest first) and take top zones
+            support_candidates.sort(key=lambda x: x['confidence'], reverse=True)
+            resistance_candidates.sort(key=lambda x: x['confidence'], reverse=True)
+            
+            results['support_zones'] = support_candidates
+            results['resistance_zones'] = resistance_candidates
+            
+            # Debug: print all zone probabilities
+            print(f"[S/R Debug] Price range: ${price_min:.2f} - ${price_max:.2f}")
+            print(f"[S/R Debug] Support probs: {[f'{p:.2f}' for p in support_probs]}")
+            print(f"[S/R Debug] Resistance probs: {[f'{p:.2f}' for p in resistance_probs]}")
     
     # Calculate signal
     signal_score = 0
@@ -634,8 +846,16 @@ def analyze_chart_with_models(image, price_range):
     return results
 
 
-def draw_analysis_on_chart(image, analysis, price_range, num_bars=30):
-    """Draw S/R lines and trend line on the chart image."""
+def draw_analysis_on_chart(image, analysis, price_range, num_bars=30, show_prices=True):
+    """Draw clean, minimal S/R lines and trend indicator on the chart image.
+    
+    Args:
+        image: PIL Image
+        analysis: dict with trend, support_zones, resistance_zones
+        price_range: (min, max) price tuple
+        num_bars: number of bars in chart
+        show_prices: whether to show price labels (False for uploaded images without real prices)
+    """
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -652,83 +872,83 @@ def draw_analysis_on_chart(image, analysis, price_range, num_bars=30):
     price_min, price_max = price_range
     price_range_val = price_max - price_min
     
+    # Check if we have real prices (not normalized 0-100 range)
+    has_real_prices = show_prices and price_max > 100
+    
     def price_to_y(price):
         """Convert price to y-coordinate (inverted because image y=0 is top)"""
         if price_range_val == 0:
             return img_height / 2
         normalized = (price - price_min) / price_range_val
-        # Invert and add padding (chart doesn't go to edges)
-        return img_height * (1 - normalized * 0.85 - 0.075)
+        return img_height * (1 - normalized * 0.8 - 0.1)
     
-    # Draw Support lines (green)
-    for zone in analysis.get('support_zones', []):
+    # Draw Support lines (green) - pick the LOWEST price zones (bottom of chart)
+    support_zones = analysis.get('support_zones', [])
+    # Sort by price ascending (lowest first) for support, take top 2
+    support_to_draw = sorted(support_zones, key=lambda x: x.get('price', 0))[:2]
+    for i, zone in enumerate(support_to_draw):
         y = price_to_y(zone.get('price', 50))
-        # Confidence might be 0-100 (int) or 0-1 (float), normalize to 0-1
-        confidence = zone.get('confidence', 50)
-        if confidence > 1:
-            confidence = confidence / 100.0
-        alpha = min(0.4 + confidence * 0.5, 0.95)  # Clamp to valid range
-        ax.axhline(y=y, color='#22c55e', linestyle='--', linewidth=2, alpha=alpha)
-        price_label = zone.get('price', 0)
-        ax.text(img_width - 5, y - 5, f"S: ${price_label:.2f}" if price_label > 1 else f"S: Zone {zone.get('zone', '?')}", 
-                color='#22c55e', fontsize=8, ha='right', va='bottom',
-                bbox=dict(boxstyle='round,pad=0.2', facecolor='#1a1a2e', alpha=0.8))
+        ax.axhline(y=y, color='#10b981', linestyle='-', linewidth=1.5, alpha=0.8)
+        if has_real_prices:
+            price_label = zone.get('price', 0)
+            ax.text(img_width - 8, y - 3, f'${price_label:.0f}', 
+                    color='#10b981', fontsize=7, ha='right', va='bottom', fontweight='bold')
+        else:
+            ax.text(img_width - 8, y - 3, 'S', 
+                    color='#10b981', fontsize=8, ha='right', va='bottom', fontweight='bold')
     
-    # Draw Resistance lines (red)
-    for zone in analysis.get('resistance_zones', []):
+    # Draw Resistance lines (red) - pick the HIGHEST price zones (top of chart)
+    resistance_zones = analysis.get('resistance_zones', [])
+    # Sort by price descending (highest first) for resistance, take top 2
+    resistance_to_draw = sorted(resistance_zones, key=lambda x: x.get('price', 0), reverse=True)[:2]
+    for i, zone in enumerate(resistance_to_draw):
         y = price_to_y(zone.get('price', 50))
-        # Confidence might be 0-100 (int) or 0-1 (float), normalize to 0-1
-        confidence = zone.get('confidence', 50)
-        if confidence > 1:
-            confidence = confidence / 100.0
-        alpha = min(0.4 + confidence * 0.5, 0.95)  # Clamp to valid range
-        ax.axhline(y=y, color='#ef4444', linestyle='--', linewidth=2, alpha=alpha)
-        price_label = zone.get('price', 0)
-        ax.text(img_width - 5, y + 12, f"R: ${price_label:.2f}" if price_label > 1 else f"R: Zone {zone.get('zone', '?')}", 
-                color='#ef4444', fontsize=8, ha='right', va='top',
-                bbox=dict(boxstyle='round,pad=0.2', facecolor='#1a1a2e', alpha=0.8))
+        ax.axhline(y=y, color='#f43f5e', linestyle='-', linewidth=1.5, alpha=0.8)
+        if has_real_prices:
+            price_label = zone.get('price', 0)
+            ax.text(img_width - 8, y + 10, f'${price_label:.0f}', 
+                    color='#f43f5e', fontsize=7, ha='right', va='top', fontweight='bold')
+        else:
+            ax.text(img_width - 8, y + 10, 'R', 
+                    color='#f43f5e', fontsize=8, ha='right', va='top', fontweight='bold')
     
-    # Draw Trend line
+    # Draw subtle trend line
     trend = analysis.get('trend', 'sideways')
     trend_conf = analysis.get('trend_confidence', 0.5)
     
-    if trend == 'uptrend':
-        # Draw diagonal line from bottom-left to top-right
-        ax.plot([0, img_width], [img_height * 0.7, img_height * 0.3], 
-                color='#22c55e', linewidth=3, alpha=0.7, linestyle='-')
-        ax.text(10, 20, f"↗ UPTREND ({trend_conf*100:.0f}%)", 
-                color='#22c55e', fontsize=10, fontweight='bold',
-                bbox=dict(boxstyle='round,pad=0.3', facecolor='#1a1a2e', alpha=0.9))
-    elif trend == 'downtrend':
-        # Draw diagonal line from top-left to bottom-right
-        ax.plot([0, img_width], [img_height * 0.3, img_height * 0.7], 
-                color='#ef4444', linewidth=3, alpha=0.7, linestyle='-')
-        ax.text(10, 20, f"↘ DOWNTREND ({trend_conf*100:.0f}%)", 
-                color='#ef4444', fontsize=10, fontweight='bold',
-                bbox=dict(boxstyle='round,pad=0.3', facecolor='#1a1a2e', alpha=0.9))
-    else:
-        # Draw horizontal line for sideways
-        ax.plot([0, img_width], [img_height * 0.5, img_height * 0.5], 
-                color='#f59e0b', linewidth=3, alpha=0.7, linestyle='-')
-        ax.text(10, 20, f"→ SIDEWAYS ({trend_conf*100:.0f}%)", 
-                color='#f59e0b', fontsize=10, fontweight='bold',
-                bbox=dict(boxstyle='round,pad=0.3', facecolor='#1a1a2e', alpha=0.9))
+    trend_colors = {'uptrend': '#10b981', 'downtrend': '#f43f5e', 'sideways': '#f59e0b'}
+    trend_color = trend_colors.get(trend, '#f59e0b')
     
-    # Add signal badge
+    if trend == 'uptrend':
+        ax.plot([img_width * 0.1, img_width * 0.9], [img_height * 0.65, img_height * 0.35], 
+                color=trend_color, linewidth=2, alpha=0.6, linestyle='--')
+    elif trend == 'downtrend':
+        ax.plot([img_width * 0.1, img_width * 0.9], [img_height * 0.35, img_height * 0.65], 
+                color=trend_color, linewidth=2, alpha=0.6, linestyle='--')
+    
+    # Minimal signal badge - top right corner
     signal = analysis.get('signal', 'HOLD')
-    signal_colors = {'BUY': '#22c55e', 'SELL': '#ef4444', 'HOLD': '#f59e0b'}
+    signal_colors = {'BUY': '#10b981', 'SELL': '#f43f5e', 'HOLD': '#f59e0b'}
     signal_color = signal_colors.get(signal, '#f59e0b')
-    ax.text(img_width - 10, 20, signal, 
-            color=signal_color, fontsize=12, fontweight='bold', ha='right',
-            bbox=dict(boxstyle='round,pad=0.4', facecolor='#1a1a2e', 
-                     edgecolor=signal_color, linewidth=2, alpha=0.9))
+    
+    # Simple badge
+    ax.text(img_width - 10, 15, signal, 
+            color='white', fontsize=9, fontweight='bold', ha='right',
+            bbox=dict(boxstyle='round,pad=0.3', facecolor=signal_color, 
+                     edgecolor='none', alpha=0.9))
+    
+    # Trend indicator - small text below signal
+    trend_label = trend.upper()
+    conf_pct = int(trend_conf * 100) if trend_conf <= 1 else int(trend_conf)
+    ax.text(img_width - 10, 35, f'{trend_label} {conf_pct}%', 
+            color='#9ca3af', fontsize=7, ha='right', va='top')
     
     ax.axis('off')
     plt.tight_layout(pad=0)
     
     # Convert back to PIL Image
     buf = io.BytesIO()
-    plt.savefig(buf, format='png', dpi=100, facecolor='#1a1a2e',
+    plt.savefig(buf, format='png', dpi=120, facecolor='#0f0f1a',
                 bbox_inches='tight', pad_inches=0)
     buf.seek(0)
     plt.close(fig)

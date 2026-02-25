@@ -22,6 +22,12 @@ export default function ChartAnalyzer() {
   const [analyzing, setAnalyzing] = useState(false);
   const [results, setResults] = useState<any>(null);
   const [showXAI, setShowXAI] = useState(false);
+  const [xaiLoading, setXaiLoading] = useState(false);
+  const [xaiData, setXaiData] = useState<{
+    trendHeatmap?: string;
+    srHeatmap?: string;
+    explanation?: string;
+  } | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -36,6 +42,8 @@ export default function ChartAnalyzer() {
       reader.onload = (e) => {
         setImage(e.target?.result as string);
         setResults(null);
+        setXaiData(null);  // Reset XAI when new image uploaded
+        setShowXAI(false);
       };
       reader.readAsDataURL(file);
     }
@@ -336,7 +344,39 @@ export default function ChartAnalyzer() {
 
                 {/* XAI Toggle */}
                 <button
-                  onClick={() => setShowXAI(!showXAI)}
+                  onClick={async () => {
+                    if (!showXAI && !xaiData && image) {
+                      // Fetch XAI data
+                      setXaiLoading(true);
+                      try {
+                        const response = await fetch(image);
+                        const blob = await response.blob();
+                        const file = new File([blob], "chart.png", { type: "image/png" });
+                        
+                        const formData = new FormData();
+                        formData.append("file", file);
+                        
+                        const apiResponse = await fetch("http://localhost:8000/api/xai", {
+                          method: "POST",
+                          body: formData,
+                        });
+                        
+                        if (apiResponse.ok) {
+                          const data = await apiResponse.json();
+                          setXaiData({
+                            trendHeatmap: data.trend_heatmap ? `data:image/png;base64,${data.trend_heatmap}` : undefined,
+                            srHeatmap: data.sr_heatmap ? `data:image/png;base64,${data.sr_heatmap}` : undefined,
+                            explanation: data.explanation,
+                          });
+                        }
+                      } catch (error) {
+                        console.error("XAI error:", error);
+                      } finally {
+                        setXaiLoading(false);
+                      }
+                    }
+                    setShowXAI(!showXAI);
+                  }}
                   className="w-full glass-card rounded-xl p-4 text-left hover:border-primary/40 transition-colors"
                 >
                   <div className="flex items-center justify-between">
@@ -345,18 +385,56 @@ export default function ChartAnalyzer() {
                       <span className="font-semibold text-sm">Explainable AI (Grad-CAM)</span>
                     </div>
                     <span className="text-xs text-muted-foreground">
-                      {showXAI ? "Hide" : "Show"} what the model sees
+                      {xaiLoading ? "Loading..." : showXAI ? "Hide" : "Show"} what the model sees
                     </span>
                   </div>
                   {showXAI && (
-                    <div className="mt-4 p-4 bg-muted/50 rounded-lg text-center">
-                      <p className="text-sm text-muted-foreground">
-                        Heatmap visualization shows which parts of the chart
-                        the AI focused on to make its prediction.
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-2">
-                        🔴 Red/Yellow = High importance | 🔵 Blue = Low importance
-                      </p>
+                    <div className="mt-4 space-y-4">
+                      {xaiLoading ? (
+                        <div className="flex items-center justify-center p-8">
+                          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                        </div>
+                      ) : xaiData ? (
+                        <>
+                          {xaiData.explanation && (
+                            <p className="text-sm text-center text-muted-foreground">
+                              {xaiData.explanation}
+                            </p>
+                          )}
+                          <div className="grid grid-cols-2 gap-4">
+                            {xaiData.trendHeatmap && (
+                              <div>
+                                <p className="text-xs text-center mb-2 font-medium">Trend Model Focus</p>
+                                <img 
+                                  src={xaiData.trendHeatmap} 
+                                  alt="Trend Grad-CAM" 
+                                  className="w-full rounded-lg"
+                                />
+                              </div>
+                            )}
+                            {xaiData.srHeatmap && (
+                              <div>
+                                <p className="text-xs text-center mb-2 font-medium">S/R Model Focus</p>
+                                <img 
+                                  src={xaiData.srHeatmap} 
+                                  alt="S/R Grad-CAM" 
+                                  className="w-full rounded-lg"
+                                />
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground text-center">
+                            🔴 Red/Yellow = High importance | 🔵 Blue = Low importance
+                          </p>
+                        </>
+                      ) : (
+                        <div className="p-4 bg-muted/50 rounded-lg text-center">
+                          <p className="text-sm text-muted-foreground">
+                            Click to generate heatmap showing which parts of the chart
+                            the AI focused on.
+                          </p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </button>

@@ -25,6 +25,7 @@ chroma_db/
 
 # RAG Knowledge Base Cache (generated from links.md)
 quantcademy-app/rag/fetched_content_cache.json
+rag_validation/validation_results.json
 
 # Chart vision - ignore training images, keep models
 chart-vision/data/
