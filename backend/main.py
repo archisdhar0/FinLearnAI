@@ -1326,6 +1326,304 @@ async def health_check():
     return status
 
 # =============================================================================
+# Learning Progress & Leaderboard Endpoints
+# =============================================================================
+
+# Initialize Supabase client
+_supabase_client = None
+
+def get_supabase():
+    global _supabase_client
+    if _supabase_client is None:
+        try:
+            from supabase import create_client
+            url = os.environ.get('SUPABASE_URL')
+            key = os.environ.get('SUPABASE_KEY')
+            if url and key:
+                _supabase_client = create_client(url, key)
+        except Exception as e:
+            print(f"[Supabase] Failed to initialize: {e}")
+    return _supabase_client
+
+
+class ProgressUpdate(BaseModel):
+    user_id: str
+    module_id: str
+    lesson_id: str
+    completed: bool = True
+
+
+class QuizSubmission(BaseModel):
+    user_id: str
+    module_id: str
+    lesson_id: Optional[str] = None  # None for module final quiz
+    score: int
+    total_questions: int
+    time_taken_seconds: Optional[int] = None
+    is_final_quiz: bool = False
+
+
+class LeaderboardEntry(BaseModel):
+    user_id: str
+    display_name: str
+    total_quiz_score: int
+    avg_percentage: float
+    modules_completed: int
+    rank: int
+
+
+@app.post("/api/progress")
+async def update_progress(progress: ProgressUpdate):
+    """Update user's lesson progress."""
+    supabase = get_supabase()
+    if not supabase:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        # Upsert progress
+        data = {
+            "user_id": progress.user_id,
+            "module_id": progress.module_id,
+            "lesson_id": progress.lesson_id,
+            "completed": progress.completed,
+            "completed_at": datetime.utcnow().isoformat() if progress.completed else None
+        }
+        
+        result = supabase.table("user_progress").upsert(
+            data,
+            on_conflict="user_id,module_id,lesson_id"
+        ).execute()
+        
+        return {"success": True, "data": result.data}
+    except Exception as e:
+        print(f"[Progress Error] {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/progress/{user_id}")
+async def get_progress(user_id: str):
+    """Get user's complete progress."""
+    supabase = get_supabase()
+    if not supabase:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        result = supabase.table("user_progress").select("*").eq("user_id", user_id).execute()
+        
+        # Group by module
+        progress_by_module = {}
+        for item in result.data:
+            mod_id = item["module_id"]
+            if mod_id not in progress_by_module:
+                progress_by_module[mod_id] = {"completed_lessons": [], "total_completed": 0}
+            if item["completed"]:
+                progress_by_module[mod_id]["completed_lessons"].append(item["lesson_id"])
+                progress_by_module[mod_id]["total_completed"] += 1
+        
+        return {"user_id": user_id, "progress": progress_by_module}
+    except Exception as e:
+        print(f"[Progress Error] {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/quiz/submit")
+async def submit_quiz(submission: QuizSubmission):
+    """Submit quiz score."""
+    supabase = get_supabase()
+    if not supabase:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        percentage = (submission.score / submission.total_questions) * 100 if submission.total_questions > 0 else 0
+        
+        if submission.is_final_quiz:
+            # Module final quiz - check for existing score
+            existing = supabase.table("module_quiz_scores").select("*").eq(
+                "user_id", submission.user_id
+            ).eq("module_id", submission.module_id).execute()
+            
+            if existing.data:
+                # Update with best score
+                old = existing.data[0]
+                best_score = max(old.get("best_score", 0), submission.score)
+                best_pct = max(old.get("best_percentage", 0), percentage)
+                
+                result = supabase.table("module_quiz_scores").update({
+                    "score": submission.score,
+                    "total_questions": submission.total_questions,
+                    "percentage": percentage,
+                    "attempts": old.get("attempts", 0) + 1,
+                    "best_score": best_score,
+                    "best_percentage": best_pct,
+                    "time_taken_seconds": submission.time_taken_seconds,
+                    "completed_at": datetime.utcnow().isoformat()
+                }).eq("user_id", submission.user_id).eq("module_id", submission.module_id).execute()
+            else:
+                # Insert new
+                result = supabase.table("module_quiz_scores").insert({
+                    "user_id": submission.user_id,
+                    "module_id": submission.module_id,
+                    "score": submission.score,
+                    "total_questions": submission.total_questions,
+                    "percentage": percentage,
+                    "attempts": 1,
+                    "best_score": submission.score,
+                    "best_percentage": percentage,
+                    "time_taken_seconds": submission.time_taken_seconds
+                }).execute()
+        else:
+            # Lesson quiz
+            existing = supabase.table("lesson_quiz_scores").select("*").eq(
+                "user_id", submission.user_id
+            ).eq("module_id", submission.module_id).eq("lesson_id", submission.lesson_id).execute()
+            
+            if existing.data:
+                old = existing.data[0]
+                best_score = max(old.get("best_score", 0), submission.score)
+                
+                result = supabase.table("lesson_quiz_scores").update({
+                    "score": submission.score,
+                    "total_questions": submission.total_questions,
+                    "percentage": percentage,
+                    "attempts": old.get("attempts", 0) + 1,
+                    "best_score": best_score
+                }).eq("user_id", submission.user_id).eq("module_id", submission.module_id).eq("lesson_id", submission.lesson_id).execute()
+            else:
+                result = supabase.table("lesson_quiz_scores").insert({
+                    "user_id": submission.user_id,
+                    "module_id": submission.module_id,
+                    "lesson_id": submission.lesson_id,
+                    "score": submission.score,
+                    "total_questions": submission.total_questions,
+                    "percentage": percentage,
+                    "best_score": submission.score
+                }).execute()
+        
+        return {
+            "success": True,
+            "score": submission.score,
+            "percentage": round(percentage, 1),
+            "passed": percentage >= 70
+        }
+    except Exception as e:
+        print(f"[Quiz Error] {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/quiz/scores/{user_id}")
+async def get_quiz_scores(user_id: str):
+    """Get all quiz scores for a user."""
+    supabase = get_supabase()
+    if not supabase:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        lesson_scores = supabase.table("lesson_quiz_scores").select("*").eq("user_id", user_id).execute()
+        module_scores = supabase.table("module_quiz_scores").select("*").eq("user_id", user_id).execute()
+        
+        return {
+            "user_id": user_id,
+            "lesson_scores": lesson_scores.data,
+            "module_scores": module_scores.data
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/leaderboard")
+async def get_leaderboard(module_id: Optional[str] = None, limit: int = 20):
+    """Get leaderboard rankings."""
+    supabase = get_supabase()
+    if not supabase:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        if module_id:
+            # Module-specific leaderboard
+            result = supabase.table("module_quiz_scores").select(
+                "user_id, best_score, best_percentage, attempts"
+            ).eq("module_id", module_id).order("best_score", desc=True).limit(limit).execute()
+            
+            leaderboard = []
+            for i, entry in enumerate(result.data):
+                # Get display name
+                profile = supabase.table("user_profiles").select("display_name").eq("user_id", entry["user_id"]).execute()
+                display_name = profile.data[0]["display_name"] if profile.data else f"User {entry['user_id'][:8]}"
+                
+                leaderboard.append({
+                    "rank": i + 1,
+                    "user_id": entry["user_id"],
+                    "display_name": display_name,
+                    "score": entry["best_score"],
+                    "percentage": entry["best_percentage"],
+                    "attempts": entry["attempts"]
+                })
+        else:
+            # Global leaderboard - aggregate all module scores
+            result = supabase.rpc("get_global_leaderboard", {"limit_count": limit}).execute()
+            
+            if not result.data:
+                # Fallback if RPC doesn't exist - manual aggregation
+                scores = supabase.table("module_quiz_scores").select("user_id, best_score, best_percentage").execute()
+                
+                user_totals = {}
+                for s in scores.data:
+                    uid = s["user_id"]
+                    if uid not in user_totals:
+                        user_totals[uid] = {"total_score": 0, "total_pct": 0, "count": 0}
+                    user_totals[uid]["total_score"] += s["best_score"]
+                    user_totals[uid]["total_pct"] += s["best_percentage"]
+                    user_totals[uid]["count"] += 1
+                
+                # Sort by total score
+                sorted_users = sorted(user_totals.items(), key=lambda x: x[1]["total_score"], reverse=True)[:limit]
+                
+                leaderboard = []
+                for i, (uid, data) in enumerate(sorted_users):
+                    profile = supabase.table("user_profiles").select("display_name").eq("user_id", uid).execute()
+                    display_name = profile.data[0]["display_name"] if profile.data else f"User {uid[:8]}"
+                    
+                    leaderboard.append({
+                        "rank": i + 1,
+                        "user_id": uid,
+                        "display_name": display_name,
+                        "total_score": data["total_score"],
+                        "avg_percentage": round(data["total_pct"] / data["count"], 1) if data["count"] > 0 else 0,
+                        "modules_completed": data["count"]
+                    })
+            else:
+                leaderboard = result.data
+        
+        return {"leaderboard": leaderboard, "module_id": module_id}
+    except Exception as e:
+        print(f"[Leaderboard Error] {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/profile")
+async def update_profile(user_id: str, display_name: str):
+    """Update user profile."""
+    supabase = get_supabase()
+    if not supabase:
+        raise HTTPException(status_code=500, detail="Database not configured")
+    
+    try:
+        result = supabase.table("user_profiles").upsert({
+            "user_id": user_id,
+            "display_name": display_name,
+            "updated_at": datetime.utcnow().isoformat()
+        }, on_conflict="user_id").execute()
+        
+        return {"success": True, "data": result.data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# =============================================================================
 # Run Server
 # =============================================================================
 
