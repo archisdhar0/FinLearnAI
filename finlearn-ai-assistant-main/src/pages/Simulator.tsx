@@ -261,15 +261,16 @@ export default function Simulator() {
                 {/* Chart */}
                 <div className="glass-card rounded-xl p-6">
                   <h3 className="font-display text-lg font-semibold mb-4">Growth Over Time</h3>
-                  <div className="h-64 flex items-end gap-1">
-                    {result.years.map((year, index) => {
-                      const maxValue = Math.max(...result.portfolio);
-                      const portfolioHeight = (result.portfolio[index] / maxValue) * 100;
-                      const contributionHeight = (result.contributions[index] / maxValue) * 100;
-                      
-                      return (
-                        <div key={year} className="flex-1 flex flex-col items-center gap-1">
-                          <div className="w-full flex flex-col justify-end h-48">
+                  <div className="relative">
+                    {/* Chart bars */}
+                    <div className="h-48 flex items-end gap-1">
+                      {result.years.map((year, index) => {
+                        const maxValue = Math.max(...result.portfolio);
+                        const portfolioHeight = (result.portfolio[index] / maxValue) * 100;
+                        const contributionHeight = (result.contributions[index] / maxValue) * 100;
+                        
+                        return (
+                          <div key={year} className="flex-1">
                             <div
                               className="w-full bg-primary/30 rounded-t relative"
                               style={{ height: `${portfolioHeight}%` }}
@@ -280,12 +281,19 @@ export default function Simulator() {
                               ></div>
                             </div>
                           </div>
+                        );
+                      })}
+                    </div>
+                    {/* X-axis labels - all on same baseline */}
+                    <div className="flex gap-1 mt-2">
+                      {result.years.map((year, index) => (
+                        <div key={year} className="flex-1 text-center">
                           {index % 5 === 0 && (
                             <span className="text-xs text-muted-foreground">Y{year}</span>
                           )}
                         </div>
-                      );
-                    })}
+                      ))}
+                    </div>
                   </div>
                   <div className="flex gap-4 mt-4 justify-center">
                     <div className="flex items-center gap-2 text-sm">

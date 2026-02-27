@@ -333,6 +333,19 @@ export default function LearningModule() {
         </header>
 
         <div className="max-w-4xl mx-auto px-6 py-8">
+          {/* Module Goal Banner */}
+          {module.goal && currentLessonIndex === 0 && completedLessons.length === 0 && (
+            <div className="mb-6 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-transparent border border-primary/20">
+              <div className="flex items-center gap-3">
+                <Target className="w-5 h-5 text-primary" />
+                <div>
+                  <span className="text-sm font-semibold text-primary">Your Goal for This Module</span>
+                  <p className="text-foreground">{module.goal}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Progress bar */}
           <div className="mb-6">
             <div className="flex justify-between text-sm mb-2">
@@ -435,6 +448,61 @@ export default function LearningModule() {
                 </div>
               )}
 
+              {/* Tool Links */}
+              {currentLesson.toolLinks && currentLesson.toolLinks.length > 0 && (
+                <div className="mb-8 p-5 rounded-xl bg-gradient-to-r from-primary/10 to-purple-500/10 border border-primary/20">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <Target className="w-5 h-5 text-primary" />
+                    See It In Action
+                  </h3>
+                  <div className="space-y-3">
+                    {currentLesson.toolLinks.map((link, i) => (
+                      <button
+                        key={i}
+                        onClick={() => navigate(link.route)}
+                        className="w-full text-left p-4 rounded-lg bg-background/50 hover:bg-background/80 border border-border/50 hover:border-primary/40 transition-all group"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-semibold text-primary group-hover:text-primary/80">
+                            {link.text} →
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">{link.description}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Goal Reminder */}
+              {currentLesson.goalReminder && (
+                <div className="mb-8 p-4 rounded-xl bg-success/10 border border-success/30">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-success mt-0.5" />
+                    <div>
+                      <span className="text-sm font-semibold text-success">Your Progress</span>
+                      <p className="text-sm text-foreground mt-1">{currentLesson.goalReminder}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Module Goal Reminder (at end of module) */}
+              {currentLessonIndex === module.lessons.length - 1 && module.goal && (
+                <div className="mb-8 p-5 rounded-xl bg-gradient-to-r from-primary/10 to-success/10 border border-primary/30">
+                  <div className="flex items-start gap-3">
+                    <Trophy className="w-6 h-6 text-primary mt-0.5" />
+                    <div>
+                      <span className="font-semibold text-primary">Module Goal Achieved</span>
+                      <p className="text-foreground mt-1">{module.goal}</p>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Complete the final quiz to test your knowledge and see how you compare!
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Navigation Buttons */}
               <div className="flex justify-between items-center">
                 <button
@@ -495,9 +563,9 @@ export default function LearningModule() {
         </div>
       </div>
 
-      {/* AI Chat Panel */}
+      {/* AI Chat Panel - open by default in learning modules */}
       <div className="hidden lg:flex w-[380px] flex-shrink-0 h-screen sticky top-0">
-        <ChatPanel />
+        <ChatPanel defaultOpen={true} />
       </div>
     </div>
   );

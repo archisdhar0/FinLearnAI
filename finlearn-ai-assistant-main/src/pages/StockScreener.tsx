@@ -43,6 +43,8 @@ interface StockData {
   sentiment_score: number | null;
   sentiment_signal: string | null;
   news_count: number | null;
+  // AI Analysis
+  ai_analysis: string | null;
 }
 
 // Fetch real stock data from backend with CV analysis
@@ -258,6 +260,19 @@ export default function StockScreener() {
                     ) : (
                       <div className="h-32 bg-muted/50 rounded-lg flex items-center justify-center mb-4">
                         <span className="text-muted-foreground text-sm">Chart unavailable</span>
+                      </div>
+                    )}
+
+                    {/* AI Analysis Paragraph */}
+                    {stock.ai_analysis && (
+                      <div className="p-3 rounded-lg bg-muted/30 border border-border/30">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Zap className="w-4 h-4 text-primary" />
+                          <span className="text-xs font-semibold text-primary">AI Analysis</span>
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {stock.ai_analysis}
+                        </p>
                       </div>
                     )}
                   </div>

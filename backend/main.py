@@ -47,6 +47,21 @@ _trend_model = None
 _sentiment_analyzer = None
 _news_fetcher = None
 
+# Stock analysis cache for default watchlists
+_stock_cache: Dict[str, Any] = {}
+_stock_cache_time: Dict[str, datetime] = {}
+_CACHE_TTL_MINUTES = 15  # Cache expires after 15 minutes
+
+# Default watchlists to preload (must match frontend StockScreener.tsx)
+DEFAULT_WATCHLISTS = {
+    "Tech Giants": ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA"],
+    "Finance": ["JPM", "BAC", "GS", "V", "MA", "AXP"],
+    "Consumer": ["WMT", "HD", "NKE", "SBUX", "MCD", "COST"],
+    "Healthcare": ["JNJ", "UNH", "PFE", "ABBV", "MRK", "LLY"],
+    "ETFs": ["SPY", "QQQ", "IWM", "DIA", "XLF", "XLE"],
+    "Growth": ["TSLA", "NFLX", "CRM", "ADBE", "SQ", "SHOP"],
+}
+
 def _prewarm_cv():
     """Helper to prewarm CV models - actual load_cv_models defined below."""
     global _cv_loaded, _sr_model, _trend_model
@@ -107,14 +122,161 @@ async def prewarm_models():
         load_sentiment_models()
         if _sentiment_analyzer is not None:
             print("[Prewarm] Sentiment model ready")
-        else:
-            print("[Prewarm] Sentiment model not loaded")
     except Exception as e:
         print(f"[Prewarm] Sentiment model failed: {e}")
+    
+    # 5. Preload default watchlist stock data (background task)
+    print("\n[Prewarm] Starting background preload of default stocks...")
+    try:
+        import asyncio
+        asyncio.create_task(preload_default_stocks())
+        print("[Prewarm] Stock preload task started")
+    except Exception as e:
+        print(f"[Prewarm] Stock preload failed: {e}")
     
     print("\n" + "="*60)
     print("SERVER READY - All models prewarmed!")
     print("="*60 + "\n")
+
+
+async def preload_default_stocks():
+    """Background task to preload all default watchlist stocks into cache."""
+    global _stock_cache, _stock_cache_time
+    
+    polygon_key = os.environ.get('POLYGON_API_KEY')
+    if not polygon_key:
+        print("[Preload] No Polygon API key, skipping stock preload")
+        return
+    
+    # Collect all unique tickers from default watchlists
+    all_tickers = set()
+    for tickers in DEFAULT_WATCHLISTS.values():
+        all_tickers.update(tickers)
+    
+    print(f"[Preload] Loading {len(all_tickers)} stocks from default watchlists...")
+    
+    try:
+        from polygon import RESTClient
+        client = RESTClient(polygon_key)
+        
+        loaded = 0
+        for ticker in all_tickers:
+            try:
+                # Check if already cached and fresh
+                if ticker in _stock_cache:
+                    cache_age = datetime.now() - _stock_cache_time.get(ticker, datetime.min)
+                    if cache_age.total_seconds() < _CACHE_TTL_MINUTES * 60:
+                        continue
+                
+                # Get 30+ days of data
+                end_date = datetime.now()
+                start_date = end_date - timedelta(days=45)
+                
+                bars = client.get_aggs(
+                    ticker=ticker,
+                    multiplier=1,
+                    timespan="day",
+                    from_=start_date.strftime('%Y-%m-%d'),
+                    to=end_date.strftime('%Y-%m-%d'),
+                    limit=50
+                )
+                
+                if not bars or len(bars) < 10:
+                    continue
+                
+                # Get last 30 days
+                bars = bars[-30:] if len(bars) > 30 else bars
+                
+                latest = bars[-1]
+                prev = bars[-2] if len(bars) > 1 else bars[-1]
+                
+                change = latest.close - prev.close
+                change_pct = (change / prev.close) * 100 if prev.close > 0 else 0
+                
+                # Generate chart image
+                chart_image = generate_chart_image_from_data(bars)
+                
+                # Get price range for S/R calculation
+                price_min = min(b.low for b in bars)
+                price_max = max(b.high for b in bars)
+                
+                # Run CV model analysis
+                analysis = analyze_chart_with_models(chart_image, (price_min, price_max))
+                
+                # Draw analysis lines on the chart
+                annotated_chart = draw_analysis_on_chart(
+                    chart_image, 
+                    analysis, 
+                    (price_min, price_max),
+                    num_bars=len(bars)
+                )
+                
+                # Convert annotated image to base64
+                buf = io.BytesIO()
+                annotated_chart.save(buf, format='PNG')
+                buf.seek(0)
+                chart_base64 = base64.b64encode(buf.read()).decode('utf-8')
+                
+                # Get support/resistance prices
+                support_price = analysis['support_zones'][0]['price'] if analysis['support_zones'] else round(price_min, 2)
+                resistance_price = analysis['resistance_zones'][0]['price'] if analysis['resistance_zones'] else round(price_max, 2)
+                
+                # Get sentiment analysis
+                sentiment_data = get_stock_sentiment(ticker)
+                
+                # Prepare data for AI analysis
+                analysis_data = {
+                    'price': round(latest.close, 2),
+                    'change_pct': round(change_pct, 2),
+                    'trend': analysis['trend'],
+                    'trend_confidence': round(analysis['trend_confidence'] * 100, 1),
+                    'signal': analysis['signal'],
+                    'signal_strength': round(analysis['signal_strength'], 1),
+                    'support': support_price,
+                    'resistance': resistance_price,
+                    'sentiment': sentiment_data.get('sentiment', 'neutral'),
+                    'news_count': sentiment_data.get('news_count', 0)
+                }
+                
+                # Generate AI analysis paragraph
+                ai_analysis = generate_ai_stock_analysis(ticker, analysis_data)
+                
+                # Store in cache
+                _stock_cache[ticker] = {
+                    'ticker': ticker,
+                    'price': round(latest.close, 2),
+                    'change': round(change, 2),
+                    'change_pct': round(change_pct, 2),
+                    'trend': analysis['trend'],
+                    'trend_confidence': round(analysis['trend_confidence'] * 100, 1),
+                    'signal': analysis['signal'],
+                    'signal_strength': round(analysis['signal_strength'], 1),
+                    'support': support_price,
+                    'resistance': resistance_price,
+                    'support_zones': analysis['support_zones'],
+                    'resistance_zones': analysis['resistance_zones'],
+                    'chart_image': chart_base64,
+                    'sentiment': sentiment_data.get('sentiment'),
+                    'sentiment_score': sentiment_data.get('sentiment_score'),
+                    'sentiment_signal': sentiment_data.get('sentiment_signal'),
+                    'news_count': sentiment_data.get('news_count', 0),
+                    'ai_analysis': ai_analysis
+                }
+                _stock_cache_time[ticker] = datetime.now()
+                loaded += 1
+                
+                # Small delay to avoid rate limiting
+                import asyncio
+                await asyncio.sleep(0.2)
+                
+            except Exception as e:
+                print(f"[Preload] Error loading {ticker}: {e}")
+                continue
+        
+        print(f"[Preload] Loaded {loaded}/{len(all_tickers)} stocks into cache")
+        
+    except Exception as e:
+        print(f"[Preload] Error: {e}")
 
 # =============================================================================
 # Request/Response Models
@@ -921,28 +1083,46 @@ def analyze_chart_with_models(image, price_range):
             print(f"[S/R Debug] Support probs: {[f'{p:.2f}' for p in support_probs]}")
             print(f"[S/R Debug] Resistance probs: {[f'{p:.2f}' for p in resistance_probs]}")
     
-    # Calculate signal
+    # Calculate signal - improved logic for more varied outputs
     signal_score = 0
     
+    # Trend contribution (weighted by confidence)
+    trend_conf = results['trend_confidence']
     if results['trend'] == 'uptrend':
-        signal_score += results['trend_confidence'] * 40
+        signal_score += trend_conf * 60  # Increased weight
     elif results['trend'] == 'downtrend':
-        signal_score -= results['trend_confidence'] * 40
+        signal_score -= trend_conf * 60  # Increased weight
+    else:  # sideways
+        # Sideways trend contributes based on S/R balance
+        pass
     
-    if results['support_zones']:
-        signal_score += 15
-    if results['resistance_zones']:
-        signal_score -= 15
+    # S/R contribution - weighted by number and confidence of zones
+    support_strength = sum(z.get('confidence', 50) for z in results['support_zones'][:2]) / 100 if results['support_zones'] else 0
+    resistance_strength = sum(z.get('confidence', 50) for z in results['resistance_zones'][:2]) / 100 if results['resistance_zones'] else 0
     
-    if signal_score > 20:
+    # More support than resistance = bullish, vice versa
+    sr_balance = (support_strength - resistance_strength) * 20
+    signal_score += sr_balance
+    
+    # Calculate final signal with more granular thresholds
+    if signal_score > 15:
         results['signal'] = 'BUY'
-        results['signal_strength'] = min(signal_score, 100)
-    elif signal_score < -20:
+        # Scale confidence: 15-60 maps to 55-90%
+        results['signal_strength'] = min(55 + (signal_score - 15) * 0.8, 95)
+    elif signal_score < -15:
         results['signal'] = 'SELL'
-        results['signal_strength'] = min(abs(signal_score), 100)
+        results['signal_strength'] = min(55 + (abs(signal_score) - 15) * 0.8, 95)
     else:
         results['signal'] = 'HOLD'
-        results['signal_strength'] = 50
+        # HOLD confidence varies based on how close to neutral
+        # Closer to 0 = more confident HOLD, closer to ±15 = less confident
+        hold_confidence = 70 - abs(signal_score) * 1.5
+        results['signal_strength'] = max(40, min(hold_confidence, 75))
+    
+    # Round to integer
+    results['signal_strength'] = int(results['signal_strength'])
+    
+    print(f"[Signal Debug] trend={results['trend']} ({trend_conf:.2f}), score={signal_score:.1f}, signal={results['signal']} ({results['signal_strength']}%)")
     
     return results
 
@@ -1020,12 +1200,16 @@ def draw_analysis_on_chart(image, analysis, price_range, num_bars=30, show_price
     trend_colors = {'uptrend': '#10b981', 'downtrend': '#f43f5e', 'sideways': '#f59e0b'}
     trend_color = trend_colors.get(trend, '#f59e0b')
     
+    # Always draw trend line
     if trend == 'uptrend':
         ax.plot([img_width * 0.1, img_width * 0.9], [img_height * 0.65, img_height * 0.35], 
-                color=trend_color, linewidth=2, alpha=0.6, linestyle='--')
+                color=trend_color, linewidth=2, alpha=0.7, linestyle='--')
     elif trend == 'downtrend':
         ax.plot([img_width * 0.1, img_width * 0.9], [img_height * 0.35, img_height * 0.65], 
-                color=trend_color, linewidth=2, alpha=0.6, linestyle='--')
+                color=trend_color, linewidth=2, alpha=0.7, linestyle='--')
+    else:  # sideways - draw horizontal line through middle
+        ax.plot([img_width * 0.1, img_width * 0.9], [img_height * 0.5, img_height * 0.5], 
+                color=trend_color, linewidth=2, alpha=0.7, linestyle='--')
     
     # Minimal signal badge - top right corner
     signal = analysis.get('signal', 'HOLD')
@@ -1076,11 +1260,56 @@ class StockAnalysisResponse(BaseModel):
     sentiment_score: Optional[float] = None  # -1 to +1
     sentiment_signal: Optional[str] = None  # 'BULLISH', 'BEARISH', 'NEUTRAL'
     news_count: Optional[int] = None
+    # AI-generated analysis paragraph
+    ai_analysis: Optional[str] = None
+
+
+def generate_ai_stock_analysis(ticker: str, data: dict) -> str:
+    """Generate a short AI analysis paragraph using Gemini."""
+    try:
+        # Build the prompt with all available data
+        prompt = f"""You are a concise financial analyst. Write a 2-3 sentence analysis of {ticker} stock based on this data:
+
+Price: ${data.get('price', 'N/A')} ({data.get('change_pct', 0):+.2f}% today)
+30-Day Trend: {data.get('trend', 'unknown')} ({data.get('trend_confidence', 0):.0f}% confidence)
+AI Signal: {data.get('signal', 'HOLD')} ({data.get('signal_strength', 50):.0f}% strength)
+Support Level: ${data.get('support', 'N/A')}
+Resistance Level: ${data.get('resistance', 'N/A')}
+News Sentiment: {data.get('sentiment', 'neutral')} ({data.get('news_count', 0)} articles)
+
+Write a brief, actionable summary for an investor. Be specific about the numbers. No disclaimers or hedging language. Start directly with the analysis."""
+
+        # Use the LLM provider
+        import sys
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'quantcademy-app'))
+        from rag.llm_provider import chat_with_llm
+        
+        response = chat_with_llm(prompt, stream=False)
+        
+        # Clean up response
+        if isinstance(response, str):
+            return response.strip()
+        return str(response).strip()
+        
+    except Exception as e:
+        print(f"[AI Analysis Error] {ticker}: {e}")
+        # Fallback to a simple template-based analysis
+        trend = data.get('trend', 'sideways')
+        signal = data.get('signal', 'HOLD')
+        sentiment = data.get('sentiment', 'neutral')
+        
+        if signal == 'BUY':
+            return f"{ticker} shows bullish momentum with a {trend} trend and {sentiment} news sentiment. Support at ${data.get('support', 'N/A')} provides a potential entry point."
+        elif signal == 'SELL':
+            return f"{ticker} displays bearish signals with a {trend} trend. Resistance at ${data.get('resistance', 'N/A')} may cap upside. News sentiment is {sentiment}."
+        else:
+            return f"{ticker} is consolidating in a {trend} pattern. Watch support at ${data.get('support', 'N/A')} and resistance at ${data.get('resistance', 'N/A')}. Sentiment is {sentiment}."
 
 
 @app.post("/api/stocks", response_model=List[StockAnalysisResponse])
 async def get_stocks(request: StockRequest):
-    """Get stock data with real CV model analysis."""
+    """Get stock data with real CV model analysis. Uses cache for default watchlist stocks."""
+    global _stock_cache, _stock_cache_time
     
     polygon_key = os.environ.get('POLYGON_API_KEY')
     if not polygon_key:
@@ -1098,6 +1327,18 @@ async def get_stocks(request: StockRequest):
         
         for ticker in request.tickers:
             try:
+                # Check cache first for default watchlist stocks
+                if ticker in _stock_cache:
+                    cache_age = datetime.now() - _stock_cache_time.get(ticker, datetime.min)
+                    if cache_age.total_seconds() < _CACHE_TTL_MINUTES * 60:
+                        # Use cached data
+                        cached = _stock_cache[ticker]
+                        results.append(StockAnalysisResponse(**cached))
+                        print(f"[Cache Hit] {ticker}")
+                        continue
+                
+                print(f"[Cache Miss] {ticker} - fetching fresh data")
+                
                 # Get 30+ days of data
                 end_date = datetime.now()
                 start_date = end_date - timedelta(days=45)
@@ -1154,26 +1395,50 @@ async def get_stocks(request: StockRequest):
                 # Get sentiment analysis
                 sentiment_data = get_stock_sentiment(ticker)
                 
-                results.append(StockAnalysisResponse(
-                    ticker=ticker,
-                    price=round(latest.close, 2),
-                    change=round(change, 2),
-                    change_pct=round(change_pct, 2),
-                    trend=analysis['trend'],
-                    trend_confidence=round(analysis['trend_confidence'] * 100, 1),
-                    signal=analysis['signal'],
-                    signal_strength=round(analysis['signal_strength'], 1),
-                    support=support_price,
-                    resistance=resistance_price,
-                    support_zones=analysis['support_zones'],
-                    resistance_zones=analysis['resistance_zones'],
-                    chart_image=chart_base64,
-                    # Sentiment fields
-                    sentiment=sentiment_data.get('sentiment'),
-                    sentiment_score=sentiment_data.get('sentiment_score'),
-                    sentiment_signal=sentiment_data.get('sentiment_signal'),
-                    news_count=sentiment_data.get('news_count', 0)
-                ))
+                # Prepare data for AI analysis
+                analysis_data = {
+                    'price': round(latest.close, 2),
+                    'change_pct': round(change_pct, 2),
+                    'trend': analysis['trend'],
+                    'trend_confidence': round(analysis['trend_confidence'] * 100, 1),
+                    'signal': analysis['signal'],
+                    'signal_strength': round(analysis['signal_strength'], 1),
+                    'support': support_price,
+                    'resistance': resistance_price,
+                    'sentiment': sentiment_data.get('sentiment', 'neutral'),
+                    'news_count': sentiment_data.get('news_count', 0)
+                }
+                
+                # Generate AI analysis paragraph
+                ai_analysis = generate_ai_stock_analysis(ticker, analysis_data)
+                
+                # Build response data
+                stock_data = {
+                    'ticker': ticker,
+                    'price': round(latest.close, 2),
+                    'change': round(change, 2),
+                    'change_pct': round(change_pct, 2),
+                    'trend': analysis['trend'],
+                    'trend_confidence': round(analysis['trend_confidence'] * 100, 1),
+                    'signal': analysis['signal'],
+                    'signal_strength': round(analysis['signal_strength'], 1),
+                    'support': support_price,
+                    'resistance': resistance_price,
+                    'support_zones': analysis['support_zones'],
+                    'resistance_zones': analysis['resistance_zones'],
+                    'chart_image': chart_base64,
+                    'sentiment': sentiment_data.get('sentiment'),
+                    'sentiment_score': sentiment_data.get('sentiment_score'),
+                    'sentiment_signal': sentiment_data.get('sentiment_signal'),
+                    'news_count': sentiment_data.get('news_count', 0),
+                    'ai_analysis': ai_analysis
+                }
+                
+                # Update cache for this ticker
+                _stock_cache[ticker] = stock_data
+                _stock_cache_time[ticker] = datetime.now()
+                
+                results.append(StockAnalysisResponse(**stock_data))
                 
             except Exception as e:
                 print(f"[Stock Error] {ticker}: {e}")

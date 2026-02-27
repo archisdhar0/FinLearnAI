@@ -20,8 +20,12 @@ const SUGGESTED_QUESTIONS = [
   "What's the difference between stocks and bonds?",
 ];
 
-export function ChatPanel() {
-  const [isOpen, setIsOpen] = useState(true);
+interface ChatPanelProps {
+  defaultOpen?: boolean;
+}
+
+export function ChatPanel({ defaultOpen = false }: ChatPanelProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",

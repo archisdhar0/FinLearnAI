@@ -41,7 +41,7 @@ const Dashboard = () => {
       <div className="flex-1 overflow-y-auto">
         {/* Top Bar */}
         <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur-md">
-          <div className="max-w-4xl mx-auto px-6 lg:px-10 h-14 flex items-center justify-between">
+          <div className="max-w-6xl mx-auto px-6 lg:px-12 h-14 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="p-1.5 rounded-lg bg-primary/10">
                 <TrendingUp className="w-4 h-4 text-primary" />
@@ -61,7 +61,7 @@ const Dashboard = () => {
           </div>
         </header>
 
-        <div className="max-w-4xl mx-auto px-6 lg:px-10 pb-16">
+        <div className="max-w-6xl mx-auto px-6 lg:px-12 pb-16">
           <HeroSection />
           
           {/* Learning Modules Section - Now on top */}
@@ -137,14 +137,14 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* AI Chat Panel */}
+      {/* AI Chat Panel - collapsed by default on dashboard */}
       <div className="hidden md:flex w-[380px] flex-shrink-0 h-screen sticky top-0">
-        <ChatPanel />
+        <ChatPanel defaultOpen={false} />
       </div>
 
       {/* Mobile chat toggle */}
       <div className="md:hidden">
-        <ChatPanel />
+        <ChatPanel defaultOpen={false} />
       </div>
     </div>
   );
