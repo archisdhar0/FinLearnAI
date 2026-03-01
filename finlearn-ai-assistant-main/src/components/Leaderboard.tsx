@@ -31,8 +31,8 @@ export const Leaderboard = ({ moduleId, currentUserId }: LeaderboardProps) => {
     setLoading(true);
     try {
       const url = moduleId 
-        ? `http://localhost:8000/api/leaderboard?module_id=${moduleId}`
-        : 'http://localhost:8000/api/leaderboard';
+        ? `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/leaderboard?module_id=${moduleId}`
+        : '${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/leaderboard';
       
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch leaderboard');

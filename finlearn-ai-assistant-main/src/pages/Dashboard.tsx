@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { HeroSection } from "@/components/HeroSection";
 import { LessonGrid } from "@/components/LessonGrid";
 import { ChatPanel } from "@/components/ChatPanel";
-import { LogOut, TrendingUp, BarChart3, Eye, LineChart, Brain } from "lucide-react";
+import { LogOut, TrendingUp, BarChart3, Eye, LineChart, Brain, Trophy, Users } from "lucide-react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -49,6 +49,24 @@ const Dashboard = () => {
               <span className="font-display text-sm font-semibold">FinLearn AI</span>
             </div>
             <div className="flex items-center gap-4">
+              {/* Social & Leaderboard Links */}
+              <button
+                onClick={() => navigate("/leaderboard")}
+                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors"
+                title="Leaderboard"
+              >
+                <Trophy className="w-4 h-4" />
+                <span className="hidden md:inline">Leaderboard</span>
+              </button>
+              <button
+                onClick={() => navigate("/social")}
+                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors"
+                title="Community"
+              >
+                <Users className="w-4 h-4" />
+                <span className="hidden md:inline">Community</span>
+              </button>
+              <div className="h-4 w-px bg-border hidden sm:block" />
               <span className="text-xs text-muted-foreground hidden sm:block">{userEmail}</span>
               <button
                 onClick={handleLogout}

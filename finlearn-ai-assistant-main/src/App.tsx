@@ -10,6 +10,8 @@ import ChartAnalyzer from "./pages/ChartAnalyzer";
 import SentimentAnalyzer from "./pages/SentimentAnalyzer";
 import LearningModule from "./pages/LearningModule";
 import Simulator from "./pages/Simulator";
+import Leaderboard from "./pages/Leaderboard";
+import Social from "./pages/Social";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,8 @@ const App = () => (
           <Route path="/sentiment" element={<SentimentAnalyzer />} />
           <Route path="/learn/:moduleId" element={<LearningModule />} />
           <Route path="/simulator" element={<Simulator />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/social" element={<Social />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

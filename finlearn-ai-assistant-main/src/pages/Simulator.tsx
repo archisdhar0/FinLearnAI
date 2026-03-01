@@ -263,21 +263,28 @@ export default function Simulator() {
                   <h3 className="font-display text-lg font-semibold mb-4">Growth Over Time</h3>
                   <div className="relative">
                     {/* Chart bars */}
-                    <div className="h-48 flex items-end gap-1">
+                    <div className="h-48 flex items-end gap-0.5">
                       {result.years.map((year, index) => {
                         const maxValue = Math.max(...result.portfolio);
-                        const portfolioHeight = (result.portfolio[index] / maxValue) * 100;
-                        const contributionHeight = (result.contributions[index] / maxValue) * 100;
+                        const portfolioHeight = maxValue > 0 ? (result.portfolio[index] / maxValue) * 100 : 0;
+                        const contributionHeight = maxValue > 0 ? (result.contributions[index] / maxValue) * 100 : 0;
                         
                         return (
-                          <div key={year} className="flex-1">
+                          <div 
+                            key={year} 
+                            className="flex-1 flex flex-col justify-end h-full"
+                          >
                             <div
-                              className="w-full bg-primary/30 rounded-t relative"
-                              style={{ height: `${portfolioHeight}%` }}
+                              className="w-full bg-primary/30 rounded-t relative min-h-[2px]"
+                              style={{ height: `${Math.max(portfolioHeight, 1)}%` }}
                             >
                               <div
                                 className="absolute bottom-0 w-full bg-primary rounded-t"
-                                style={{ height: `${(contributionHeight / portfolioHeight) * 100}%` }}
+                                style={{ 
+                                  height: portfolioHeight > 0 
+                                    ? `${(contributionHeight / portfolioHeight) * 100}%` 
+                                    : '0%' 
+                                }}
                               ></div>
                             </div>
                           </div>
@@ -285,7 +292,7 @@ export default function Simulator() {
                       })}
                     </div>
                     {/* X-axis labels - all on same baseline */}
-                    <div className="flex gap-1 mt-2">
+                    <div className="flex gap-0.5 mt-2">
                       {result.years.map((year, index) => (
                         <div key={year} className="flex-1 text-center">
                           {index % 5 === 0 && (

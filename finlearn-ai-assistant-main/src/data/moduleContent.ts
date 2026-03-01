@@ -45,49 +45,99 @@ export const MODULES: Record<string, Module> = {
       {
         id: "what_is_investing",
         title: "What is Investing?",
-        goalReminder: "After this lesson, you'll understand WHY investing matters and why starting now is so important.",
+        goalReminder: "You now understand WHY investing matters. Next up: what you can actually buy.",
+        toolLinks: [
+          {
+            text: "See Your Money Grow (or Shrink)",
+            route: "/simulator",
+            description: "Try the Portfolio Simulator NOW. Set monthly investment to $200, years to 30, and watch what happens. Then try $0/month and see the difference. This is YOUR future."
+          }
+        ],
         content: `
-You've probably heard people talk about investing. Your friend who won't stop talking about their portfolio. That coworker who's always checking stock prices. Your parents telling you to "start investing early."
+> **Before you read another word:** Go to the Portfolio Simulator below. Put in $200/month, 30 years, 7% return. See that number? That could be YOUR retirement. Now change it to $0/month. See the difference? That's what waiting costs you.
 
-But what does investing actually mean? And why should you care?
+---
 
-Let me put it simply: **investing is just using your money to make more money over time**. Instead of letting your cash sit in a savings account earning next to nothing, you're putting it to work. You're buying pieces of companies, or lending money to governments, or owning a slice of the entire stock market.
+## What Is Investing, Really?
 
-Think of it like this: if you stash $100 under your mattress, you'll still have $100 in ten years (minus whatever the mice eat). But if you invest that $100 and it grows at 7% per year, you'll have about $200. Your money made money while you slept.
+**Investing = using your money to make more money over time.**
+
+That's it. You're not gambling. You're not day trading. You're buying pieces of real companies and letting them grow.
+
+- **$100 under your mattress** → Still $100 in 10 years
+- **$100 invested at 7%/year** → About $200 in 10 years
+
+Your money works while you sleep.
+
+---
+
+> 💡 **QUICK STAT:** If you invested $1,000 in the S&P 500 in 2014, you'd have ~$3,500 today. That's doing nothing but waiting.
 
 ---
 
 ## The Savings Account Trap
 
-Here's something that might surprise you: keeping all your money in a savings account is actually risky. Not risky like "you might lose it" risky, but risky like "it's definitely going to lose value" risky.
+Here's the uncomfortable truth: **keeping all your money in savings is risky.**
 
-See, there's this thing called **inflation**. Every year, stuff costs more. A gallon of milk that cost $3 last year might cost $3.10 this year. Your $100 can buy less stuff over time, even though it's still $100.
+Not "lose it all" risky. But "guaranteed to lose value" risky.
 
-If inflation is 3% per year (which is pretty normal), that $100 under your mattress will only be worth about $74 in purchasing power after ten years. You didn't lose the money, but you lost what the money can actually buy.
+**Inflation** = stuff costs more every year.
+- Milk that cost $3 last year → $3.10 this year
+- Your $100 buys less stuff, even though it's still $100
 
----
+At 3% inflation, $100 today = **$74 in purchasing power** after 10 years.
 
-## Saving vs Investing: What's the Difference?
-
-**Saving** is like your safety net. It's the money you keep in a regular bank account for emergencies. Your car breaks down? Your savings account has you covered.
-
-**Investing** is for the long game. This is money you're putting away for retirement, or a house down payment in five years, or your kid's college fund. You're okay with this money going up and down in value because you're not touching it for a while.
-
-The key difference? **Time**. If you need the money in the next year or two, keep it in savings. If you don't need it for five, ten, or thirty years, that's when investing makes sense.
+You didn't lose the money. You lost what the money can buy.
 
 ---
 
-## Why Time Matters So Much
+> 📊 **TRY IT:** Use the Inflation Calculator below. Enter $10,000 and see what it's worth in 20 years if you don't invest.
 
-The earlier you start investing, the easier it is. Not because you have more money (you probably don't), but because time does most of the heavy lifting.
+---
 
-Let's say you invest $100 when you're 25. By the time you're 65, that $100 could be worth $1,500 or more (assuming 7% average returns). But if you wait until you're 35 to invest that same $100, by 65 it might only be worth $750.
+## Saving vs Investing: The Simple Rule
 
-Same $100. Same return rate. But starting ten years earlier means you end up with **twice as much money**.
+| | Saving | Investing |
+|---|---|---|
+| **For** | Emergencies, short-term | Retirement, 5+ year goals |
+| **Risk** | Low (but loses to inflation) | Higher (but beats inflation) |
+| **Timeline** | Need it in 1-2 years | Don't need it for 5+ years |
 
-That's the power of compounding. Your money makes money, and then that money makes money, and it keeps going.
+**The key difference? Time.**
+
+Need money soon → savings account.
+Don't need it for years → invest it.
+
+---
+
+## Why Starting NOW Matters
+
+> 🎯 **THE MATH THAT CHANGES EVERYTHING:**
+>
+> **Start at 25:** Invest $200/month → **$500,000+ by 65**
+>
+> **Start at 35:** Need $450/month to catch up
+>
+> **Start at 45:** Need $1,000/month to catch up
+
+Same destination. But waiting 10 years means paying **2x more** to get there.
+
+---
+
+> ✅ **MILESTONE COMPLETE:** You now understand more about investing than most Americans. Seriously. Most people never learn this.
+
+---
+
+## Your Action Item
+
+Before moving on, go to the **Portfolio Simulator** and try these:
+1. **Your realistic scenario:** Your age, $200/month, 30 years
+2. **The "I'll start later" scenario:** Same but 10 fewer years
+3. **The "I wish I started earlier" scenario:** Add 10 more years
+
+See the difference? That's why we're here.
         `,
-        interactiveElements: ['InflationCalculator'],
+        interactiveElements: ['InflationCalculator', 'CompoundCalculator'],
         quiz: [
           {
             question: "What's the main difference between saving and investing?",
@@ -110,70 +160,90 @@ That's the power of compounding. Your money makes money, and then that money mak
             ],
             correct: 1,
             explanation: "Starting early gives your money more time to compound, which can double or triple your returns over decades."
-          },
-          {
-            question: "What is inflation's effect on cash savings?",
-            options: [
-              "It makes your money worth more over time",
-              "It has no effect on savings",
-              "It reduces the purchasing power of your money",
-              "It only affects stocks"
-            ],
-            correct: 2,
-            explanation: "Inflation means prices rise over time, so the same amount of money buys less in the future."
           }
         ]
       },
       {
         id: "what_youre_buying",
         title: "What You're Actually Buying",
-        goalReminder: "You're learning what you can actually invest in. Soon you'll pick your first investment.",
+        goalReminder: "You now know the 3 main investment types. Most beginners just need index funds. Keep going!",
         toolLinks: [
           {
-            text: "See Real Stocks in Action",
+            text: "See Real Stocks RIGHT NOW",
             route: "/screener",
-            description: "Check out our AI Stock Screener to see real stocks with support/resistance levels and trend analysis."
+            description: "Go look at AAPL, MSFT, GOOGL in our Stock Screener. These are real companies you could own a piece of TODAY. See their current prices, trends, and AI analysis."
           }
         ],
         content: `
-When you "invest," you're actually buying something. Not something you can hold in your hands, but something very real. Let's break down the main things investors buy.
+> **Quick challenge:** After this lesson, go to the Stock Screener and find Apple (AAPL). Look at its current price. That's how much ONE share costs. You could own a piece of a $3 trillion company for that price.
 
 ---
 
-## Stocks: Owning a Piece of a Company
+## The 3 Things You Can Buy
 
-When you buy a stock, you're buying a tiny piece of a company. If you own one share of Apple, you literally own a small fraction of Apple Inc.
+| Type | What It Is | Risk | Return |
+|------|-----------|------|--------|
+| **Stocks** | Own a piece of a company | Higher | ~10%/year historically |
+| **Bonds** | Lend money, get interest | Lower | ~4-5%/year |
+| **Funds** | Basket of stocks/bonds | Medium | Depends on mix |
 
-What does that mean practically?
-- If Apple makes money, you might get **dividends** (cash payments to shareholders)
-- If Apple's value goes up, your shares are worth more
-- If Apple tanks, your shares lose value
-
-Stocks are considered "riskier" because their prices bounce around a lot. But historically, they've also provided the **best long-term returns**.
-
----
-
-## Bonds: Lending Your Money
-
-When you buy a bond, you're lending money to someone (usually a company or the government). They promise to pay you back with interest.
-
-Think of it like this: you give the government $1,000. They say "thanks, we'll pay you 4% interest every year, and in 10 years we'll give you your $1,000 back."
-
-Bonds are considered "safer" because you know exactly what you're getting. But the trade-off is **lower returns**.
+That's it. Everything else is a variation of these three.
 
 ---
 
-## Funds: Buying a Basket
+## Stocks: You Own Part of the Company
 
-Instead of picking individual stocks or bonds, you can buy a fund that holds hundreds or thousands of them.
+**Buy 1 share of Apple = you own a tiny piece of Apple Inc.**
 
-**Index Funds**: Track a market index like the S&P 500. You're basically buying a little bit of the 500 largest U.S. companies all at once.
+What that means:
+- Apple profits → you might get **dividends** (cash payments)
+- Apple grows → your shares are worth more
+- Apple tanks → your shares lose value
 
-**ETFs (Exchange-Traded Funds)**: Similar to index funds, but they trade like stocks throughout the day.
+> 💡 **REAL EXAMPLE:** 1 share of Apple in 2010 = ~$10. Today = ~$180. That's 18x your money in 14 years.
 
-**Mutual Funds**: Professionally managed pools of investments. Usually more expensive.
+Stocks are "riskier" because prices bounce around daily. But over decades? They've beaten everything else.
 
-For most beginners, **index funds are the way to go**. Low cost, instant diversification, and you don't have to pick winners.
+---
+
+## Bonds: You're the Bank
+
+**Buy a bond = you're lending money and getting paid interest.**
+
+Example: You give the government $1,000. They say:
+- "We'll pay you 4% interest every year"
+- "In 10 years, we'll give your $1,000 back"
+
+Safer than stocks. But lower returns. Most young investors don't need many bonds yet.
+
+---
+
+## Funds: The Easy Button
+
+**Don't want to pick individual stocks? Buy a fund that holds hundreds of them.**
+
+| Fund Type | What It Does | Cost |
+|-----------|-------------|------|
+| **Index Fund** | Tracks S&P 500 (top 500 companies) | Very low (~0.03%) |
+| **ETF** | Same as index fund, trades like a stock | Very low |
+| **Mutual Fund** | Manager picks stocks for you | Higher (1-2%) |
+
+> 🎯 **THE BEGINNER ANSWER:** Just buy an S&P 500 index fund (like VOO, SPY, or FXAIX). You instantly own a piece of Apple, Microsoft, Google, Amazon, and 496 other companies.
+
+---
+
+> ✅ **MILESTONE:** You now know more about investment types than most adults. Index funds are the answer for 90% of beginners. Don't overthink it.
+
+---
+
+## Your Action Item
+
+Go to the **Stock Screener** and:
+1. Look up **AAPL** (Apple) - see the current price
+2. Look up **SPY** (S&P 500 ETF) - this is 500 companies in one
+3. Compare the AI signals - which looks more stable?
+
+This is real. These are things you can actually buy.
         `,
         quiz: [
           {
@@ -203,61 +273,76 @@ For most beginners, **index funds are the way to go**. Low cost, instant diversi
       {
         id: "how_markets_work",
         title: "How Markets Function",
-        goalReminder: "Understanding how markets work helps you stay calm when prices move. You're almost ready to invest!",
+        goalReminder: "You now understand how prices move. This knowledge will keep you calm when markets get crazy.",
         toolLinks: [
           {
-            text: "Analyze Real Charts",
+            text: "See Charts in Action",
             route: "/analyzer",
-            description: "Try our Chart Analyzer to see how AI detects support/resistance levels and trends in real stock charts."
+            description: "Upload any stock chart to our Chart Analyzer. Watch AI identify support levels (where prices tend to stop falling) and resistance levels (where they stop rising)."
           },
           {
-            text: "Watch Live Market Data",
+            text: "Watch Real Price Movement",
             route: "/screener",
-            description: "See how real stocks are moving right now with our AI Stock Screener."
+            description: "Go to Stock Screener and watch the trends. Green = uptrend. Red = downtrend. This is supply and demand in action."
           }
         ],
         content: `
-The stock market can seem mysterious, but it's really just a place where buyers and sellers meet to trade.
+> **The secret:** The stock market isn't mysterious. It's just people buying and selling. That's it.
 
 ---
 
-## The Basics
+## How Prices Actually Work
 
-**Stock Exchanges** are like marketplaces. The big ones in the U.S. are:
-- NYSE (New York Stock Exchange)
-- NASDAQ
+**More buyers than sellers → price goes UP**
+**More sellers than buyers → price goes DOWN**
 
-When you buy a stock, you're buying it from someone who wants to sell. When you sell, someone else is buying from you.
-
-**Market Hours**: U.S. markets are open 9:30 AM - 4:00 PM Eastern, Monday through Friday.
+That's literally it. Everything else (earnings reports, Fed announcements, analyst ratings) just affects how many people want to buy or sell.
 
 ---
 
-## Supply and Demand
-
-Stock prices work just like any other price: **supply and demand**.
-
-- More buyers than sellers → price goes up
-- More sellers than buyers → price goes down
-
-That's it. All the complicated-sounding stuff (P/E ratios, earnings reports, Fed announcements) just affects how many people want to buy or sell.
+> 📊 **TRY IT:** Go to the Stock Screener and look at any stock's trend. Uptrend = more buyers lately. Downtrend = more sellers. You're watching supply and demand in real-time.
 
 ---
 
-## What Moves Prices?
+## The Basics You Need to Know
 
-- **Company news**: Good earnings? Stock goes up. Scandal? Stock goes down.
-- **Economic data**: Jobs report, inflation numbers, GDP growth
-- **Interest rates**: When the Fed raises rates, stocks often fall
-- **Sentiment**: Sometimes the market just gets scared or excited
+| What | Details |
+|------|---------|
+| **Where** | NYSE, NASDAQ (stock exchanges) |
+| **When** | 9:30 AM - 4:00 PM Eastern, Mon-Fri |
+| **How** | You buy from sellers, sell to buyers |
 
-The key insight: in the short term, prices are driven by emotions and news. In the long term, prices follow actual business performance.
+When you click "buy" on your brokerage app, someone else clicked "sell" at that exact moment. You're trading with real people.
 
 ---
 
-## You Don't Need to Predict the Market
+## What Makes Prices Move?
 
-Here's the good news: you don't need to understand every market move. Most successful long-term investors just buy regularly and hold for years. They don't try to time the market.
+| Factor | Effect |
+|--------|--------|
+| **Good earnings** | Stock usually goes up |
+| **Bad news/scandal** | Stock usually goes down |
+| **Fed raises rates** | Market often drops |
+| **Fear/panic** | Everything drops |
+| **Optimism/hype** | Everything rises |
+
+> 💡 **KEY INSIGHT:** Short-term = emotions and news. Long-term = actual business performance. This is why we don't panic sell.
+
+---
+
+## The Good News: You Don't Need to Predict Anything
+
+Most successful investors:
+- Buy regularly (every paycheck)
+- Hold for years/decades
+- Don't try to time the market
+- Ignore daily news
+
+That's it. No crystal ball needed.
+
+---
+
+> ✅ **MILESTONE:** You now understand markets better than people who watch CNBC all day. They're trying to predict. You're just going to buy and hold.
         `,
         quiz: [
           {
@@ -276,47 +361,80 @@ Here's the good news: you don't need to understand every market move. Most succe
       {
         id: "time_and_compounding",
         title: "Time and Compounding",
+        goalReminder: "You now understand the most powerful force in investing. Time is on your side - if you start now.",
+        toolLinks: [
+          {
+            text: "Watch Compounding in Action",
+            route: "/simulator",
+            description: "Go to Portfolio Simulator. Set $200/month for 40 years. Now change to 30 years. See how much that 10 years costs you? That's compounding."
+          }
+        ],
         content: `
-Compound interest is the most powerful force in investing. Einstein supposedly called it the "eighth wonder of the world." Whether he actually said that or not, the math is real.
+> **This is the most important lesson.** Compounding is why starting NOW matters more than how much you invest.
 
 ---
 
-## How Compounding Works
+## The Magic of Compounding (In 30 Seconds)
 
-**Simple interest**: You earn interest only on your original investment.
-**Compound interest**: You earn interest on your investment PLUS all the interest you've already earned.
+**Year 1:** Invest $1,000, earn 10% = **$1,100**
+**Year 2:** Earn 10% on $1,100 = **$1,210**
+**Year 3:** Earn 10% on $1,210 = **$1,331**
 
-Example:
-- Year 1: You invest $1,000, earn 10% = $1,100
-- Year 2: You earn 10% on $1,100 = $1,210
-- Year 3: You earn 10% on $1,210 = $1,331
-
-See how each year you're earning more? That's compounding.
+See it? Each year you earn more because you're earning on your earnings. This snowballs over decades.
 
 ---
 
-## The Rule of 72
-
-Want a quick way to estimate how long it takes to double your money? Divide 72 by your interest rate.
-
-- At 7% return: 72 ÷ 7 = about **10 years to double**
-- At 10% return: 72 ÷ 10 = about **7 years to double**
+> 📊 **TRY IT NOW:** Use the Compound Calculator below. Put in $10,000, 7% return, 30 years. That's ~$76,000. Now try 40 years. That's ~$150,000. Ten extra years = DOUBLE the money.
 
 ---
 
-## Why Starting Early Matters
+## The Rule of 72 (Memorize This)
 
-Let's compare two people:
+**72 ÷ your return rate = years to double your money**
 
-**Sarah** starts investing $200/month at age 25, stops at 35 (10 years, $24,000 total invested)
+| Return | Years to Double |
+|--------|-----------------|
+| 6% | 12 years |
+| 7% | ~10 years |
+| 10% | ~7 years |
 
-**Mike** starts investing $200/month at age 35, continues until 65 (30 years, $72,000 total invested)
+At 7% (stock market average), your money doubles every 10 years.
+- Age 25: $10,000
+- Age 35: $20,000
+- Age 45: $40,000
+- Age 55: $80,000
+- Age 65: $160,000
 
-At 7% returns, by age 65:
-- Sarah has about $240,000
-- Mike has about $240,000
+**One investment. No extra contributions. Just time.**
 
-Sarah invested **1/3 the money** but ended up with the same amount. That's the power of starting early.
+---
+
+## The Story That Will Change How You Think
+
+> 🎯 **SARAH vs MIKE:**
+>
+> **Sarah:** Invests $200/month from age 25-35, then STOPS (10 years, $24,000 total)
+>
+> **Mike:** Invests $200/month from age 35-65 (30 years, $72,000 total)
+>
+> **At age 65, they have the SAME amount: ~$240,000**
+
+Sarah invested 1/3 the money but got the same result. The only difference? She started 10 years earlier.
+
+---
+
+> ✅ **MILESTONE:** You now understand why every financial advisor says "start early." It's not a cliché - it's math. And the math is brutal if you wait.
+
+---
+
+## Your Action Item
+
+Go to the **Portfolio Simulator** and run YOUR numbers:
+1. Your current age
+2. $200/month (or whatever you can do)
+3. Retirement age 65
+
+Now add 5 years to your starting age. See the difference? That's what waiting costs.
         `,
         interactiveElements: ['CompoundCalculator'],
         quiz: [
@@ -347,53 +465,79 @@ Sarah invested **1/3 the money** but ended up with the same amount. That's the p
       {
         id: "basics_of_risk",
         title: "The Basics of Risk",
+        goalReminder: "You now understand that risk isn't scary - it's manageable. Diversify and don't panic. That's it.",
+        toolLinks: [
+          {
+            text: "See Risk in Real Stocks",
+            route: "/screener",
+            description: "Compare individual stocks (TSLA, AAPL) to ETFs (SPY, QQQ) in the Stock Screener. Notice how ETFs have smoother trends? That's diversification reducing risk."
+          }
+        ],
         content: `
-Risk in investing doesn't mean "chance of losing everything." It means "how much your investments might go up or down in value."
+> **Risk doesn't mean "lose everything."** It means "how much your investments bounce around." And you can manage it.
 
 ---
 
-## Risk and Reward Are Linked
+## The Risk-Reward Tradeoff (No Free Lunch)
 
-Higher potential returns = higher risk. Lower risk = lower potential returns.
+| Investment | Risk | Average Return |
+|------------|------|----------------|
+| Savings account | Very low | 0.5% |
+| Bonds | Low | 3-5% |
+| Stock index funds | Medium | 7-10% |
+| Individual stocks | High | -100% to +1000% |
 
-- **Savings account**: Very low risk, very low return (0.5%)
-- **Bonds**: Low risk, low-moderate return (3-5%)
-- **Stocks**: Higher risk, higher return (7-10% historically)
-- **Individual stocks**: Highest risk, highest potential return (or loss)
-
-There's no free lunch. Anyone promising high returns with no risk is lying.
-
----
-
-## Types of Risk
-
-**Market Risk**: The whole market drops (like in 2008 or 2020). Even good companies fall.
-
-**Company Risk**: One specific company fails (like Enron or Blockbuster). This is why you diversify.
-
-**Inflation Risk**: Your returns don't keep up with rising prices. This is the hidden risk of keeping everything in cash.
+**Higher returns = higher risk. Always.** Anyone promising otherwise is lying.
 
 ---
 
-## How to Manage Risk
+## The 3 Types of Risk
 
-1. **Diversify**: Don't put all your eggs in one basket. Own many different investments.
+| Risk | What It Is | Example |
+|------|-----------|---------|
+| **Market Risk** | Whole market drops | 2008, 2020 crashes |
+| **Company Risk** | One company fails | Enron, Blockbuster |
+| **Inflation Risk** | Cash loses value | Your savings account |
 
-2. **Match risk to timeline**: 
-   - Money you need soon → low risk (savings, bonds)
-   - Money you won't touch for decades → can handle more risk (stocks)
-
-3. **Don't panic sell**: Market drops are normal. Selling during a crash locks in losses.
+> 💡 **KEY INSIGHT:** Keeping all your money in cash feels safe but guarantees you lose to inflation. That's a risk too.
 
 ---
 
-## Your Risk Tolerance
+## How to Manage Risk (3 Rules)
 
-Everyone's different. Some people can watch their portfolio drop 30% and sleep fine. Others panic at a 5% dip.
+**1. Diversify** - Own many investments, not just one
+- Bad: All your money in Tesla
+- Good: S&P 500 index fund (500 companies)
 
-Be honest with yourself. If you can't handle volatility, it's okay to invest more conservatively. A boring portfolio you stick with beats an aggressive one you abandon.
+**2. Match risk to timeline**
+- Need money in 1-2 years → savings/bonds
+- Don't need it for 10+ years → mostly stocks
+
+**3. Don't panic sell**
+- Markets drop 20-30% sometimes. It's normal.
+- Selling during a crash = locking in losses
+- Staying invested = recovering when it bounces back
+
+---
+
+> 📊 **TRY IT:** Go to Stock Screener. Compare TSLA (individual stock) to SPY (500 companies). Look at the trend confidence. Which is more stable? That's diversification.
+
+---
+
+## Be Honest About Your Risk Tolerance
+
+Can you watch your portfolio drop 30% and NOT sell?
+
+- **Yes** → You can handle more stocks
+- **No** → Add more bonds, sleep better
+
+A boring portfolio you stick with beats an exciting one you panic-sell.
+
+---
+
+> ✅ **MILESTONE:** You now understand risk better than most investors. The secret? Diversify, match to timeline, don't panic. That's it.
         `,
-        interactiveElements: ['RiskReturnChart', 'DiversificationDemo'],
+        interactiveElements: ['RiskReturnChart'],
         quiz: [
           {
             question: "What does 'risk' mean in investing?",
@@ -422,51 +566,75 @@ Be honest with yourself. If you can't handle volatility, it's okay to invest mor
       {
         id: "accounts_and_setup",
         title: "Accounts and Setup",
+        goalReminder: "You now know WHERE to invest. The next step is actually opening an account. You can do this TODAY.",
         content: `
-Before you can invest, you need somewhere to do it. Here's a quick guide to the accounts you'll encounter.
+> **This is where it gets real.** After this lesson, you'll know exactly which account to open first.
 
 ---
 
-## Brokerage Accounts
+## Where to Actually Invest
 
-A brokerage account is where you buy and sell investments. Think of it like a bank account, but for stocks and funds.
+**A brokerage account** = a bank account for investments
 
-**Popular brokerages**:
-- Fidelity
-- Vanguard
-- Charles Schwab
-- Robinhood
+| Brokerage | Best For | Minimum |
+|-----------|----------|---------|
+| **Fidelity** | Beginners, great app | $0 |
+| **Vanguard** | Index fund investors | $0 |
+| **Schwab** | All-around solid | $0 |
+| **Robinhood** | Simple UI, crypto | $0 |
 
-Most have no minimums and no trading fees now. Pick one with a good app and customer service.
-
----
-
-## Retirement Accounts
-
-These have special tax advantages but restrictions on when you can withdraw.
-
-**401(k)**: Offered through employers
-- Pre-tax contributions (reduces your taxable income)
-- Often includes employer match (free money!)
-- Can't withdraw before 59½ without penalty
-
-**IRA (Individual Retirement Account)**: You open this yourself
-- Traditional IRA: Tax deduction now, pay taxes later
-- Roth IRA: Pay taxes now, withdrawals are tax-free in retirement
+All have $0 trading fees. Pick one with a good app. You can always switch later.
 
 ---
 
-## Which Account First?
+## The Account Priority Order
 
-1. **401(k) up to employer match**: If your employer matches contributions, always get the full match. It's free money.
+> 🎯 **FOLLOW THIS EXACT ORDER:**
+>
+> **1. 401(k) up to employer match** (if available) - This is FREE MONEY
+>
+> **2. Emergency fund** - 3-6 months expenses in savings
+>
+> **3. Roth IRA** - Tax-free growth, $7,000/year limit
+>
+> **4. Max 401(k)** - $23,000/year limit
+>
+> **5. Taxable brokerage** - No limits, no special tax benefits
 
-2. **Emergency fund**: Keep 3-6 months of expenses in savings.
+---
 
-3. **Roth IRA**: After the match, a Roth IRA is great for most people.
+## Retirement Accounts Explained (Simply)
 
-4. **More 401(k)**: Max it out if you can.
+| Account | Who Opens It | Tax Benefit | Catch |
+|---------|-------------|-------------|-------|
+| **401(k)** | Through employer | Pre-tax (save now) | Can't touch until 59½ |
+| **Traditional IRA** | You | Pre-tax (save now) | Can't touch until 59½ |
+| **Roth IRA** | You | Tax-free withdrawals later | Pay taxes now |
 
-5. **Taxable brokerage**: After retirement accounts are maxed.
+> 💡 **SIMPLE RULE:** If you're young and in a low tax bracket, Roth is usually better. Tax-free growth for decades is powerful.
+
+---
+
+## The Employer Match (Don't Miss This)
+
+If your employer offers a 401(k) match, **this is the highest-return investment that exists.**
+
+Example: Employer matches 50% up to 6% of salary
+- You contribute 6% ($3,600 on $60k salary)
+- Employer adds $1,800 FREE
+- That's an instant 50% return before any market gains
+
+**Always get the full match. Always.**
+
+---
+
+> ✅ **MILESTONE:** You now know exactly which accounts to open and in what order. Most people never figure this out. You just did.
+
+---
+
+## Your Action Item
+
+**This week:** Open a Roth IRA at Fidelity, Vanguard, or Schwab. It takes 15 minutes. You don't have to fund it yet - just open it.
         `,
         quiz: [
           {
@@ -485,42 +653,83 @@ These have special tax advantages but restrictions on when you can withdraw.
       {
         id: "first_time_mindset",
         title: "First Time Investor Mindset",
+        goalReminder: "You've completed The Foundation! You now know more about investing than most Americans. Time to actually start.",
+        toolLinks: [
+          {
+            text: "One Last Look at Your Future",
+            route: "/simulator",
+            description: "Before you finish this module, run the Portfolio Simulator one more time with YOUR numbers. That's your future if you start now."
+          }
+        ],
         content: `
-The hardest part of investing isn't picking stocks or understanding markets. It's managing your own psychology.
+> **The hardest part isn't the math.** It's your own brain. This lesson will save you from the mistakes that cost most investors money.
 
 ---
 
-## Common Beginner Mistakes
+## The 4 Mistakes That Destroy Returns
 
-**1. Waiting for the "right time"**
-There's never a perfect time to start. The market might drop after you invest. It might also go up. No one knows. The best time to start was yesterday. The second best time is today.
+| Mistake | Why It Happens | The Fix |
+|---------|---------------|---------|
+| **Waiting for the "right time"** | Fear of buying at the top | There's no perfect time. Start now. |
+| **Checking too often** | Anxiety, FOMO | Check monthly, not daily |
+| **Panic selling** | Market drops feel scary | Drops are sales. Stay invested. |
+| **Chasing hot tips** | Greed, social pressure | Boring index funds win |
 
-**2. Checking too often**
-Looking at your portfolio daily is a recipe for anxiety. The market goes up and down constantly. If you're investing for 20+ years, daily movements don't matter.
-
-**3. Panic selling**
-When the market drops, your instinct screams "sell everything!" This is exactly wrong. Drops are when stocks are on sale. Selling locks in losses.
-
-**4. Chasing hot tips**
-Your cousin's crypto pick. That Reddit stock. The "next big thing." Most hot tips lose money. Boring, diversified investing wins.
+> 💡 **FACT:** The average investor earns ~4% when the market returns ~10%. Why? They buy high (excitement) and sell low (fear).
 
 ---
 
-## The Right Mindset
+## The Mindset That Actually Works
 
-**Think in decades, not days**. You're building wealth over 20, 30, 40 years. A bad week or month is noise.
+**Think in decades, not days**
+- You're building wealth over 30+ years
+- A bad month is noise
+- A bad year is noise
+- Stay invested
 
-**Automate everything**. Set up automatic transfers so you invest without thinking about it.
+**Automate everything**
+- Set up auto-transfers from your paycheck
+- You can't panic sell what you don't think about
+- "Set it and forget it" beats active trading
 
-**Ignore the news**. Financial media needs drama to get clicks. "Markets do normal thing" doesn't make headlines.
-
-**Stay the course**. The investors who do best are often the ones who do the least. Buy, hold, don't panic.
+**Ignore financial news**
+- Headlines need drama for clicks
+- "Markets do normal thing" isn't news
+- Turn off CNBC
 
 ---
 
-## You've Got This
+> 📊 **THE DATA:** From 1980-2020, if you missed just the 10 best days in the market, your returns dropped from 2,600% to 800%. Those best days often come right after the worst days. If you panic sold, you missed them.
 
-Millions of regular people build wealth through investing. You don't need to be a genius or have a finance degree. You just need to start, stay consistent, and give it time.
+---
+
+## Your Investing Checklist
+
+Before you leave this module, you should:
+
+- [ ] Understand why investing beats saving (inflation)
+- [ ] Know the difference between stocks, bonds, and funds
+- [ ] Know that index funds are the answer for beginners
+- [ ] Understand compounding and why starting early matters
+- [ ] Know which account to open first
+- [ ] Be ready to NOT panic when markets drop
+
+---
+
+> ✅ **MODULE COMPLETE:** You now know more about investing than 80% of Americans. Seriously. Most people never learn this stuff.
+>
+> **Your mission:** Open an account this week. Buy an S&P 500 index fund. Set up auto-invest. Then forget about it for 30 years.
+
+---
+
+## The Final Truth
+
+Millions of regular people build wealth through investing. Not geniuses. Not finance majors. Regular people who:
+1. Started
+2. Stayed consistent
+3. Didn't panic
+
+That's it. You can do this.
         `,
         quiz: [
           {

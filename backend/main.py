@@ -140,8 +140,16 @@ async def prewarm_models():
 
 
 async def preload_default_stocks():
-    """Background task to preload all default watchlist stocks into cache."""
+    """Background task to preload all default watchlist stocks into cache.
+    
+    This runs in the background and doesn't block the server startup.
+    Stocks are loaded gradually with delays to avoid overwhelming APIs.
+    """
     global _stock_cache, _stock_cache_time
+    
+    # Wait a bit before starting to let the server fully initialize
+    import asyncio
+    await asyncio.sleep(2)
     
     polygon_key = os.environ.get('POLYGON_API_KEY')
     if not polygon_key:
@@ -221,27 +229,10 @@ async def preload_default_stocks():
                 support_price = analysis['support_zones'][0]['price'] if analysis['support_zones'] else round(price_min, 2)
                 resistance_price = analysis['resistance_zones'][0]['price'] if analysis['resistance_zones'] else round(price_max, 2)
                 
-                # Get sentiment analysis
-                sentiment_data = get_stock_sentiment(ticker)
+                # Skip sentiment and AI analysis during preload for speed
+                # These will be generated on-demand when requested
                 
-                # Prepare data for AI analysis
-                analysis_data = {
-                    'price': round(latest.close, 2),
-                    'change_pct': round(change_pct, 2),
-                    'trend': analysis['trend'],
-                    'trend_confidence': round(analysis['trend_confidence'] * 100, 1),
-                    'signal': analysis['signal'],
-                    'signal_strength': round(analysis['signal_strength'], 1),
-                    'support': support_price,
-                    'resistance': resistance_price,
-                    'sentiment': sentiment_data.get('sentiment', 'neutral'),
-                    'news_count': sentiment_data.get('news_count', 0)
-                }
-                
-                # Generate AI analysis paragraph
-                ai_analysis = generate_ai_stock_analysis(ticker, analysis_data)
-                
-                # Store in cache
+                # Store in cache (without sentiment/AI analysis for faster preload)
                 _stock_cache[ticker] = {
                     'ticker': ticker,
                     'price': round(latest.close, 2),
@@ -256,18 +247,18 @@ async def preload_default_stocks():
                     'support_zones': analysis['support_zones'],
                     'resistance_zones': analysis['resistance_zones'],
                     'chart_image': chart_base64,
-                    'sentiment': sentiment_data.get('sentiment'),
-                    'sentiment_score': sentiment_data.get('sentiment_score'),
-                    'sentiment_signal': sentiment_data.get('sentiment_signal'),
-                    'news_count': sentiment_data.get('news_count', 0),
-                    'ai_analysis': ai_analysis
+                    'sentiment': None,  # Generated on-demand
+                    'sentiment_score': None,
+                    'sentiment_signal': None,
+                    'news_count': 0,
+                    'ai_analysis': None  # Generated on-demand
                 }
                 _stock_cache_time[ticker] = datetime.now()
                 loaded += 1
                 
                 # Small delay to avoid rate limiting
                 import asyncio
-                await asyncio.sleep(0.2)
+                await asyncio.sleep(0.1)  # Reduced delay since we're not calling LLM
                 
             except Exception as e:
                 print(f"[Preload] Error loading {ticker}: {e}")
@@ -1211,22 +1202,8 @@ def draw_analysis_on_chart(image, analysis, price_range, num_bars=30, show_price
         ax.plot([img_width * 0.1, img_width * 0.9], [img_height * 0.5, img_height * 0.5], 
                 color=trend_color, linewidth=2, alpha=0.7, linestyle='--')
     
-    # Minimal signal badge - top right corner
-    signal = analysis.get('signal', 'HOLD')
-    signal_colors = {'BUY': '#10b981', 'SELL': '#f43f5e', 'HOLD': '#f59e0b'}
-    signal_color = signal_colors.get(signal, '#f59e0b')
-    
-    # Simple badge
-    ax.text(img_width - 10, 15, signal, 
-            color='white', fontsize=9, fontweight='bold', ha='right',
-            bbox=dict(boxstyle='round,pad=0.3', facecolor=signal_color, 
-                     edgecolor='none', alpha=0.9))
-    
-    # Trend indicator - small text below signal
-    trend_label = trend.upper()
-    conf_pct = int(trend_conf * 100) if trend_conf <= 1 else int(trend_conf)
-    ax.text(img_width - 10, 35, f'{trend_label} {conf_pct}%', 
-            color='#9ca3af', fontsize=7, ha='right', va='top')
+    # Note: Signal badge and trend text removed from chart - now shown in sidebar only
+    # This avoids duplicate display of the same information
     
     ax.axis('off')
     plt.tight_layout(pad=0)
@@ -1332,9 +1309,38 @@ async def get_stocks(request: StockRequest):
                     cache_age = datetime.now() - _stock_cache_time.get(ticker, datetime.min)
                     if cache_age.total_seconds() < _CACHE_TTL_MINUTES * 60:
                         # Use cached data
-                        cached = _stock_cache[ticker]
+                        cached = dict(_stock_cache[ticker])  # Make a copy
+                        
+                        # Generate sentiment and AI analysis on-demand if missing
+                        if cached.get('sentiment') is None or cached.get('ai_analysis') is None:
+                            print(f"[Cache Hit] {ticker} - generating sentiment/AI analysis")
+                            sentiment_data = get_stock_sentiment(ticker)
+                            cached['sentiment'] = sentiment_data.get('sentiment')
+                            cached['sentiment_score'] = sentiment_data.get('sentiment_score')
+                            cached['sentiment_signal'] = sentiment_data.get('sentiment_signal')
+                            cached['news_count'] = sentiment_data.get('news_count', 0)
+                            
+                            # Generate AI analysis
+                            analysis_data = {
+                                'price': cached['price'],
+                                'change_pct': cached['change_pct'],
+                                'trend': cached['trend'],
+                                'trend_confidence': cached['trend_confidence'],
+                                'signal': cached['signal'],
+                                'signal_strength': cached['signal_strength'],
+                                'support': cached['support'],
+                                'resistance': cached['resistance'],
+                                'sentiment': cached['sentiment'] or 'neutral',
+                                'news_count': cached['news_count']
+                            }
+                            cached['ai_analysis'] = generate_ai_stock_analysis(ticker, analysis_data)
+                            
+                            # Update cache with enriched data
+                            _stock_cache[ticker] = cached
+                        else:
+                            print(f"[Cache Hit] {ticker}")
+                        
                         results.append(StockAnalysisResponse(**cached))
-                        print(f"[Cache Hit] {ticker}")
                         continue
                 
                 print(f"[Cache Miss] {ticker} - fetching fresh data")
@@ -1886,6 +1892,235 @@ async def update_profile(user_id: str, display_name: str):
         return {"success": True, "data": result.data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# =============================================================================
+# Leaderboard & Social Endpoints
+# =============================================================================
+
+# Sample users data for demo (will be returned if no real data exists)
+SAMPLE_USERS = [
+    {"id": "sample-1", "username": "InvestorPro", "avatar_color": "bg-yellow-500", "total_score": 2850, "modules_completed": 3, "quizzes_completed": 18, "average_score": 94, "joined_date": "2024-01-15", "is_online": True, "last_activity": "Completed Advanced Module"},
+    {"id": "sample-2", "username": "WealthBuilder", "avatar_color": "bg-blue-500", "total_score": 2720, "modules_completed": 3, "quizzes_completed": 17, "average_score": 91, "joined_date": "2024-02-01", "is_online": True, "last_activity": "Scored 95% on Risk Quiz"},
+    {"id": "sample-3", "username": "StockSavvy", "avatar_color": "bg-green-500", "total_score": 2580, "modules_completed": 3, "quizzes_completed": 16, "average_score": 89, "joined_date": "2024-01-20", "is_online": False, "last_activity": "Learning about ETFs"},
+    {"id": "sample-4", "username": "MarketMaster", "avatar_color": "bg-purple-500", "total_score": 2340, "modules_completed": 2, "quizzes_completed": 15, "average_score": 87, "joined_date": "2024-02-10", "is_online": True, "last_activity": "Started Investor Insight"},
+    {"id": "sample-5", "username": "DividendKing", "avatar_color": "bg-pink-500", "total_score": 2180, "modules_completed": 2, "quizzes_completed": 14, "average_score": 85, "joined_date": "2024-01-25", "is_online": False, "last_activity": "Completed Foundation"},
+    {"id": "sample-6", "username": "IndexFundFan", "avatar_color": "bg-cyan-500", "total_score": 1950, "modules_completed": 2, "quizzes_completed": 13, "average_score": 83, "joined_date": "2024-02-15", "is_online": True, "last_activity": "Exploring Stock Screener"},
+    {"id": "sample-7", "username": "CompoundKing", "avatar_color": "bg-orange-500", "total_score": 1820, "modules_completed": 2, "quizzes_completed": 12, "average_score": 81, "joined_date": "2024-02-20", "is_online": False, "last_activity": "Learning Compounding"},
+    {"id": "sample-8", "username": "RetireEarly", "avatar_color": "bg-red-500", "total_score": 1650, "modules_completed": 1, "quizzes_completed": 11, "average_score": 79, "joined_date": "2024-03-01", "is_online": True, "last_activity": "Just joined!"},
+    {"id": "sample-9", "username": "BudgetBoss", "avatar_color": "bg-indigo-500", "total_score": 1480, "modules_completed": 1, "quizzes_completed": 10, "average_score": 77, "joined_date": "2024-02-28", "is_online": False, "last_activity": "Studying Risk Management"},
+    {"id": "sample-10", "username": "NewInvestor", "avatar_color": "bg-teal-500", "total_score": 1200, "modules_completed": 1, "quizzes_completed": 8, "average_score": 75, "joined_date": "2024-03-05", "is_online": True, "last_activity": "Started Foundation"},
+]
+
+AVATAR_COLORS = [
+    "bg-yellow-500", "bg-blue-500", "bg-green-500", "bg-purple-500", "bg-pink-500",
+    "bg-cyan-500", "bg-orange-500", "bg-red-500", "bg-indigo-500", "bg-teal-500",
+    "bg-emerald-500", "bg-violet-500", "bg-amber-500", "bg-rose-500", "bg-lime-500"
+]
+
+
+@app.get("/api/leaderboard")
+async def get_full_leaderboard(limit: int = 50):
+    """Get full leaderboard with all quiz scores."""
+    supabase = get_supabase()
+    
+    try:
+        if supabase:
+            # Try to get real data from Supabase
+            # Aggregate all quiz scores by user
+            lesson_scores = supabase.table("lesson_quiz_scores").select("*").execute()
+            module_scores = supabase.table("module_quiz_scores").select("*").execute()
+            profiles = supabase.table("user_profiles").select("*").execute()
+            
+            # Build profile lookup
+            profile_lookup = {p["user_id"]: p for p in (profiles.data or [])}
+            
+            # Aggregate scores
+            user_data = {}
+            
+            for score in (lesson_scores.data or []):
+                uid = score["user_id"]
+                if uid not in user_data:
+                    user_data[uid] = {"total_score": 0, "quizzes_completed": 0, "total_pct": 0}
+                user_data[uid]["total_score"] += score.get("score", 0)
+                user_data[uid]["quizzes_completed"] += 1
+                user_data[uid]["total_pct"] += score.get("percentage", 0)
+            
+            for score in (module_scores.data or []):
+                uid = score["user_id"]
+                if uid not in user_data:
+                    user_data[uid] = {"total_score": 0, "quizzes_completed": 0, "total_pct": 0}
+                user_data[uid]["total_score"] += score.get("score", 0)
+                user_data[uid]["quizzes_completed"] += 1
+                user_data[uid]["total_pct"] += score.get("percentage", 0)
+            
+            if user_data:
+                # Sort by total score
+                sorted_users = sorted(user_data.items(), key=lambda x: x[1]["total_score"], reverse=True)[:limit]
+                
+                leaderboard = []
+                for i, (uid, data) in enumerate(sorted_users):
+                    profile = profile_lookup.get(uid, {})
+                    display_name = profile.get("display_name") or f"User {uid[:8]}"
+                    avatar_color = AVATAR_COLORS[i % len(AVATAR_COLORS)]
+                    
+                    avg_score = round(data["total_pct"] / data["quizzes_completed"]) if data["quizzes_completed"] > 0 else 0
+                    
+                    leaderboard.append({
+                        "rank": i + 1,
+                        "user_id": uid,
+                        "username": display_name,
+                        "avatar_color": avatar_color,
+                        "total_score": data["total_score"],
+                        "quizzes_completed": data["quizzes_completed"],
+                        "modules_completed": data["quizzes_completed"] // 5,  # Approximate
+                        "average_score": avg_score
+                    })
+                
+                return leaderboard
+        
+        # Return sample data if no real data
+        return SAMPLE_USERS
+        
+    except Exception as e:
+        print(f"[Leaderboard Error] {e}")
+        # Return sample data on error
+        return SAMPLE_USERS
+
+
+@app.get("/api/users")
+async def get_community_users(limit: int = 50):
+    """Get community users for social page."""
+    supabase = get_supabase()
+    
+    try:
+        if supabase:
+            # Get user profiles with their scores
+            profiles = supabase.table("user_profiles").select("*").limit(limit).execute()
+            lesson_scores = supabase.table("lesson_quiz_scores").select("*").execute()
+            module_scores = supabase.table("module_quiz_scores").select("*").execute()
+            
+            # Aggregate scores by user
+            user_scores = {}
+            for score in (lesson_scores.data or []):
+                uid = score["user_id"]
+                if uid not in user_scores:
+                    user_scores[uid] = {"total_score": 0, "quizzes_completed": 0}
+                user_scores[uid]["total_score"] += score.get("score", 0)
+                user_scores[uid]["quizzes_completed"] += 1
+            
+            for score in (module_scores.data or []):
+                uid = score["user_id"]
+                if uid not in user_scores:
+                    user_scores[uid] = {"total_score": 0, "quizzes_completed": 0}
+                user_scores[uid]["total_score"] += score.get("score", 0)
+                user_scores[uid]["quizzes_completed"] += 1
+            
+            if profiles.data and len(profiles.data) > 0:
+                users = []
+                for i, profile in enumerate(profiles.data):
+                    uid = profile["user_id"]
+                    scores = user_scores.get(uid, {"total_score": 0, "quizzes_completed": 0})
+                    
+                    users.append({
+                        "id": uid,
+                        "username": profile.get("display_name") or f"User {uid[:8]}",
+                        "avatar_color": AVATAR_COLORS[i % len(AVATAR_COLORS)],
+                        "total_score": scores["total_score"],
+                        "modules_completed": scores["quizzes_completed"] // 5,
+                        "quizzes_completed": scores["quizzes_completed"],
+                        "joined_date": profile.get("created_at", "2024-01-01")[:10],
+                        "is_online": i % 3 == 0,  # Simulate online status
+                        "last_activity": "Learning on FinLearn AI"
+                    })
+                
+                return users
+        
+        # Return sample data
+        return SAMPLE_USERS
+        
+    except Exception as e:
+        print(f"[Users Error] {e}")
+        return SAMPLE_USERS
+
+
+@app.get("/api/user-stats/{user_id}")
+async def get_user_stats(user_id: str):
+    """Get detailed stats for a specific user."""
+    supabase = get_supabase()
+    
+    if not supabase:
+        return {
+            "rank": None,
+            "total_score": 0,
+            "quizzes_completed": 0,
+            "average_score": 0,
+            "modules_completed": 0
+        }
+    
+    try:
+        # Get user's scores
+        lesson_scores = supabase.table("lesson_quiz_scores").select("*").eq("user_id", user_id).execute()
+        module_scores = supabase.table("module_quiz_scores").select("*").eq("user_id", user_id).execute()
+        
+        total_score = 0
+        total_pct = 0
+        quiz_count = 0
+        
+        for score in (lesson_scores.data or []):
+            total_score += score.get("score", 0)
+            total_pct += score.get("percentage", 0)
+            quiz_count += 1
+        
+        for score in (module_scores.data or []):
+            total_score += score.get("score", 0)
+            total_pct += score.get("percentage", 0)
+            quiz_count += 1
+        
+        avg_score = round(total_pct / quiz_count) if quiz_count > 0 else 0
+        
+        # Get rank by comparing to all users
+        all_scores = supabase.table("lesson_quiz_scores").select("user_id, score").execute()
+        user_totals = {}
+        for score in (all_scores.data or []):
+            uid = score["user_id"]
+            if uid not in user_totals:
+                user_totals[uid] = 0
+            user_totals[uid] += score.get("score", 0)
+        
+        # Add module scores
+        all_module_scores = supabase.table("module_quiz_scores").select("user_id, score").execute()
+        for score in (all_module_scores.data or []):
+            uid = score["user_id"]
+            if uid not in user_totals:
+                user_totals[uid] = 0
+            user_totals[uid] += score.get("score", 0)
+        
+        # Sort and find rank
+        sorted_users = sorted(user_totals.items(), key=lambda x: x[1], reverse=True)
+        rank = None
+        for i, (uid, _) in enumerate(sorted_users):
+            if uid == user_id:
+                rank = i + 1
+                break
+        
+        return {
+            "rank": rank,
+            "total_score": total_score,
+            "quizzes_completed": quiz_count,
+            "average_score": avg_score,
+            "modules_completed": quiz_count // 5
+        }
+        
+    except Exception as e:
+        print(f"[User Stats Error] {e}")
+        return {
+            "rank": None,
+            "total_score": 0,
+            "quizzes_completed": 0,
+            "average_score": 0,
+            "modules_completed": 0
+        }
 
 
 # =============================================================================

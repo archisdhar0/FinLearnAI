@@ -1,5 +1,74 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Send, Bot, User, Sparkles, X, MessageSquare } from "lucide-react";
+
+// Simple markdown parser for chat messages
+function parseMarkdown(text: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  let remaining = text;
+  let key = 0;
+
+  while (remaining.length > 0) {
+    // Bold: **text**
+    const boldMatch = remaining.match(/^\*\*(.+?)\*\*/);
+    if (boldMatch) {
+      parts.push(<strong key={key++} className="font-semibold">{boldMatch[1]}</strong>);
+      remaining = remaining.slice(boldMatch[0].length);
+      continue;
+    }
+
+    // Italic: *text*
+    const italicMatch = remaining.match(/^\*(.+?)\*/);
+    if (italicMatch) {
+      parts.push(<em key={key++}>{italicMatch[1]}</em>);
+      remaining = remaining.slice(italicMatch[0].length);
+      continue;
+    }
+
+    // Headers: ## text (on its own line)
+    const headerMatch = remaining.match(/^##\s+(.+?)(?:\n|$)/);
+    if (headerMatch) {
+      parts.push(<span key={key++} className="font-bold text-primary block mt-3 mb-1">{headerMatch[1]}</span>);
+      remaining = remaining.slice(headerMatch[0].length);
+      continue;
+    }
+
+    // Bullet points: - text (on its own line)
+    const bulletMatch = remaining.match(/^[-•]\s+(.+?)(?:\n|$)/);
+    if (bulletMatch) {
+      parts.push(<span key={key++} className="block pl-3 before:content-['•'] before:mr-2 before:text-primary">{bulletMatch[1]}</span>);
+      remaining = remaining.slice(bulletMatch[0].length);
+      continue;
+    }
+
+    // Line breaks
+    if (remaining.startsWith('\n\n')) {
+      parts.push(<span key={key++} className="block h-2" />);
+      remaining = remaining.slice(2);
+      continue;
+    }
+    if (remaining.startsWith('\n')) {
+      parts.push(<br key={key++} />);
+      remaining = remaining.slice(1);
+      continue;
+    }
+
+    // Regular text - take until next special character
+    const nextSpecial = remaining.search(/[\*\n#-]/);
+    if (nextSpecial === -1) {
+      parts.push(remaining);
+      break;
+    } else if (nextSpecial === 0) {
+      // Special char but didn't match patterns above, treat as regular text
+      parts.push(remaining[0]);
+      remaining = remaining.slice(1);
+    } else {
+      parts.push(remaining.slice(0, nextSpecial));
+      remaining = remaining.slice(nextSpecial);
+    }
+  }
+
+  return parts;
+}
 
 type Source = {
   title: string;
@@ -135,7 +204,7 @@ export function ChatPanel({ defaultOpen = false }: ChatPanelProps) {
                   : "glass-card"
               }`}
             >
-              <div className="whitespace-pre-wrap">{msg.content}</div>
+              <div className="whitespace-pre-wrap">{msg.role === "assistant" ? parseMarkdown(msg.content) : msg.content}</div>
               {/* Display sources for assistant messages */}
               {msg.role === "assistant" && msg.sources && msg.sources.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-border/50">

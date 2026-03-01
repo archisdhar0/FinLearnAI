@@ -14,6 +14,58 @@ import {
   AlertCircle
 } from "lucide-react";
 
+// Simple markdown parser for AI analysis text
+function parseMarkdown(text: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  let remaining = text;
+  let key = 0;
+
+  while (remaining.length > 0) {
+    // Bold: **text**
+    const boldMatch = remaining.match(/^\*\*(.+?)\*\*/);
+    if (boldMatch) {
+      parts.push(<strong key={key++} className="font-semibold text-foreground">{boldMatch[1]}</strong>);
+      remaining = remaining.slice(boldMatch[0].length);
+      continue;
+    }
+
+    // Italic: *text*
+    const italicMatch = remaining.match(/^\*(.+?)\*/);
+    if (italicMatch) {
+      parts.push(<em key={key++}>{italicMatch[1]}</em>);
+      remaining = remaining.slice(italicMatch[0].length);
+      continue;
+    }
+
+    // Line breaks
+    if (remaining.startsWith('\n\n')) {
+      parts.push(<span key={key++} className="block h-2" />);
+      remaining = remaining.slice(2);
+      continue;
+    }
+    if (remaining.startsWith('\n')) {
+      parts.push(<br key={key++} />);
+      remaining = remaining.slice(1);
+      continue;
+    }
+
+    // Regular text - take until next special character
+    const nextSpecial = remaining.search(/[\*\n]/);
+    if (nextSpecial === -1) {
+      parts.push(remaining);
+      break;
+    } else if (nextSpecial === 0) {
+      parts.push(remaining[0]);
+      remaining = remaining.slice(1);
+    } else {
+      parts.push(remaining.slice(0, nextSpecial));
+      remaining = remaining.slice(nextSpecial);
+    }
+  }
+
+  return parts;
+}
+
 // Stock categories - matching Streamlit app
 const WATCHLISTS: Record<string, string[]> = {
   "Tech Giants": ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA"],
@@ -271,7 +323,7 @@ export default function StockScreener() {
                           <span className="text-xs font-semibold text-primary">AI Analysis</span>
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          {stock.ai_analysis}
+                          {parseMarkdown(stock.ai_analysis)}
                         </p>
                       </div>
                     )}
