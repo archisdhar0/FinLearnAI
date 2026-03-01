@@ -12,6 +12,7 @@ import LearningModule from "./pages/LearningModule";
 import Simulator from "./pages/Simulator";
 import Leaderboard from "./pages/Leaderboard";
 import Social from "./pages/Social";
+import ETFRecommender from "./pages/ETFRecommender";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/simulator" element={<Simulator />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/social" element={<Social />} />
+          <Route path="/etf-recommender" element={<ETFRecommender />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

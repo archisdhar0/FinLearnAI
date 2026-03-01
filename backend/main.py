@@ -1832,40 +1832,34 @@ async def get_leaderboard(module_id: Optional[str] = None, limit: int = 20):
                     "attempts": entry["attempts"]
                 })
         else:
-            # Global leaderboard - aggregate all module scores
-            result = supabase.rpc("get_global_leaderboard", {"limit_count": limit}).execute()
+            # Global leaderboard - aggregate all module scores (no RPC needed)
+            scores = supabase.table("module_quiz_scores").select("user_id, best_score, best_percentage").execute()
             
-            if not result.data:
-                # Fallback if RPC doesn't exist - manual aggregation
-                scores = supabase.table("module_quiz_scores").select("user_id, best_score, best_percentage").execute()
+            user_totals = {}
+            for s in (scores.data or []):
+                uid = s["user_id"]
+                if uid not in user_totals:
+                    user_totals[uid] = {"total_score": 0, "total_pct": 0, "count": 0}
+                user_totals[uid]["total_score"] += s.get("best_score", 0)
+                user_totals[uid]["total_pct"] += s.get("best_percentage", 0)
+                user_totals[uid]["count"] += 1
+            
+            # Sort by total score
+            sorted_users = sorted(user_totals.items(), key=lambda x: x[1]["total_score"], reverse=True)[:limit]
+            
+            leaderboard = []
+            for i, (uid, data) in enumerate(sorted_users):
+                profile = supabase.table("user_profiles").select("display_name").eq("user_id", uid).execute()
+                display_name = profile.data[0]["display_name"] if profile.data else f"User {uid[:8]}"
                 
-                user_totals = {}
-                for s in scores.data:
-                    uid = s["user_id"]
-                    if uid not in user_totals:
-                        user_totals[uid] = {"total_score": 0, "total_pct": 0, "count": 0}
-                    user_totals[uid]["total_score"] += s["best_score"]
-                    user_totals[uid]["total_pct"] += s["best_percentage"]
-                    user_totals[uid]["count"] += 1
-                
-                # Sort by total score
-                sorted_users = sorted(user_totals.items(), key=lambda x: x[1]["total_score"], reverse=True)[:limit]
-                
-                leaderboard = []
-                for i, (uid, data) in enumerate(sorted_users):
-                    profile = supabase.table("user_profiles").select("display_name").eq("user_id", uid).execute()
-                    display_name = profile.data[0]["display_name"] if profile.data else f"User {uid[:8]}"
-                    
-                    leaderboard.append({
-                        "rank": i + 1,
-                        "user_id": uid,
-                        "display_name": display_name,
-                        "total_score": data["total_score"],
-                        "avg_percentage": round(data["total_pct"] / data["count"], 1) if data["count"] > 0 else 0,
-                        "modules_completed": data["count"]
-                    })
-            else:
-                leaderboard = result.data
+                leaderboard.append({
+                    "rank": i + 1,
+                    "user_id": uid,
+                    "display_name": display_name,
+                    "total_score": data["total_score"],
+                    "avg_percentage": round(data["total_pct"] / data["count"], 1) if data["count"] > 0 else 0,
+                    "modules_completed": data["count"]
+                })
         
         return {"leaderboard": leaderboard, "module_id": module_id}
     except Exception as e:

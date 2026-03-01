@@ -118,27 +118,6 @@ const fetchStockData = async (tickers: string[]): Promise<StockData[]> => {
   }
 };
 
-const TrendIcon = ({ trend }: { trend: string }) => {
-  if (trend === "uptrend") return <TrendingUp className="w-4 h-4 text-success" />;
-  if (trend === "downtrend") return <TrendingDown className="w-4 h-4 text-destructive" />;
-  return <Minus className="w-4 h-4 text-warning" />;
-};
-
-const SignalBadge = ({ signal, strength }: { signal: string; strength: number }) => {
-  const colors: Record<string, string> = {
-    BUY: "bg-success/20 text-success border-success/30",
-    SELL: "bg-destructive/20 text-destructive border-destructive/30",
-    HOLD: "bg-warning/20 text-warning border-warning/30",
-  };
-  
-  return (
-    <div className={`px-3 py-2 rounded-lg border ${colors[signal] || colors.HOLD} text-center`}>
-      <div className="text-lg font-bold">{signal}</div>
-      <div className="text-xs opacity-80">{strength.toFixed(0)}% confidence</div>
-    </div>
-  );
-};
-
 export default function StockScreener() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("Tech Giants");
@@ -330,18 +309,42 @@ export default function StockScreener() {
                   </div>
 
                   {/* AI Analysis */}
-                  <div className="w-52 space-y-4">
-                    <SignalBadge signal={stock.signal} strength={stock.signal_strength} />
-
-                    <div className="glass-card rounded-lg p-3">
-                      <div className="flex items-center gap-2 mb-1">
-                        <TrendIcon trend={stock.trend} />
-                        <span className="text-sm font-medium capitalize">{stock.trend}</span>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {stock.trend_confidence.toFixed(0)}% confidence
-                      </div>
-                    </div>
+                  <div className="w-52 space-y-3">
+                    {/* Trend-based Signal Card */}
+                    {(() => {
+                      // Derive signal from trend
+                      const trend = stock.trend;
+                      const confidence = stock.trend_confidence;
+                      
+                      let displaySignal: string;
+                      let bgClass: string;
+                      let textClass: string;
+                      
+                      if (trend === 'uptrend') {
+                        displaySignal = 'BUY';
+                        bgClass = 'bg-success/10 border-success/30';
+                        textClass = 'text-success';
+                      } else if (trend === 'downtrend') {
+                        displaySignal = 'SELL';
+                        bgClass = 'bg-destructive/10 border-destructive/30';
+                        textClass = 'text-destructive';
+                      } else {
+                        displaySignal = 'HOLD';
+                        bgClass = 'bg-muted/50';
+                        textClass = 'text-muted-foreground';
+                      }
+                      
+                      return (
+                        <div className={`glass-card rounded-lg p-4 text-center ${bgClass}`}>
+                          <div className={`text-2xl font-bold ${textClass}`}>
+                            {displaySignal}
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {confidence.toFixed(0)}% confidence
+                          </div>
+                        </div>
+                      );
+                    })()}
 
                     <div className="space-y-2">
                       {/* Support Zones */}
@@ -384,49 +387,53 @@ export default function StockScreener() {
                     </div>
 
                     {/* Sentiment Section */}
-                    {stock.sentiment && (
-                      <div className="pt-2 border-t border-border/30">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground flex items-center gap-1">
-                            <Zap className="w-3 h-3" /> Sentiment
-                          </span>
-                          <span className={`font-medium ${
-                            stock.sentiment === 'positive' ? 'text-success' :
-                            stock.sentiment === 'negative' ? 'text-destructive' :
-                            'text-warning'
-                          }`}>
-                            {stock.sentiment_signal || stock.sentiment.toUpperCase()}
-                          </span>
-                        </div>
-                        {stock.sentiment_score !== null && (
-                          <div className="mt-1">
-                            <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                              <div 
-                                className={`h-full transition-all ${
-                                  stock.sentiment_score > 0 ? 'bg-success' :
-                                  stock.sentiment_score < 0 ? 'bg-destructive' :
-                                  'bg-warning'
-                                }`}
-                                style={{ 
-                                  width: `${Math.abs(stock.sentiment_score) * 100}%`,
-                                  marginLeft: stock.sentiment_score < 0 ? 'auto' : 0
-                                }}
-                              />
-                            </div>
-                            <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5">
-                              <span>{stock.news_count} articles</span>
-                              <span>{(stock.sentiment_score * 100).toFixed(0)}%</span>
-                            </div>
+                    <div className="pt-2 border-t border-border/30">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground flex items-center gap-1">
+                          <Zap className="w-3 h-3" /> Sentiment
+                        </span>
+                        {(() => {
+                          const signal = (stock.sentiment_signal || '').toUpperCase();
+                          const sentiment = stock.sentiment || '';
+                          const isBullish = signal === 'BULLISH' || sentiment === 'positive';
+                          const isBearish = signal === 'BEARISH' || sentiment === 'negative';
+                          
+                          // If no sentiment data yet, show loading
+                          if (!stock.sentiment && !stock.sentiment_signal) {
+                            return <span className="text-muted-foreground">Loading...</span>;
+                          }
+                          
+                          if (isBullish) {
+                            return <span className="font-medium text-green-500">Bullish</span>;
+                          } else if (isBearish) {
+                            return <span className="font-medium text-red-500">Bearish</span>;
+                          } else {
+                            return <span className="font-medium text-yellow-500">Neutral</span>;
+                          }
+                        })()}
+                      </div>
+                      {stock.sentiment_score !== null && stock.sentiment_score !== undefined && (
+                        <div className="mt-1">
+                          <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div 
+                              className={`h-full transition-all ${
+                                stock.sentiment_score > 0 ? 'bg-success' :
+                                stock.sentiment_score < 0 ? 'bg-destructive' :
+                                'bg-warning'
+                              }`}
+                              style={{ 
+                                width: `${Math.min(Math.abs(stock.sentiment_score) * 100, 100)}%`,
+                                marginLeft: stock.sentiment_score < 0 ? 'auto' : 0
+                              }}
+                            />
                           </div>
-                        )}
-                      </div>
-                    )}
-                    {!stock.sentiment && (
-                      <div className="text-xs text-muted-foreground text-center pt-2 border-t border-border/30">
-                        <Zap className="w-3 h-3 inline mr-1" />
-                        Sentiment: Loading...
-                      </div>
-                    )}
+                          <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5">
+                            <span>{stock.news_count || 0} articles</span>
+                            <span>{(stock.sentiment_score * 100).toFixed(0)}%</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
