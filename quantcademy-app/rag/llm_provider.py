@@ -360,31 +360,22 @@ def _chat_with_gemini_new_sdk(
         if model_name.startswith("models/"):
             model_name = model_name[7:]
         
-        gen_config = {"max_output_tokens": 200, "temperature": 0.7}
-        
         if stream:
             def generate():
-                collected = []
                 response = _gemini_client.models.generate_content_stream(
                     model=model_name,
-                    contents=contents,
-                    config=gen_config
+                    contents=contents
                 )
                 for chunk in response:
                     if chunk.text:
-                        collected.append(chunk.text)
-                # Trim to last complete sentence, then yield all at once
-                full_text = _trim_to_last_sentence("".join(collected))
-                if full_text:
-                    yield full_text
+                        yield chunk.text
             return generate()
         else:
             response = _gemini_client.models.generate_content(
                 model=model_name,
-                contents=contents,
-                config=gen_config
+                contents=contents
             )
-            return _trim_to_last_sentence(response.text)
+            return response.text
             
     except Exception as e:
         error_msg = f"❌ Gemini error: {str(e)}"
