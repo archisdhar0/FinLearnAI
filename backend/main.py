@@ -2132,7 +2132,7 @@ from portfolio_optimizer import PortfolioOptimizer
 _analysis_jobs: Dict[str, Dict[str, Any]] = {}
 _universe_cache: Optional[Dict[str, Any]] = None
 _universe_cache_time: Optional[datetime] = None
-_CACHE_TTL_HOURS = 24
+_CACHE_TTL_HOURS = 168  # 7 days — matches weekly analysis schedule
 
 def _load_cache_from_file():
     """Load cached analysis from file if it exists."""
