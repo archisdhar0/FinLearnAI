@@ -248,5 +248,130 @@
     "id": 50,
     "question": "What leads to long-term investing success?",
     "answer": "Long-term investing success typically comes from consistent contributions, diversification, and staying invested through market cycles. Rather than trying to predict short-term movements, successful investors focus on discipline and planning.\n\nA clear strategy, regular reviews, and patience help investors build wealth over time. By following a structured approach and avoiding emotional decisions, investors can achieve their long-term goals."
+  },
+  {
+    "id": 51,
+    "question": "What is inflation and why does it matter for investors?",
+    "answer": "Inflation is the gradual increase in the prices of goods and services over time, which reduces the purchasing power of money. When inflation rises, each dollar buys fewer goods than it did previously. Even modest inflation can significantly erode value over long periods. For example, if inflation averages 3% annually, money loses nearly half its purchasing power over roughly 24 years.\n\nFor investors, inflation matters because investment returns must exceed inflation to create real growth. If an investment earns 6% annually but inflation is 3%, the real return is closer to 3%. Investing in assets such as stocks or diversified funds helps protect against inflation because businesses can raise prices and grow earnings over time, allowing investments to outpace rising costs."
+  },
+  {
+    "id": 52,
+    "question": "What is the difference between saving and investing?",
+    "answer": "Saving typically involves placing money into low-risk, highly liquid accounts such as savings accounts or money market funds. The primary goal of saving is capital preservation and easy access, not growth. Savings are appropriate for short-term needs or emergency funds because they minimize the risk of losing principal.\n\nInvesting, by contrast, involves purchasing assets such as stocks, bonds, or funds with the goal of long-term growth. Investments fluctuate in value and carry risk, but they offer the potential for higher returns than savings. While saving protects money in the short term, investing helps grow wealth over time and combat inflation."
+  },
+  {
+    "id": 53,
+    "question": "Why are stock returns uneven year to year?",
+    "answer": "Stock returns vary significantly from year to year because markets respond to changing economic conditions, company earnings, interest rates, and investor expectations. Prices reflect what investors believe will happen in the future, not just current performance. As new information becomes available, those expectations adjust quickly, causing price fluctuations.\n\nThis leads to years of strong gains followed by years of losses or stagnation. However, over long periods, overall economic growth and business expansion have historically driven markets upward. Understanding that returns are uneven helps investors maintain realistic expectations and remain patient during periods of volatility."
+  },
+  {
+    "id": 54,
+    "question": "What is a bear market?",
+    "answer": "A bear market is typically defined as a decline of 20% or more in a major stock index from recent highs. Bear markets often occur during economic slowdowns, recessions, or periods of heightened uncertainty. They are characterized by widespread pessimism and falling prices across many sectors.\n\nAlthough bear markets can be uncomfortable and sometimes prolonged, they are a normal part of long-term market cycles. Historically, bear markets have eventually been followed by recoveries and new periods of growth. Recognizing this cyclical pattern helps investors stay disciplined rather than reacting emotionally during downturns."
+  },
+  {
+    "id": 55,
+    "question": "What is a bull market?",
+    "answer": "A bull market is a sustained period during which stock prices generally rise. Bull markets are often supported by economic growth, rising corporate profits, and positive investor sentiment. During these periods, optimism and increasing demand for investments push prices higher over time.\n\nWhile bull markets can create strong wealth-building opportunities, they do not last indefinitely. Periods of rapid growth can lead to overvaluation or excessive optimism. Investors should remain disciplined even during strong markets and maintain diversified portfolios rather than assuming gains will continue without interruption."
+  },
+  {
+    "id": 56,
+    "question": "Why are bonds considered less risky than stocks?",
+    "answer": "Bonds are often considered less risky than stocks because they represent loans to governments or corporations that pay fixed interest over time. Bondholders typically receive scheduled payments and are prioritized over stockholders if a company faces financial distress. This structure provides more predictable returns.\n\nHowever, bonds are not risk-free. They are subject to interest rate risk, inflation risk, and credit risk. Despite these risks, bonds generally experience smaller price swings than stocks and often provide stability in diversified portfolios, especially during equity market downturns."
+  },
+  {
+    "id": 57,
+    "question": "What is concentration risk?",
+    "answer": "Concentration risk occurs when a large portion of a portfolio is invested in a single company, sector, or asset type. If that investment performs poorly, the overall portfolio may suffer significant losses. Concentrated positions increase volatility and dependence on a narrow set of outcomes.\n\nDiversification reduces concentration risk by spreading investments across multiple assets. By holding different companies and asset classes, investors lower the impact of any single investment’s performance. Managing concentration risk is essential for long-term portfolio stability."
+  },
+  {
+    "id": 58,
+    "question": "Why do portfolios drift over time?",
+    "answer": "Portfolios drift because different investments grow at different rates. For example, if stocks perform strongly while bonds remain stable, the percentage allocated to stocks increases automatically. Over time, this changes the portfolio’s intended risk profile.\n\nDrift can make a portfolio riskier or more conservative than originally planned. Periodic rebalancing restores the target allocation and helps maintain consistency. Without rebalancing, investors may unintentionally take on more risk than they intended."
+  },
+  {
+    "id": 59,
+    "question": "What is correlation in investing?",
+    "answer": "Correlation measures how two investments move relative to each other. If they move in the same direction consistently, they are positively correlated. If they move in opposite directions, they are negatively correlated. Correlation is a key concept in diversification.\n\nAssets with lower correlation help reduce overall portfolio volatility. When one investment declines, another with low correlation may remain stable or rise. Understanding correlation allows investors to build portfolios that balance risk more effectively."
+  },
+  {
+    "id": 60,
+    "question": "Why shouldn’t investors try to predict the market?",
+    "answer": "Predicting short-term market movements is extremely difficult because markets incorporate new information rapidly. Prices reflect millions of decisions and expectations, making accurate timing nearly impossible on a consistent basis. Even professional investors struggle to outperform consistently through timing strategies.\n\nAttempting to predict markets can lead to frequent trading, higher costs, and missed opportunities. Many strong market recoveries occur quickly and unexpectedly. Remaining invested and following a disciplined strategy typically produces more reliable long-term outcomes."
+  },
+  {
+    "id": 61,
+    "question": "Why can trends reverse suddenly?",
+    "answer": "Trends can reverse when new information significantly alters investor expectations. Earnings surprises, economic reports, policy changes, or global events can shift sentiment quickly. Because markets are forward-looking, price changes often reflect revised outlooks rather than current conditions.\n\nSudden reversals highlight the importance of humility and risk management. While trends provide context, they are not guarantees. Investors should avoid assuming that a current direction will continue indefinitely."
+  },
+  {
+    "id": 62,
+    "question": "What does high volume during a price increase suggest?",
+    "answer": "High trading volume during a price increase suggests strong participation and conviction among investors. It indicates that many buyers are actively supporting the upward move, which can reinforce the strength of the trend.\n\nHowever, volume alone does not ensure continued gains. While it adds confirmation to price movements, it should be interpreted alongside broader trends and context. Volume enhances analysis but does not predict outcomes."
+  },
+  {
+    "id": 63,
+    "question": "What does low volume during a rally suggest?",
+    "answer": "Low volume during a price rally may suggest weaker participation or conviction among investors. When fewer traders are involved, price movements may be less stable or more vulnerable to reversal.\n\nThat said, low volume does not automatically mean a rally will fail. It simply provides context about market participation. Investors should consider both volume and broader trends when interpreting price changes."
+  },
+  {
+    "id": 64,
+    "question": "Why can short-term charts look scary?",
+    "answer": "Short-term charts often magnify small price movements, making them appear dramatic. Daily fluctuations that are insignificant over years can look large when viewed in isolation. This visual exaggeration can create emotional reactions.\n\nZooming out to longer timeframes provides perspective and reduces anxiety. Long-term trends often appear smoother and more stable. Viewing charts in context helps investors maintain discipline."
+  },
+  {
+    "id": 65,
+    "question": "What is market noise?",
+    "answer": "Market noise refers to short-term price fluctuations that do not reflect meaningful long-term changes in value. These movements may result from minor news, speculation, or temporary sentiment shifts.\n\nFocusing too heavily on noise can lead to overtrading and emotional decisions. Long-term investors benefit from filtering out short-term distractions and concentrating on broader trends and fundamentals."
+  },
+  {
+    "id": 66,
+    "question": "Why do investors panic sell?",
+    "answer": "Investors panic sell when fear of further losses overrides rational decision-making. Sharp market declines can trigger emotional responses that lead individuals to exit investments prematurely.\n\nPanic selling often locks in losses and prevents participation in recoveries. Maintaining a disciplined strategy and understanding market cycles helps reduce the likelihood of fear-driven decisions."
+  },
+  {
+    "id": 67,
+    "question": "What is herd behavior in markets?",
+    "answer": "Herd behavior occurs when investors follow the actions of others rather than independent analysis. This can amplify trends, driving prices excessively high during optimism or excessively low during pessimism.\n\nHerd behavior contributes to bubbles and crashes. Recognizing this tendency helps investors remain objective and avoid making decisions based solely on crowd behavior."
+  },
+  {
+    "id": 68,
+    "question": "Why is overconfidence dangerous?",
+    "answer": "Overconfidence may cause investors to underestimate risk and overestimate their ability to predict markets. This can lead to excessive trading or concentrated positions.\n\nMarkets are complex and unpredictable. Maintaining humility and adhering to diversified strategies reduces the risks associated with overconfidence."
+  },
+  {
+    "id": 69,
+    "question": "Why does missing the best market days hurt returns?",
+    "answer": "A small number of strong market days often account for a large portion of long-term gains. Being out of the market during these days can significantly reduce overall returns.\n\nBecause strong recoveries often follow downturns quickly, attempting to time exits increases the risk of missing these key gains. Staying invested improves the likelihood of capturing long-term growth."
+  },
+  {
+    "id": 70,
+    "question": "Why is consistency more important than timing?",
+    "answer": "Consistency ensures steady participation in market growth. Regular investing and disciplined allocation allow compounding to work effectively over time.\n\nTiming the market requires predicting short-term movements, which is difficult and unreliable. Consistency reduces emotional decisions and supports long-term success."
+  },
+  {
+    "id": 71,
+    "question": "Why is automation helpful in investing?",
+    "answer": "Automation ensures contributions occur regularly without relying solely on discipline. Automatic transfers remove the temptation to delay or skip investing during uncertain periods.\n\nBy automating contributions, investors build consistent habits that support long-term growth. Automation reinforces discipline and reduces emotional interference."
+  },
+  {
+    "id": 72,
+    "question": "What is sequence of returns risk?",
+    "answer": "Sequence of returns risk refers to the impact of experiencing poor returns early in a withdrawal period, such as retirement. Early losses can reduce portfolio value significantly and limit recovery potential.\n\nManaging allocation and withdrawal rates helps mitigate this risk. Understanding sequence risk is important for long-term planning and portfolio sustainability."
+  },
+  {
+    "id": 73,
+    "question": "Why should goals be reviewed annually?",
+    "answer": "Annual reviews allow investors to assess progress toward goals and adjust strategies as circumstances change. Life events, income changes, or new priorities may require allocation adjustments.\n\nPeriodic reviews ensure portfolios remain aligned with objectives. Reviewing annually strikes a balance between discipline and adaptability."
+  },
+  {
+    "id": 74,
+    "question": "Why is staying invested during downturns important?",
+    "answer": "Market recoveries often occur unexpectedly and quickly. Selling during downturns locks in losses and prevents participation in rebounds.\n\nRemaining invested allows investors to benefit from eventual recoveries and long-term growth. Patience and discipline are critical during volatile periods."
+  },
+  {
+    "id": 75,
+    "question": "What is the biggest mistake beginner investors make?",
+    "answer": "The biggest mistake beginner investors make is reacting emotionally to short-term volatility. Panic selling, chasing trends, or overtrading can significantly reduce long-term returns.\n\nSuccessful investing relies on diversification, consistent contributions, and patience. Avoiding emotional decisions and maintaining a long-term perspective are key to achieving financial goals."
   }
 ]
