@@ -7,6 +7,7 @@ Capstone-grade RAG with:
 """
 
 import os
+import re
 from typing import Generator, Union, Optional, List, Dict, Tuple
 from pathlib import Path
 
@@ -89,16 +90,14 @@ REFUSE to answer and explain why for:
 - Questions outside your knowledge → Admit limitations
 
 ## RESPONSE FORMAT
-1. Clear, structured answer with headers
+1. Keep answers CONCISE: 50-60 words max unless the user asks for detail
 2. Key definitions in **bold**
-3. Practical examples when helpful
-4. Warning about risks when relevant
-5. **ALWAYS end with:** "Sources: [list the sources from your context]"
+3. One practical example max
+4. **End with:** "Sources: [list sources]"
 
 ## TEACHING STYLE
-- Beginner-friendly language
-- Use analogies and examples
-- Encourage long-term thinking
+- Beginner-friendly, clear, and brief
+- One analogy max
 - Be honest about what you don't know
 """
 
@@ -134,6 +133,24 @@ Would you like me to explain how to build a diversified portfolio instead?
 
 *Sources: SEC Investor.gov, FINRA, SPIVA Research*
 """
+
+
+def _trim_to_last_sentence(text: str) -> str:
+    """Trim text to the last complete sentence so it doesn't end mid-thought."""
+    if not text:
+        return text
+    # Find last sentence-ending punctuation (. ! ? or markdown list/header line)
+    # We look for '. ', '.\n', '!', '?' at the end, or the text already ends cleanly
+    stripped = text.rstrip()
+    if stripped and stripped[-1] in '.!?':
+        return stripped
+    # Find the last sentence boundary
+    match = list(re.finditer(r'[.!?](?:\s|$|\n|"|\*)', stripped))
+    if match:
+        last = match[-1]
+        return stripped[:last.start() + 1].rstrip()
+    # No sentence boundary found — return as-is (better than empty)
+    return stripped
 
 
 def _should_refuse_stock_picking(query: str) -> bool:
