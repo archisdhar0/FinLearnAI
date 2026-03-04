@@ -2127,6 +2127,7 @@ from stock_universe_analyzer import StockUniverseAnalyzer, SP500_TICKERS
 from sector_normalizer import SectorNormalizer
 from stock_scorer import StockScorer
 from portfolio_optimizer import PortfolioOptimizer
+from ga_etf_allocator import recommend_etf_allocation, explain_allocation
 
 # Analysis job tracking
 _analysis_jobs: Dict[str, Dict[str, Any]] = {}
@@ -2198,6 +2199,22 @@ class PortfolioAnalysisResponse(BaseModel):
     weights: Dict[str, float]
     analysis: Dict[str, Any]
     stocks: List[Dict[str, Any]]
+
+
+class GAAllocationQuestionnaire(BaseModel):
+    """Questionnaire for GA-based ETF allocation."""
+
+    time_horizon_years: int
+    risk_tolerance: int  # 1 (very low) – 5 (very high)
+    drawdown_tolerance: int  # 1 (cannot tolerate) – 5 (comfortable)
+    investment_knowledge: int  # 1 (beginner) – 5 (advanced)
+    income_stability: int  # 1 (very unstable) – 5 (very stable)
+    primary_goal: str  # "capital_preservation" | "income" | "balanced" | "growth" | "max_growth"
+
+
+class GAAllocationResponse(BaseModel):
+    allocations: Dict[str, float]
+    summary: Dict[str, Any]
 
 
 @app.post("/api/ai/stock-universe/analyze", response_model=AnalyzeUniverseResponse)
@@ -2462,6 +2479,19 @@ async def optimize_portfolio(request: OptimizePortfolioRequest):
 async def analyze_portfolio(request: OptimizePortfolioRequest):
     """Analyze a portfolio with given weights (no optimization)."""
     return await optimize_portfolio(request)  # Same endpoint, just requires custom_weights
+
+
+@app.post("/api/ai/asset-allocation/etf-ga", response_model=GAAllocationResponse)
+async def ga_etf_allocation(questionnaire: GAAllocationQuestionnaire):
+    """
+    Recommend an ETF-only asset allocation using a genetic algorithm.
+
+    This does not depend on or modify the existing stock-level optimiser.
+    """
+    answers_dict = questionnaire.dict()
+    allocations = recommend_etf_allocation(answers_dict)
+    summary = explain_allocation(answers_dict, allocations)
+    return GAAllocationResponse(allocations=allocations, summary=summary)
 
 
 # =============================================================================

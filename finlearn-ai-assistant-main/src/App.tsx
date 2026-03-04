@@ -15,6 +15,7 @@ import Social from "./pages/Social";
 import ETFRecommender from "./pages/ETFRecommender";
 import AIStockDiscovery from "./pages/AIStockDiscovery";
 import NotFound from "./pages/NotFound";
+import GAAllocation from "./pages/GAAllocation";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/social" element={<Social />} />
           <Route path="/etf-recommender" element={<ETFRecommender />} />
+          <Route path="/ga-allocation" element={<GAAllocation />} />
           <Route path="/ai-discovery" element={<AIStockDiscovery />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

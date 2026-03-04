@@ -180,6 +180,21 @@ const Dashboard = () => {
                   Take a risk quiz, get personalized ETF recommendations, and run Monte Carlo simulations
                 </p>
               </button>
+
+              <button
+                onClick={() => navigate("/ga-allocation")}
+                className="glass-card rounded-xl p-6 text-left hover:border-primary/40 transition-all group"
+              >
+                <div className="p-2.5 rounded-lg bg-primary/10 text-primary w-fit mb-4 group-hover:glow-gold transition-all">
+                  <PieChart className="w-5 h-5" />
+                </div>
+                <h3 className="font-display text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                  GA ETF Allocation
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Answer a detailed risk questionnaire and generate an ETF-only allocation using a genetic algorithm
+                </p>
+              </button>
             </div>
           </section>
         </div>
