@@ -2520,39 +2520,6 @@ async def analyze_portfolio(request: OptimizePortfolioRequest):
 
 
 # =============================================================================
-# GA-based ETF Portfolio Optimizer
-# =============================================================================
-
-class ETFOptimizeRequest(BaseModel):
-    answers: Dict[str, Any]
-    required_etfs: Optional[List[str]] = None
-    simulate: Optional[Dict[str, Any]] = None
-
-@app.post("/api/etf/optimize")
-async def etf_optimize(request: ETFOptimizeRequest):
-    """
-    GA-optimised ETF allocation.
-    
-    Accepts risk-profile answers, optional required ETFs (thematic picks),
-    and optional simulation parameters. Returns optimised allocation,
-    portfolio metrics, and Monte Carlo results.
-    """
-    try:
-        from ga_etf_optimizer import optimize_etf_portfolio
-        result = optimize_etf_portfolio(
-            answers=request.answers,
-            required_etfs=request.required_etfs,
-            simulate=request.simulate,
-        )
-        return result
-    except Exception as e:
-        print(f"[ETF Optimize] Error: {e}")
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# =============================================================================
 # Run Server
 # =============================================================================
 
